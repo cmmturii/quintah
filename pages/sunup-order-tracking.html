@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SunUp Collections — Track Order</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --pink:#C0547A;--pink-mid:#D4617F;--pink-light:#E06E8A;
+  --pink-pale:#FDF0F4;--pink-border:#F2D0DB;
+  --white:#FFFFFF;--bg:#FFF8FB;--text:#2E1A22;--muted:#9B6B7A;
+  --shadow:rgba(192,84,122,0.12);--green:#27ae60;--red:#e74c3c;--orange:#e67e22;--star:#F5A623;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
+  background-image:radial-gradient(ellipse at 15% 0%,rgba(255,182,210,0.22) 0%,transparent 55%);
+  min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--white);border-bottom:1.5px solid var(--pink-border);padding:0 24px;height:58px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px var(--shadow);}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-icon{width:38px;height:38px;background:var(--pink);border-radius:10px;display:flex;align-items:center;justify-content:center;}
+.brand{font-size:17px;font-weight:900;color:var(--pink);}
+.sub{font-size:10px;color:var(--muted);font-weight:600;}
+.topbar-right{display:flex;align-items:center;gap:8px;}
+.icon-btn{width:36px;height:36px;border-radius:50%;border:1.5px solid var(--pink-border);background:var(--white);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:15px;transition:background .15s;}
+.icon-btn:hover{background:var(--pink-pale);}
+
+/* SEARCH BAR */
+.track-hero{background:linear-gradient(135deg,var(--pink) 0%,#D4617F 100%);padding:40px 24px;text-align:center;position:relative;overflow:hidden;}
+.track-hero::before{content:'';position:absolute;top:-50px;right:-50px;width:220px;height:220px;border-radius:50%;background:rgba(255,255,255,.08);}
+.track-hero::after{content:'';position:absolute;bottom:-60px;left:-40px;width:180px;height:180px;border-radius:50%;background:rgba(255,255,255,.06);}
+.track-hero h1{font-size:26px;font-weight:900;color:#fff;margin-bottom:6px;position:relative;z-index:2;}
+.track-hero p{font-size:14px;color:rgba(255,255,255,.8);margin-bottom:24px;position:relative;z-index:2;}
+.track-search{display:flex;gap:10px;max-width:520px;margin:0 auto;position:relative;z-index:2;}
+.track-input{flex:1;padding:13px 18px;border:none;border-radius:12px;font-size:14px;font-family:'Nunito',sans-serif;
+  font-weight:700;color:var(--text);outline:none;}
+.track-btn{padding:13px 24px;background:var(--text);color:#fff;border:none;border-radius:12px;
+  font-size:14px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;white-space:nowrap;transition:opacity .15s;}
+.track-btn:hover{opacity:.85;}
+
+/* PAGE CONTENT */
+.page-content{max-width:860px;margin:0 auto;padding:28px 24px 60px;}
+
+/* NOT FOUND */
+.not-found{text-align:center;padding:60px 24px;display:none;}
+.not-found.show{display:block;}
+.not-found h2{font-size:22px;font-weight:900;margin-bottom:10px;}
+.not-found p{font-size:14px;color:var(--muted);}
+
+/* ORDER CARD */
+.order-card{background:var(--white);border-radius:18px;border:1px solid var(--pink-border);overflow:hidden;display:none;}
+.order-card.show{display:block;animation:fadeUp .4s ease-out;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+
+/* ORDER HEADER */
+.order-header{padding:20px 24px;border-bottom:1px solid var(--pink-border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;}
+.order-num{font-size:18px;font-weight:900;}
+.order-num span{color:var(--pink);}
+.order-date{font-size:12.5px;color:var(--muted);font-weight:700;margin-top:2px;}
+.status-chip{padding:6px 16px;border-radius:100px;font-size:12px;font-weight:900;letter-spacing:.04em;}
+.status-chip.processing{background:#FFF8E1;color:#F59E0B;}
+.status-chip.shipped{background:#E3F2FD;color:#1565C0;}
+.status-chip.out{background:#FFF3E0;color:var(--orange);}
+.status-chip.delivered{background:#E8F5E9;color:var(--green);}
+.status-chip.cancelled{background:#FDECEA;color:var(--red);}
+
+/* TRACKING TIMELINE */
+.tracking-section{padding:28px 24px;}
+.tracking-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:22px;}
+
+.timeline{position:relative;padding-left:42px;}
+.timeline::before{content:'';position:absolute;left:16px;top:20px;bottom:20px;width:2px;background:var(--pink-border);}
+
+.tl-step{position:relative;margin-bottom:32px;}
+.tl-step:last-child{margin-bottom:0;}
+.tl-dot{position:absolute;left:-42px;top:0;width:34px;height:34px;border-radius:50%;background:var(--white);
+  border:2px solid var(--pink-border);display:flex;align-items:center;justify-content:center;
+  font-size:15px;transition:all .3s;z-index:2;}
+.tl-step.done .tl-dot{background:var(--green);border-color:var(--green);font-size:12px;}
+.tl-step.active .tl-dot{background:var(--pink);border-color:var(--pink);box-shadow:0 0 0 5px rgba(192,84,122,.18);}
+.tl-step.active .tl-dot::after{content:'';position:absolute;inset:-4px;border-radius:50%;border:2px solid var(--pink);animation:pulse 1.5s infinite;opacity:.6;}
+@keyframes pulse{0%{transform:scale(1);opacity:.6}100%{transform:scale(1.5);opacity:0}}
+.tl-content{}
+.tl-title{font-size:14.5px;font-weight:900;margin-bottom:3px;}
+.tl-step.done .tl-title{color:var(--green);}
+.tl-step.active .tl-title{color:var(--pink);}
+.tl-step.pending .tl-title{color:var(--muted);}
+.tl-desc{font-size:12.5px;color:var(--muted);line-height:1.5;margin-bottom:4px;}
+.tl-time{font-size:11.5px;color:var(--muted);font-weight:700;}
+.tl-step.done .tl-time,.tl-step.active .tl-time{color:var(--text);}
+
+/* COURIER CARD */
+.courier-card{margin:0 24px 24px;background:var(--pink-pale);border-radius:13px;padding:16px;display:flex;align-items:center;gap:14px;}
+.courier-icon{font-size:28px;}
+.courier-info{flex:1;}
+.courier-name{font-size:13.5px;font-weight:900;margin-bottom:2px;}
+.courier-num{font-size:12px;color:var(--muted);font-weight:700;}
+.courier-num span{color:var(--pink);font-weight:800;cursor:pointer;}
+.courier-actions{display:flex;gap:8px;}
+.courier-btn{padding:8px 16px;border-radius:100px;font-size:12.5px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;border:none;transition:all .15s;}
+.courier-btn.call{background:var(--green);color:#fff;}
+.courier-btn.msg{background:var(--white);color:var(--pink);border:1.5px solid var(--pink-border);}
+.courier-btn:hover{opacity:.85;}
+
+/* MAP PLACEHOLDER */
+.map-section{padding:0 24px 24px;}
+.map-placeholder{background:linear-gradient(135deg,#f8f0f3 0%,#fde8ef 100%);
+  border-radius:13px;height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  border:1px dashed var(--pink-border);position:relative;overflow:hidden;}
+.map-pin{font-size:40px;margin-bottom:8px;animation:bounce 1.5s infinite alternate;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-10px)}}
+.map-text{font-size:13px;font-weight:800;color:var(--pink);}
+.map-sub{font-size:11.5px;color:var(--muted);font-weight:600;}
+
+/* ORDER ITEMS */
+.items-section{padding:0 24px 24px;border-top:1px solid var(--pink-border);margin-top:0;}
+.items-header{display:flex;align-items:center;justify-content:space-between;padding:16px 0 14px;}
+.items-title{font-size:14px;font-weight:900;}
+.order-item{display:flex;gap:12px;align-items:center;padding:10px 0;border-bottom:1px solid var(--pink-border);}
+.order-item:last-child{border-bottom:none;}
+.oi-img{width:60px;height:60px;border-radius:10px;object-fit:cover;background:#f8f0f3;flex-shrink:0;}
+.oi-name{font-size:13px;font-weight:800;margin-bottom:2px;}
+.oi-meta{font-size:11.5px;color:var(--muted);font-weight:600;}
+.oi-price{margin-left:auto;font-size:14px;font-weight:900;color:var(--pink);flex-shrink:0;}
+
+/* TOTALS */
+.totals-section{padding:0 24px 24px;}
+.tot-row{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px;}
+.tot-row .label{color:var(--muted);font-weight:700;}
+.tot-row .val{font-weight:800;}
+.tot-total{display:flex;justify-content:space-between;font-size:17px;font-weight:900;
+  border-top:2px solid var(--pink);padding-top:12px;margin-top:6px;}
+.tot-total .val{color:var(--pink);}
+
+/* SHIPPING INFO */
+.shipping-section{padding:0 24px 24px;border-top:1px solid var(--pink-border);}
+.sh-title{font-size:14px;font-weight:900;padding:16px 0 12px;}
+.sh-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.sh-block{}
+.sh-label{font-size:10.5px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px;}
+.sh-val{font-size:13.5px;font-weight:700;line-height:1.5;}
+
+/* ACTIONS */
+.order-actions{padding:0 24px 24px;display:flex;gap:12px;flex-wrap:wrap;}
+.act-btn{flex:1;min-width:120px;padding:11px 16px;border-radius:100px;font-size:13px;font-weight:800;
+  font-family:'Nunito',sans-serif;cursor:pointer;transition:all .15s;text-align:center;}
+.act-btn.primary{background:var(--pink);color:#fff;border:none;}
+.act-btn.primary:hover{background:var(--pink-light);}
+.act-btn.outline{background:none;color:var(--pink);border:2px solid var(--pink);}
+.act-btn.outline:hover{background:var(--pink-pale);}
+.act-btn.danger{background:none;color:var(--red);border:2px solid #FBBCB8;}
+.act-btn.danger:hover{background:#FDECEA;}
+
+/* LOADING */
+.loading-state{text-align:center;padding:50px;display:none;}
+.loading-state.show{display:block;}
+.spin-big{width:44px;height:44px;border:4px solid var(--pink-border);border-top-color:var(--pink);
+  border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(10px);
+  background:var(--text);color:#fff;padding:9px 22px;border-radius:100px;
+  font-size:13px;font-weight:700;z-index:600;opacity:0;pointer-events:none;transition:all .25s;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:600px){
+  .order-header{flex-direction:column;align-items:flex-start;}
+  .sh-grid{grid-template-columns:1fr;}
+  .track-search{flex-direction:column;}
+  .courier-card{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <a href="sunup-shop__1_.html" class="logo">
+    <div class="logo-icon">
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <circle cx="11" cy="11" r="5" fill="#fff"/>
+        <path d="M11 2v2M11 18v2M2 11h2M18 11h2M4.22 4.22l1.41 1.41M16.37 16.37l1.41 1.41M4.22 17.78l1.41-1.41M16.37 5.63l1.41-1.41" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="brand">SunUp Collections</div>
+      <div class="sub">Premium Beauty & Wellness</div>
+    </div>
+  </a>
+  <div class="topbar-right">
+    <button class="icon-btn" onclick="window.location='sunup-shop__1_.html'">🛍️</button>
+    <button class="icon-btn" onclick="window.location='sunup-login.html'">👤</button>
+  </div>
+</header>
+
+<!-- HERO SEARCH -->
+<div class="track-hero">
+  <h1>📦 Track Your Order</h1>
+  <p>Enter your order number or email to get real-time updates</p>
+  <div class="track-search">
+    <input class="track-input" type="text" id="track-input" placeholder="Order number (e.g. SU-123456) or email"/>
+    <button class="track-btn" onclick="trackOrder()">Track Now</button>
+  </div>
+</div>
+
+<!-- PAGE CONTENT -->
+<div class="page-content">
+
+  <!-- LOADING -->
+  <div class="loading-state" id="loading-state">
+    <div class="spin-big"></div>
+    <div style="font-size:14px;font-weight:700;color:var(--muted);">Looking up your order…</div>
+  </div>
+
+  <!-- NOT FOUND -->
+  <div class="not-found" id="not-found">
+    <div style="font-size:60px;margin-bottom:16px;">🔍</div>
+    <h2>Order Not Found</h2>
+    <p>We couldn't find an order with that number or email. Please double-check and try again, or <a href="sunup-login.html" style="color:var(--pink);font-weight:700;">sign in</a> to view your orders.</p>
+  </div>
+
+  <!-- ORDER CARD -->
+  <div class="order-card" id="order-card">
+
+    <!-- HEADER -->
+    <div class="order-header">
+      <div>
+        <div class="order-num">Order <span id="disp-order-num">#SU-000000</span></div>
+        <div class="order-date" id="disp-date">Placed on —</div>
+      </div>
+      <div class="status-chip shipped" id="status-chip">Shipped</div>
+    </div>
+
+    <!-- TIMELINE -->
+    <div class="tracking-section">
+      <div class="tracking-label">Delivery Progress</div>
+      <div class="timeline" id="timeline">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+
+    <!-- COURIER CARD -->
+    <div class="courier-card" id="courier-card">
+      <div class="courier-icon">🚴</div>
+      <div class="courier-info">
+        <div class="courier-name" id="courier-name">G4S Courier Services</div>
+        <div class="courier-num">Tracking ID: <span id="courier-tracking">KE-2025-789654</span></div>
+      </div>
+      <div class="courier-actions">
+        <button class="courier-btn call" onclick="showToast('Calling courier…')">📞 Call</button>
+        <button class="courier-btn msg" onclick="showToast('Opening WhatsApp…')">💬 Message</button>
+      </div>
+    </div>
+
+    <!-- MAP -->
+    <div class="map-section" id="map-section">
+      <div class="map-placeholder">
+        <div class="map-pin">📍</div>
+        <div class="map-text">Package in transit</div>
+        <div class="map-sub">Live map coming soon · Mombasa Rd, Nairobi</div>
+      </div>
+    </div>
+
+    <!-- ORDER ITEMS -->
+    <div class="items-section">
+      <div class="items-header">
+        <div class="items-title">Items in this order</div>
+        <span style="font-size:12px;color:var(--muted);font-weight:700;" id="items-count"></span>
+      </div>
+      <div id="order-items-list"></div>
+    </div>
+
+    <!-- TOTALS -->
+    <div class="totals-section">
+      <div class="tot-row"><span class="label">Subtotal</span><span class="val" id="disp-sub">—</span></div>
+      <div class="tot-row"><span class="label">Delivery</span><span class="val" id="disp-del">—</span></div>
+      <div class="tot-row" id="disp-disc-row" style="display:none;"><span class="label">Discount</span><span class="val" style="color:var(--orange);" id="disp-disc">—</span></div>
+      <div class="tot-total"><span>Total Paid</span><span class="val" id="disp-total">—</span></div>
+    </div>
+
+    <!-- SHIPPING INFO -->
+    <div class="shipping-section">
+      <div class="sh-title">Shipment Details</div>
+      <div class="sh-grid">
+        <div class="sh-block">
+          <div class="sh-label">Delivery Address</div>
+          <div class="sh-val" id="sh-address">—</div>
+        </div>
+        <div class="sh-block">
+          <div class="sh-label">Contact</div>
+          <div class="sh-val" id="sh-contact">—</div>
+        </div>
+        <div class="sh-block">
+          <div class="sh-label">Payment Method</div>
+          <div class="sh-val" id="sh-payment">—</div>
+        </div>
+        <div class="sh-block">
+          <div class="sh-label">Est. Delivery</div>
+          <div class="sh-val" id="sh-eta">—</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="order-actions" id="order-actions">
+      <button class="act-btn primary" onclick="window.print()">🖨️ Print Invoice</button>
+      <button class="act-btn outline" onclick="contactSupport()">💬 Contact Support</button>
+      <button class="act-btn danger" id="cancel-btn" onclick="cancelOrder()">✕ Cancel Order</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// SUPABASE SETUP
+// ============================================================
+const SUPABASE_URL = 'https://your-project.supabase.co';
+const SUPABASE_ANON_KEY = 'your-anon-key-here';
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ============================================================
+// TIMELINE CONFIG
+// ============================================================
+const TIMELINE_STEPS = [
+  { key: 'placed',     icon: '📋', label: 'Order Placed',         desc: 'We received your order and are verifying payment.' },
+  { key: 'confirmed',  icon: '✅', label: 'Order Confirmed',      desc: 'Payment confirmed. Your order is being prepared.' },
+  { key: 'processing', icon: '🔄', label: 'Being Packed',         desc: 'Our team is carefully packing your items.' },
+  { key: 'shipped',    icon: '🚚', label: 'Out for Delivery',     desc: 'Your package is on its way!' },
+  { key: 'delivered',  icon: '🎉', label: 'Delivered',            desc: 'Package delivered successfully. Enjoy your order!' },
+];
+
+// Status to timeline progress map
+const STATUS_PROGRESS = {
+  pending:    1,
+  processing: 2,
+  packed:     3,
+  shipped:    4,
+  delivered:  5,
+  cancelled:  0,
+};
+
+// Status chip classes
+const STATUS_CLASSES = {
+  pending: 'processing', processing: 'processing', packed: 'processing',
+  shipped: 'shipped', delivered: 'delivered', cancelled: 'cancelled'
+};
+
+const STATUS_LABELS = {
+  pending: '⏳ Pending', processing: '🔄 Processing', packed: '📦 Packed',
+  shipped: '🚚 Shipped', delivered: '✅ Delivered', cancelled: '❌ Cancelled'
+};
+
+// ============================================================
+// TRACK ORDER
+// ============================================================
+async function trackOrder() {
+  const query = document.getElementById('track-input').value.trim();
+  if (!query) { showToast('Please enter an order number or email'); return; }
+
+  document.getElementById('loading-state').classList.add('show');
+  document.getElementById('order-card').classList.remove('show');
+  document.getElementById('not-found').classList.remove('show');
+
+  // Supabase query
+  let { data: order, error } = await supabase
+    .from('orders')
+    .select('*')
+    .or(`order_number.eq.${query},customer_email.eq.${query}`)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  document.getElementById('loading-state').classList.remove('show');
+
+  // Fallback: use last order from localStorage (for demo after checkout)
+  if (!order) {
+    const stored = localStorage.getItem('last_order');
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (parsed.order_number === query || parsed.customer_email === query) {
+        order = { ...parsed, status: 'shipped' }; // demo: simulate shipped
+      }
+    }
+  }
+
+  if (!order) {
+    // Demo mode: create a sample order if nothing found
+    if (query.toLowerCase().startsWith('su-') || query.includes('@')) {
+      order = getDemoOrder(query);
+    } else {
+      document.getElementById('not-found').classList.add('show');
+      return;
+    }
+  }
+
+  renderOrder(order);
+}
+
+function getDemoOrder(num) {
+  return {
+    order_number: num.startsWith('SU-') ? num : 'SU-' + Date.now().toString().slice(-6),
+    customer_name: 'Jane Doe',
+    customer_email: 'jane@example.com',
+    customer_phone: '+254 700 123 456',
+    shipping_address: { address: '12 Ngong Road', city: 'Nairobi', county: 'Nairobi' },
+    items: [
+      { name: 'Vitamin C Glow Serum', price: 2250, qty: 1, shade: 'Natural Glow', size: '30ml', img: 'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=200&q=80' },
+      { name: 'Retinol Night Cream', price: 1850, qty: 1, shade: null, size: '50ml', img: 'https://images.unsplash.com/photo-1556228852-6d35a585d566?w=200&q=80' },
+    ],
+    subtotal: 4100, delivery_fee: 0, discount: 0, total: 4100,
+    payment_method: 'mpesa',
+    status: 'shipped',
+    created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
+    tracking_events: [
+      { date: new Date(Date.now() - 86400000 * 2).toISOString(), note: 'Order placed online' },
+      { date: new Date(Date.now() - 86400000 * 1.8).toISOString(), note: 'Payment confirmed via M-PESA' },
+      { date: new Date(Date.now() - 86400000 * 1).toISOString(), note: 'Order packed and ready for pickup' },
+      { date: new Date(Date.now() - 3600000 * 4).toISOString(), note: 'Picked up by courier' },
+    ]
+  };
+}
+
+// ============================================================
+// RENDER ORDER
+// ============================================================
+function renderOrder(order) {
+  const card = document.getElementById('order-card');
+  card.classList.add('show');
+
+  // Header
+  document.getElementById('disp-order-num').textContent = `#${order.order_number}`;
+  document.getElementById('disp-date').textContent = `Placed on ${formatDate(order.created_at)}`;
+
+  // Status chip
+  const chip = document.getElementById('status-chip');
+  chip.className = `status-chip ${STATUS_CLASSES[order.status] || 'processing'}`;
+  chip.textContent = STATUS_LABELS[order.status] || order.status;
+
+  // Timeline
+  renderTimeline(order);
+
+  // Hide courier/map if cancelled or pending
+  const showDelivery = !['pending','cancelled'].includes(order.status);
+  document.getElementById('courier-card').style.display = showDelivery ? '' : 'none';
+  document.getElementById('map-section').style.display = order.status === 'shipped' ? '' : 'none';
+
+  // Items
+  const itemsList = document.getElementById('order-items-list');
+  itemsList.innerHTML = (order.items || []).map(item => `
+    <div class="order-item">
+      <img class="oi-img" src="${item.img || 'https://via.placeholder.com/60'}" alt="${item.name}"/>
+      <div>
+        <div class="oi-name">${item.name}</div>
+        <div class="oi-meta">${[item.shade, item.size, `×${item.qty}`].filter(Boolean).join(' · ')}</div>
+      </div>
+      <div class="oi-price">KSh ${(item.price * item.qty).toLocaleString()}</div>
+    </div>
+  `).join('');
+  document.getElementById('items-count').textContent = `${(order.items||[]).reduce((s,i)=>s+i.qty,0)} items`;
+
+  // Totals
+  document.getElementById('disp-sub').textContent = `KSh ${(order.subtotal||0).toLocaleString()}`;
+  document.getElementById('disp-del').textContent = order.delivery_fee ? `KSh ${order.delivery_fee}` : 'FREE';
+  document.getElementById('disp-total').textContent = `KSh ${(order.total||0).toLocaleString()}`;
+  if (order.discount) {
+    document.getElementById('disp-disc-row').style.display = '';
+    document.getElementById('disp-disc').textContent = `−KSh ${order.discount.toLocaleString()}`;
+  }
+
+  // Shipping info
+  const addr = order.shipping_address || {};
+  document.getElementById('sh-address').innerHTML = `${addr.address || '—'}<br/>${addr.city || ''} ${addr.county || ''}`;
+  document.getElementById('sh-contact').innerHTML = `${order.customer_name || '—'}<br/>${order.customer_phone || '—'}`;
+  document.getElementById('sh-payment').textContent = (order.payment_method||'').toUpperCase();
+  document.getElementById('sh-eta').textContent = getETA(order);
+
+  // Cancel button — hide if delivered or cancelled
+  document.getElementById('cancel-btn').style.display = ['delivered','cancelled'].includes(order.status) ? 'none' : '';
+
+  // Store for cancel
+  window._currentOrder = order;
+}
+
+function renderTimeline(order) {
+  const tl = document.getElementById('timeline');
+  const progress = STATUS_PROGRESS[order.status] || 0;
+  const events = order.tracking_events || [];
+
+  if (order.status === 'cancelled') {
+    tl.innerHTML = `
+      <div class="tl-step done">
+        <div class="tl-dot">📋</div>
+        <div class="tl-content">
+          <div class="tl-title" style="color:var(--green)">Order Placed</div>
+          <div class="tl-desc">${formatDate(order.created_at)}</div>
+        </div>
+      </div>
+      <div class="tl-step active">
+        <div class="tl-dot">❌</div>
+        <div class="tl-content">
+          <div class="tl-title" style="color:var(--red)">Order Cancelled</div>
+          <div class="tl-desc">This order has been cancelled. A refund will be processed within 3–5 business days.</div>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  tl.innerHTML = TIMELINE_STEPS.map((step, i) => {
+    const stepNum = i + 1;
+    let state = 'pending';
+    if (stepNum < progress) state = 'done';
+    else if (stepNum === progress) state = 'active';
+
+    const eventForStep = events[i];
+    const timeStr = eventForStep ? formatDateTime(eventForStep.date) : '';
+    const noteStr = eventForStep ? eventForStep.note : step.desc;
+
+    return `
+      <div class="tl-step ${state}">
+        <div class="tl-dot">${state === 'done' ? '✓' : step.icon}</div>
+        <div class="tl-content">
+          <div class="tl-title">${step.label}</div>
+          <div class="tl-desc">${noteStr}</div>
+          ${timeStr ? `<div class="tl-time">${timeStr}</div>` : ''}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ============================================================
+// CANCEL ORDER (Supabase)
+// ============================================================
+async function cancelOrder() {
+  if (!confirm('Are you sure you want to cancel this order?')) return;
+  const order = window._currentOrder;
+  if (!order) return;
+
+  const { error } = await supabase
+    .from('orders')
+    .update({ status: 'cancelled' })
+    .eq('order_number', order.order_number);
+
+  if (error) { showToast('Failed to cancel order. Please contact support.'); return; }
+
+  order.status = 'cancelled';
+  renderOrder(order);
+  showToast('Order cancelled. Refund will be processed in 3–5 days.');
+}
+
+function contactSupport() {
+  const wa = `https://wa.me/254700000000?text=Hi, I need help with order #${window._currentOrder?.order_number || ''}`;
+  window.open(wa, '_blank');
+}
+
+// ============================================================
+// HELPERS
+// ============================================================
+function formatDate(iso) {
+  return new Date(iso).toLocaleDateString('en-KE', { day:'numeric', month:'long', year:'numeric' });
+}
+function formatDateTime(iso) {
+  return new Date(iso).toLocaleString('en-KE', { day:'numeric', month:'short', hour:'2-digit', minute:'2-digit' });
+}
+function getETA(order) {
+  if (order.status === 'delivered') return 'Delivered ✅';
+  if (order.status === 'cancelled') return 'N/A';
+  const placed = new Date(order.created_at);
+  const eta = new Date(placed.getTime() + 4 * 86400000);
+  return formatDate(eta.toISOString());
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// ============================================================
+// AUTO-TRACK from URL param or localStorage
+// ============================================================
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  const orderId = params.get('order');
+  if (orderId) {
+    document.getElementById('track-input').value = orderId;
+    trackOrder();
+    return;
+  }
+
+  // Check if coming from checkout
+  const lastOrder = localStorage.getItem('last_order');
+  if (lastOrder) {
+    const parsed = JSON.parse(lastOrder);
+    document.getElementById('track-input').value = parsed.order_number;
+    trackOrder();
+  }
+})();
+</script>
+</body>
+</html>
