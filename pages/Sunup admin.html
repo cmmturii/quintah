@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SunUp Admin — Dashboard</title>
+<title>Opulent Admin — Dashboard</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -220,7 +220,7 @@ tr:hover td{background:#fffbfc;}
   <div class="sb-top">
     <a class="sb-logo" href="#">
       <div class="sb-icon"><svg width="18" height="16" viewBox="0 0 24 22" fill="none"><path d="M12 1L1 9v12h7v-7h8v7h7V9L12 1z" fill="white"/></svg></div>
-      <div><div class="sb-brand">SunUp Admin</div></div>
+      <div><div class="sb-brand">Opulent Admin</div></div>
     </a>
     <div class="sb-role">Admin Panel</div>
   </div>
@@ -229,19 +229,19 @@ tr:hover td{background:#fffbfc;}
     <button class="sb-item active" onclick="showPage('dashboard',this)"><span class="sb-icon2">📊</span>Dashboard</button>
     <button class="sb-item" onclick="showPage('orders',this)"><span class="sb-icon2">📦</span>Orders<span class="sb-badge" id="pendingBadge">0</span></button>
     <div class="sb-section">Catalog</div>
-    <button class="sb-item" onclick="window.open('sunup-products.html','_blank')"><span class="sb-icon2">🏷️</span>Manage Products ↗</button>
+    <button class="sb-item" onclick="window.open('opulent-products.html','_blank')"><span class="sb-icon2">🏷️</span>Manage Products ↗</button>
     <div class="sb-section">Business</div>
     <button class="sb-item" onclick="showPage('customers',this)"><span class="sb-icon2">👥</span>Customers</button>
     <button class="sb-item" onclick="showPage('analytics',this)"><span class="sb-icon2">📈</span>Analytics</button>
     <div class="sb-section">System</div>
     <button class="sb-item" onclick="showPage('settings',this)"><span class="sb-icon2">⚙️</span>Settings</button>
     <div style="height:6px"></div>
-    <button class="sb-item" onclick="window.open('sunup-shop.html','_blank')" style="color:var(--pink)"><span class="sb-icon2">🛒</span>View Shop ↗</button>
+    <button class="sb-item" onclick="window.open('opulent-shop.html','_blank')" style="color:var(--pink)"><span class="sb-icon2">🛒</span>View Shop ↗</button>
   </nav>
   <div class="sb-bottom">
     <div class="sb-user">
       <div class="sb-avatar" id="sbAvatar">A</div>
-      <div><div class="sb-uname" id="sbName">Admin</div><div class="sb-uemail" id="sbEmail">admin@sunup.co.ke</div></div>
+      <div><div class="sb-uname" id="sbName">Admin</div><div class="sb-uemail" id="sbEmail">admin@opulentcollections.co.ke</div></div>
       <button class="sb-exit" onclick="signOut()" title="Sign Out">⎋</button>
     </div>
   </div>
@@ -254,7 +254,7 @@ tr:hover td{background:#fffbfc;}
     <div class="topbar-right">
       <span class="topbar-date" id="topbarDate"></span>
       <button class="tbb tbb-secondary" onclick="exportData()">📥 Export</button>
-      <button class="tbb tbb-primary" onclick="window.open('sunup-products.html','_blank')">+ Add Product</button>
+      <button class="tbb tbb-primary" onclick="window.open('opulent-products.html','_blank')">+ Add Product</button>
     </div>
   </div>
 
@@ -272,7 +272,7 @@ tr:hover td{background:#fffbfc;}
       </div>
     </div>
     <div class="dash-card" style="margin-bottom:16px">
-      <div class="dash-card-title"><span>⚠️ Low Stock Alerts</span><button class="btn btn-secondary btn-sm" onclick="window.open('sunup-products.html','_blank')">Manage Products ↗</button></div>
+      <div class="dash-card-title"><span>⚠️ Low Stock Alerts</span><button class="btn btn-secondary btn-sm" onclick="window.open('opulent-products.html','_blank')">Manage Products ↗</button></div>
       <div id="lowStock"></div>
     </div>
     <div class="dash-card">
@@ -345,10 +345,10 @@ tr:hover td{background:#fffbfc;}
     <div class="settings-section">
       <h3>🏪 Store Information</h3>
       <div class="frow">
-        <div class="fg"><label>Store Name</label><input type="text" id="storeName" value="SunUp Collections"/></div>
+        <div class="fg"><label>Store Name</label><input type="text" id="storeName" value="Opulent Collections"/></div>
         <div class="fg"><label>Business Phone</label><input type="text" id="storePhone" value="+254 700 000 000"/></div>
       </div>
-      <div class="fg"><label>Business Email</label><input type="email" id="storeEmail" value="orders@sunupcollections.co.ke"/></div>
+      <div class="fg"><label>Business Email</label><input type="email" id="storeEmail" value="orders@opulentcollections.co.ke"/></div>
       <div class="fg"><label>Business Address</label><input type="text" id="storeAddr" value="Nairobi, Kenya"/></div>
       <button class="btn btn-primary" onclick="saveSettings()">Save Store Info</button>
     </div>
@@ -429,7 +429,8 @@ let orders   = JSON.parse(localStorage.getItem('sc_orders')||'[]');
 let settings = JSON.parse(localStorage.getItem('sc_settings')||'{}');
 
 const fmt=p=>'Ksh. '+Number(p).toLocaleString();
-const save=()=>{localStorage.setItem('sc_products',JSON.stringify(PRODUCTS));localStorage.setItem('sc_orders',JSON.stringify(orders));};
+const saveLocal=()=>{localStorage.setItem('sc_products',JSON.stringify(PRODUCTS));localStorage.setItem('sc_orders',JSON.stringify(orders));};
+const save=saveLocal;
 
 // ─── TOAST ─────────────────────────────────────────────────────
 function toast(msg,dur=2500){
@@ -578,7 +579,14 @@ function renderOrders(){
 }
 function updateStatus(id,status){
   const o=orders.find(x=>x.id===id);
-  if(o){o.status=status;save();renderDashboard&&renderOrders();toast('✅ Status → '+status);}
+  if(o){
+    o.status=status;
+    save();
+    updateOrderStatusDB(id,status);
+    renderOrders();
+    renderDashboard();
+    toast('✅ Status → '+status);
+  }
 }
 function cancelOrder(id){
   if(!confirm('Cancel order #'+id+'? Stock will be restocked.'))return;
@@ -592,7 +600,14 @@ function cancelOrder(id){
 function restockProduct(id){
   const qty=parseInt(prompt('How many units to add?','50'));
   if(!qty||isNaN(qty))return;
-  const p=PRODUCTS.find(x=>x.id===id);if(p){p.stock+=qty;save();renderDashboard();toast('✅ +'+qty+' units added');}
+  const p=PRODUCTS.find(x=>x.id===id);
+  if(p){
+    p.stock+=qty;
+    save();
+    updateProductStockDB(id,p.stock);
+    renderDashboard();
+    toast('✅ +'+qty+' units added');
+  }
 }
 function showOrderDetail(id){
   const o=orders.find(x=>x.id===id);if(!o)return;
@@ -635,7 +650,7 @@ function showInvoice(id){
   const o=orders.find(x=>x.id===id);if(!o)return;
   document.getElementById('invoiceContent').innerHTML=`
     <div class="inv-header">
-      <div><div class="inv-logo">SunUp Collections</div><div style="font-size:11.5px;color:var(--muted);margin-top:4px">Nairobi, Kenya · +254 700 000 000</div></div>
+      <div><div class="inv-logo">Opulent Collections</div><div style="font-size:11.5px;color:var(--muted);margin-top:4px">Nairobi, Kenya · +254 700 000 000</div></div>
       <div style="text-align:right"><div class="inv-title">INVOICE</div><div style="font-size:12px;color:var(--muted)">#${o.id} · ${o.date}</div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;font-size:12.5px;">
@@ -750,7 +765,7 @@ function saveSettings(){
 function exportData(){
   const data={products:PRODUCTS,orders,settings,exported:new Date().toISOString()};
   const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
-  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='sunup-data-'+Date.now()+'.json';a.click();
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='opulent-data-'+Date.now()+'.json';a.click();
   toast('✅ Data exported!');
 }
 function clearAllOrders(){
@@ -761,16 +776,120 @@ function resetProducts(){
   if(!confirm('Reset products to default? Custom products will be deleted!'))return;
   PRODUCTS=JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));save();renderDashboard();toast('Products reset to default');
 }
-function signOut(){toast('Sign out functionality — connect your auth system here.');}
+async function signOut(){
+  await _sb.auth.signOut();
+  sessionStorage.removeItem('oc_admin_user');
+  window.location.href = 'admin-login.html';
+}
+
+// ─── SUPABASE DATA SYNC ──────────────────────────────────────
+async function loadOrdersFromDB(){
+  try {
+    const { data, error } = await _sb.from('orders').select('*').order('created_at', {ascending:false});
+    if(!error && data){
+      orders = data.map(o=>({
+        id: o.id,
+        date: new Date(o.created_at).toLocaleDateString('en-KE'),
+        time: new Date(o.created_at).toLocaleTimeString('en-KE'),
+        items: o.items,
+        subtotal: o.subtotal,
+        delivery: o.delivery,
+        total: o.total,
+        status: o.status,
+        county: o.county,
+        address: o.address,
+        phone: o.customer_phone,
+        email: o.customer_email,
+        name: o.customer_name,
+        payment: o.payment_method,
+        notes: o.notes
+      }));
+      localStorage.setItem('sc_orders', JSON.stringify(orders));
+    }
+  } catch(e){ console.warn('Orders load failed, using cache', e); }
+}
+
+async function loadProductsFromDB(){
+  try {
+    const { data, error } = await _sb.from('products').select('*').order('id');
+    if(!error && data && data.length > 0){
+      PRODUCTS = data.map(p=>({
+        id: p.id, name: p.name, cat: p.cat, price: p.price,
+        oldPrice: p.old_price, stock: p.stock, rating: Number(p.rating),
+        reviews: p.reviews, badge: p.badge, desc: p.description, img: p.img
+      }));
+      localStorage.setItem('sc_products', JSON.stringify(PRODUCTS));
+    }
+  } catch(e){ console.warn('Products load failed, using cache', e); }
+}
+
+async function updateOrderStatusDB(id, status){
+  try {
+    await _sb.from('orders').update({ status, updated_at: new Date().toISOString() }).eq('id', id);
+  } catch(e){ console.warn('Status update DB failed', e); }
+}
+
+async function updateProductStockDB(id, stock){
+  try {
+    await _sb.from('products').update({ stock, updated_at: new Date().toISOString() }).eq('id', id);
+  } catch(e){ console.warn('Stock update DB failed', e); }
+}
+
+// Setup realtime for new orders
+function setupRealtime(){
+  _sb.channel('admin-orders')
+    .on('postgres_changes', { event:'INSERT', schema:'public', table:'orders' }, payload=>{
+      const o = payload.new;
+      const order = {
+        id:o.id, date:new Date(o.created_at).toLocaleDateString('en-KE'),
+        time:new Date(o.created_at).toLocaleTimeString('en-KE'),
+        items:o.items, subtotal:o.subtotal, delivery:o.delivery, total:o.total,
+        status:o.status, county:o.county, address:o.address,
+        phone:o.customer_phone, email:o.customer_email, name:o.customer_name,
+        payment:o.payment_method, notes:o.notes
+      };
+      orders.unshift(order);
+      localStorage.setItem('sc_orders', JSON.stringify(orders));
+      renderDashboard();
+      toast('🔔 New order: #' + o.id + ' — ' + o.customer_name);
+      document.getElementById('pendingBadge').textContent = orders.filter(x=>x.status==='Processing').length;
+    })
+    .subscribe();
+}
 
 // ─── INIT ────────────────────────────────────────────────────────
 document.getElementById('topbarDate').textContent=new Date().toLocaleDateString('en-KE',{weekday:'short',year:'numeric',month:'short',day:'numeric'});
-// Listen for changes from shop/products pages
+
 window.addEventListener('storage',e=>{
   if(e.key==='sc_products'){PRODUCTS=JSON.parse(e.newValue||'null')||PRODUCTS;}
   if(e.key==='sc_orders'){orders=JSON.parse(e.newValue||'[]');}
 });
-renderDashboard();
+
+async function adminInit(){
+  // Auth guard — redirect to login if not admin
+  const { data:{ session } } = await _sb.auth.getSession();
+  if(!session?.user){
+    window.location.href='admin-login.html'; return;
+  }
+  const { data:profile } = await _sb.from('profiles').select('role,first_name,last_name,email').eq('id',session.user.id).single();
+  if(!profile || profile.role !== 'admin'){
+    await _sb.auth.signOut();
+    window.location.href='admin-login.html'; return;
+  }
+  // Show admin user info in sidebar
+  const initials = (profile.first_name||'A')[0].toUpperCase();
+  document.getElementById('sbAvatar').textContent = initials;
+  document.getElementById('sbName').textContent = (profile.first_name||'') + ' ' + (profile.last_name||'');
+  document.getElementById('sbEmail').textContent = profile.email || session.user.email;
+
+  // Load fresh data from DB
+  await Promise.all([loadOrdersFromDB(), loadProductsFromDB()]);
+  setupRealtime();
+  renderDashboard();
+  document.getElementById('pendingBadge').textContent = orders.filter(x=>x.status==='Processing').length;
+}
+
+adminInit();
 </script>
 </body>
 </html>

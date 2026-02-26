@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SunUp — Manage Products</title>
+<title>Opulent — Manage Products</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 :root{
@@ -177,13 +177,13 @@ tr:hover td{background:#fffbfc;}
   <div class="tbar-left">
     <a class="logo" href="#">
       <div class="logo-icon"><svg width="18" height="16" viewBox="0 0 24 22" fill="none"><path d="M12 1L1 9v12h7v-7h8v7h7V9L12 1z" fill="white"/></svg></div>
-      <div class="brand">SunUp</div>
+      <div class="brand">Opulent</div>
     </a>
     <div style="width:1px;height:22px;background:var(--pink-border)"></div>
     <div class="page-label">🏷️ Manage Products</div>
   </div>
   <div class="tbar-right">
-    <button class="btn btn-secondary" onclick="window.open('sunup-admin.html','_blank')">⚙️ Admin ↗</button>
+    <button class="btn btn-secondary" onclick="window.open('opulent-admin.html','_blank')">⚙️ Admin ↗</button>
     <button class="btn btn-secondary" onclick="window.open('sunup-shop.html','_blank')">🛒 Shop ↗</button>
     <button class="btn btn-primary" onclick="openForm()">+ Add Product</button>
   </div>
@@ -357,7 +357,12 @@ tr:hover td{background:#fffbfc;}
 
 <div class="toast" id="toast"></div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+const SUPABASE_URL      = 'https://azwcxezzzljbjgojwtax.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6d2N4ZXp6emxqYmpnb2p3dGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTk2NTQsImV4cCI6MjA4NzY5NTY1NH0.wFrC32vU0MWbp-otIif5WdlCemeIDXEa2DyLXrl1OEI';
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 // ─── DEFAULT PRODUCTS ─────────────────────────────────────────────
 const DEFAULT_PRODUCTS = [
   {id:1,name:"Rectangular Rain Drop Humidifier",cat:"living",price:2850,oldPrice:3800,stock:15,rating:4.5,reviews:128,badge:"Sale",desc:"Beautifully designed rain drop humidifier that adds moisture to the air.",img:"https://images.unsplash.com/photo-1614251055880-ee96e4803393?w=600&q=80"},
@@ -390,7 +395,40 @@ let currentView = 'table';
 let pendingImgData = null;
 let restockId = null;
 
-const save = () => localStorage.setItem('sc_products', JSON.stringify(PRODUCTS));
+const saveLocal = () => localStorage.setItem('sc_products', JSON.stringify(PRODUCTS));
+const save = saveLocal;
+
+async function saveProductToDB(p){
+  try {
+    await _sb.from('products').upsert({
+      id: p.id, name: p.name, cat: p.cat, price: p.price,
+      old_price: p.oldPrice || null, stock: p.stock, rating: p.rating,
+      reviews: p.reviews || 0, badge: p.badge || null,
+      description: p.desc, img: p.img,
+      updated_at: new Date().toISOString()
+    }, { onConflict:'id' });
+  } catch(e){ console.warn('DB save failed', e); }
+}
+
+async function deleteProductFromDB(id){
+  try { await _sb.from('products').delete().eq('id', id); }
+  catch(e){ console.warn('DB delete failed', e); }
+}
+
+async function loadProductsFromDB(){
+  try {
+    const { data, error } = await _sb.from('products').select('*').order('id');
+    if(!error && data && data.length > 0){
+      PRODUCTS = data.map(p=>({
+        id:p.id, name:p.name, cat:p.cat, price:p.price,
+        oldPrice:p.old_price, stock:p.stock, rating:Number(p.rating),
+        reviews:p.reviews, badge:p.badge, desc:p.description, img:p.img
+      }));
+      nextId = Math.max(...PRODUCTS.map(p=>p.id),0)+1;
+      saveLocal();
+    }
+  } catch(e){ console.warn('Products load failed, using cache', e); }
+}
 const fmt  = p => 'Ksh. '+Number(p).toLocaleString();
 const disc = p => p.oldPrice ? Math.round((1-p.price/p.oldPrice)*100) : 0;
 
@@ -613,7 +651,9 @@ function saveProduct(){
     PRODUCTS.push({id:nextId++,name,desc,cat,price,oldPrice,stock,rating:Math.max(1,Math.min(5,rating)),reviews:0,badge,img});
     toast('✅ Product added!');
   }
-  save();closeForm();renderTable();renderStats();
+  save();
+  saveProductToDB(idVal ? PRODUCTS.find(x=>x.id===parseInt(idVal)) : PRODUCTS[PRODUCTS.length-1]);
+  closeForm();renderTable();renderStats();
 }
 
 // ─── DELETE ───────────────────────────────────────────────────────
@@ -625,7 +665,8 @@ function confirmDelete(id){
 }
 function deleteProduct(id){
   PRODUCTS=PRODUCTS.filter(x=>x.id!==id);
-  save();renderTable();renderStats();
+  save(); deleteProductFromDB(id);
+  renderTable();renderStats();
   document.getElementById('confirmModal').classList.remove('open');
   toast('Product deleted');
 }
@@ -660,8 +701,17 @@ window.addEventListener('storage',e=>{
 });
 
 // ─── INIT ────────────────────────────────────────────────────────
-renderStats();
-renderTable();
+async function productsInit(){
+  // Auth guard
+  const { data:{ session } } = await _sb.auth.getSession();
+  if(!session?.user){ window.location.href='admin-login.html'; return; }
+  const { data:profile } = await _sb.from('profiles').select('role').eq('id',session.user.id).single();
+  if(!profile || profile.role !== 'admin'){ window.location.href='admin-login.html'; return; }
+  // Load products from DB
+  await loadProductsFromDB();
+  renderStats(); renderTable();
+}
+productsInit();
 </script>
 </body>
 </html>
