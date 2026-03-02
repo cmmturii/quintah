@@ -422,6 +422,31 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
 .inv-total-row{display:flex;justify-content:space-between;padding:4px 0;font-size:12.5px;}
 .inv-total-row.big{font-size:15px;font-weight:800;border-top:2px solid var(--pink);padding-top:8px;margin-top:4px;color:var(--pink);}
 
+/* ─── PROFILE DROPDOWN ───────────────────────────────────────────── */
+.profile-menu{
+  position:fixed;bottom:70px;left:10px;width:240px;
+  background:#fff;border-radius:16px;
+  box-shadow:0 8px 40px rgba(192,84,122,0.22);
+  border:1.5px solid var(--pink-border);z-index:500;
+  opacity:0;pointer-events:none;transform:translateY(10px);transition:all .2s;
+}
+.profile-menu.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.pm-header{padding:16px 16px 12px;border-bottom:1px solid var(--pink-border);display:flex;align-items:center;gap:10px;}
+.pm-av{width:38px;height:38px;border-radius:50%;background:var(--pink);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:800;flex-shrink:0;}
+.pm-name{font-size:13.5px;font-weight:800;line-height:1.2;}
+.pm-email{font-size:10.5px;color:var(--muted);margin-top:1px;}
+.pm-item{display:flex;align-items:center;gap:10px;padding:11px 16px;
+  font-size:13px;font-weight:700;cursor:pointer;transition:background .15s;border:none;
+  background:none;width:100%;text-align:left;font-family:'Nunito',sans-serif;color:var(--text);}
+.pm-item:hover{background:var(--pink-pale);color:var(--pink);}
+.pm-item.danger{color:var(--red);}
+.pm-item.danger:hover{background:#fdecea;}
+.pm-divider{height:1px;background:var(--pink-border);}
+
+/* ─── CHANGE PASSWORD MODAL ──────────────────────────────────────── */
+.cpw-link{background:none;border:none;cursor:pointer;color:var(--pink);font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;padding:0;}
+.cpw-link:hover{text-decoration:underline;}
+
 /* ─── TOAST ──────────────────────────────────────────────────────── */
 .toast{
   position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);
@@ -513,10 +538,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
     <!-- ▼ ADMIN SECTION — hidden for regular users, shown for admins only ▼ -->
     <div class="sb-admin-group" id="sbAdminGroup">
       <span class="sb-section" style="color:var(--orange)">ADMIN</span>
-      <a class="sb-item sb-admin-item" href="opulent-admin.html">
+      <a class="sb-item sb-admin-item" href="pages/opulent admin.html">
         <span class="sb-item-icon">⚙️</span> Admin Panel
       </a>
-      <a class="sb-item sb-admin-item" href="opulent-products.html">
+      <a class="sb-item sb-admin-item" href="pages/opulent products.html">
         <span class="sb-item-icon">📦</span> Manage Products
       </a>
     </div>
@@ -622,7 +647,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
 </div><!-- /page-main -->
 </div><!-- /page-shell -->
 
-<!-- ════ OVERLAYS & MODALS (outside page-shell so they cover everything) ════ -->
+<!-- ════ OVERLAYS & MODALS ════ -->
 
 <!-- WISHLIST PANEL -->
 <div class="overlay" id="wishOverlay" onclick="closeWishlist()"></div>
@@ -745,6 +770,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
         <div class="fg"><label>Email</label><input type="email" id="siEm" placeholder="jane@example.com"/></div>
         <div class="fg"><label>Password</label><input type="password" id="siPw" placeholder="••••••••"/></div>
         <button class="btn-auth" onclick="doSignIn()">Sign In</button>
+        <div style="text-align:center;margin-top:12px">
+          <button class="cpw-link" onclick="closeAuth();openForgotFromModal()">Forgot Password?</button>
+        </div>
       </div>
       <div id="signUpForm" style="display:none">
         <div class="frow">
@@ -785,6 +813,47 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
   </div>
 </div>
 
+<!-- PROFILE DROPDOWN MENU -->
+<div class="profile-menu" id="profileMenu">
+  <div class="pm-header">
+    <div class="pm-av" id="pmAv">?</div>
+    <div>
+      <div class="pm-name" id="pmName">User</div>
+      <div class="pm-email" id="pmEmail"></div>
+    </div>
+  </div>
+  <button class="pm-item" onclick="openChangePassword()">🔑 Change Password</button>
+  <div class="pm-divider"></div>
+  <button class="pm-item danger" onclick="doSignOut();closeProfileMenu()">🚪 Sign Out</button>
+</div>
+
+<!-- CHANGE PASSWORD / FORGOT PASSWORD MODAL -->
+<div class="modal-bg" id="changePwModal">
+  <div class="modal" style="max-width:400px;">
+    <div class="mh"><h2 id="cpwModalTitle">🔑 Change Password</h2><button class="close-x" onclick="closeChangePw()">✕</button></div>
+    <div class="mb">
+      <!-- Change password form -->
+      <div id="changePwForm">
+        <div class="fg"><label>New Password*</label><input type="password" id="cpNew" placeholder="Min 6 characters"/></div>
+        <div class="fg"><label>Confirm New Password*</label><input type="password" id="cpConfirm" placeholder="Repeat new password"/></div>
+        <button class="btn-auth" onclick="doChangePassword()">Update Password</button>
+        <div style="text-align:center;margin-top:12px">
+          <button class="cpw-link" onclick="switchToForgot()">Forgot your password? Reset via email →</button>
+        </div>
+      </div>
+      <!-- Forgot password form -->
+      <div id="forgotPwForm" style="display:none">
+        <p style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.65">Enter your email address and we'll send you a link to reset your password.</p>
+        <div class="fg"><label>Email Address*</label><input type="email" id="fpEmail" placeholder="jane@example.com"/></div>
+        <button class="btn-auth" onclick="doForgotPassword()">Send Reset Link 📧</button>
+        <div style="text-align:center;margin-top:12px">
+          <button class="cpw-link" onclick="switchToChangePw()">← Back</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <!-- WHATSAPP -->
 <a class="wa" href="https://wa.me/254700000000?text=Hello!%20I%20need%20help%20with%20my%20Opulent%20order." target="_blank">
   <div class="wa-ring"></div>
@@ -793,18 +862,10 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
 
 <div class="toast" id="toast"></div>
 
-<!-- ════════════════════════════════════════════
-     SUPABASE — loaded ONCE, stored as window._sb
-     (never use  const supabase = ...  anywhere)
-════════════════════════════════════════════ -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-// ══ PASTE YOUR KEYS HERE ══════════════════════════════════════════════
 const SUPABASE_URL      = 'https://azwcxezzzljbjgojwtax.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6d2N4ZXp6emxqYmpnb2p3dGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTk2NTQsImV4cCI6MjA4NzY5NTY1NH0.wFrC32vU0MWbp-otIif5WdlCemeIDXEa2DyLXrl1OEI';
-// ═════════════════════════════════════════════════════════════════════
-
-// Safe singleton — fixes the "already declared" crash
 if (!window._sb) {
   window._sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
@@ -892,7 +953,7 @@ function openOrders(){
   toast(`📦 You have ${orders.length} order${orders.length>1?'s':''}`);
 }
 
-// ══ SUPABASE AUTH — with localStorage fallback ════════════════════
+// ══ SUPABASE AUTH ═════════════════════════════════════════════════════
 async function initAuth() {
   try {
     const { data:{ session } } = await window._sb.auth.getSession();
@@ -908,7 +969,6 @@ async function initAuth() {
       }
     });
   } catch(_) {
-    // Supabase not configured — use localStorage user
     if (user) syncSidebarUI(user, user.role || 'user');
   }
 }
@@ -935,10 +995,8 @@ async function loadSupabaseUser(sbUser) {
 }
 
 function syncSidebarUI(u, role) {
-  // Top bar
   const topAv   = document.getElementById('topAvatar');
   const topName  = document.getElementById('topName');
-  // Sidebar
   const sbAv    = document.getElementById('sbAvatar');
   const sbName  = document.getElementById('sbUserName');
   const sbEmail = document.getElementById('sbUserEmail');
@@ -957,7 +1015,6 @@ function syncSidebarUI(u, role) {
     sbName.textContent   = u.name  || u.fname;
     sbEmail.textContent  = u.email;
     sbSout.style.display = '';
-    // Show admin section only for admins
     if (role === 'admin') showAdminSection();
     else hideAdminSection();
   } else {
@@ -975,8 +1032,9 @@ function syncSidebarUI(u, role) {
 function showAdminSection(){ document.getElementById('sbAdminGroup').classList.add('visible'); }
 function hideAdminSection(){ document.getElementById('sbAdminGroup').classList.remove('visible'); }
 
-// ══ AUTH MODAL ACTIONS ════════════════════════════════════════════
-function handleProfileClick(){ user ? toast(`Logged in as ${user.name}`) : openAuth(); }
+// ══ AUTH MODAL ════════════════════════════════════════════════════════
+// ── CHANGED: handleProfileClick now opens profile menu when logged in ──
+function handleProfileClick(){ user ? openProfileMenu() : openAuth(); }
 function openAuth(){ document.getElementById('authModal').classList.add('open'); }
 function closeAuth(){ document.getElementById('authModal').classList.remove('open'); }
 function switchAuth(t){
@@ -990,7 +1048,6 @@ async function googleSignIn(){
   try {
     await window._sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.href } });
   } catch(_) {
-    // Demo fallback
     user={fname:'Google',name:'Google User',email:'user@gmail.com',role:'user',avatar:null};
     save(); closeAuth(); syncSidebarUI(user,'user'); toast('✅ Welcome, Google User!');
   }
@@ -1005,7 +1062,6 @@ async function doSignIn(){
     if(error)throw error;
     closeAuth(); toast('✅ Welcome back!');
   } catch(_){
-    // Demo fallback — works even without Supabase configured
     user={fname:em.split('@')[0],name:em.split('@')[0],email:em,role:'user',avatar:null};
     save(); closeAuth(); syncSidebarUI(user,'user'); toast('✅ Welcome back!');
   }
@@ -1033,7 +1089,72 @@ async function doSignOut(e){
   syncSidebarUI(null,null); toast('👋 Signed out. See you soon!');
 }
 
-// ══ PRODUCT GRID ════════════════════════════════════════════════════
+// ══ PROFILE MENU (NEW) ════════════════════════════════════════════════
+function openProfileMenu(){
+  const menu = document.getElementById('profileMenu');
+  const initial = (user.fname||user.name||'U')[0].toUpperCase();
+  document.getElementById('pmAv').textContent = initial;
+  document.getElementById('pmName').textContent = user.name || user.fname || 'User';
+  document.getElementById('pmEmail').textContent = user.email || '';
+  const isOpen = menu.classList.contains('open');
+  if(isOpen){ closeProfileMenu(); return; }
+  menu.classList.add('open');
+  setTimeout(()=>document.addEventListener('click', closeProfileOnOutside, {once:true}), 50);
+}
+function closeProfileMenu(){ document.getElementById('profileMenu').classList.remove('open'); }
+function closeProfileOnOutside(e){
+  const menu = document.getElementById('profileMenu');
+  if(!menu.contains(e.target)) closeProfileMenu();
+}
+
+// ══ CHANGE PASSWORD (NEW) ═════════════════════════════════════════════
+function openChangePassword(){
+  closeProfileMenu();
+  switchToChangePw();
+  document.getElementById('cpwModalTitle').textContent = '🔑 Change Password';
+  document.getElementById('changePwModal').classList.add('open');
+}
+function openForgotFromModal(){
+  switchToForgot();
+  document.getElementById('cpwModalTitle').textContent = '🔓 Reset Password';
+  document.getElementById('changePwModal').classList.add('open');
+}
+function closeChangePw(){ document.getElementById('changePwModal').classList.remove('open'); }
+function switchToForgot(){
+  document.getElementById('changePwForm').style.display='none';
+  document.getElementById('forgotPwForm').style.display='block';
+  document.getElementById('cpwModalTitle').textContent='🔓 Reset Password';
+  if(user?.email) document.getElementById('fpEmail').value = user.email;
+}
+function switchToChangePw(){
+  document.getElementById('changePwForm').style.display='block';
+  document.getElementById('forgotPwForm').style.display='none';
+  document.getElementById('cpwModalTitle').textContent='🔑 Change Password';
+}
+async function doChangePassword(){
+  const np = document.getElementById('cpNew').value;
+  const cp = document.getElementById('cpConfirm').value;
+  if(!np||!cp){toast('⚠ Fill all fields');return;}
+  if(np.length<6){toast('⚠ Password must be 6+ characters');return;}
+  if(np!==cp){toast('⚠ Passwords do not match');return;}
+  try {
+    const {error} = await window._sb.auth.updateUser({password:np});
+    if(error) throw error;
+  } catch(_){}
+  toast('✅ Password updated successfully!');
+  closeChangePw();
+}
+async function doForgotPassword(){
+  const email = document.getElementById('fpEmail').value.trim();
+  if(!email){toast('⚠ Enter your email address');return;}
+  try {
+    await window._sb.auth.resetPasswordForEmail(email, { redirectTo: window.location.href });
+  } catch(_){}
+  toast('📧 Reset link sent! Check your inbox.');
+  closeChangePw();
+}
+
+// ══ PRODUCT GRID ═════════════════════════════════════════════════════
 function getFiltered(){
   let list = activeCat==='all' ? [...PRODUCTS] : PRODUCTS.filter(p=>p.cat===activeCat);
   const sort = document.getElementById('sortSelect')?.value || 'default';
@@ -1057,7 +1178,7 @@ function cardHTML(p, i=0){
   const inCart=cart.find(c=>c.id===p.id), isW=wishlist.includes(p.id);
   const d=disc(p), oos=p.stock===0;
   return `<div class="pcard" style="animation-delay:${i*.04}s">
-    ${p.badge?`<div class="pcard-badge${p.badge==='New'?' new-b':''}">${p.badge}</div>`:''}
+    ${p.badge?`<div class="pcard-badge${p.badge==='New'?' new-b':''}"> ${p.badge}</div>`:''}
     ${d>0?`<div class="pcard-badge disc-b" style="${p.badge?'top:36px':''}">-${d}%</div>`:''}
     <button class="pcard-wish" onclick="toggleWish(${p.id},event)">${isW?'❤️':'🤍'}</button>
     <div class="pcard-img" onclick="openPD(${p.id})"><img src="${p.img}" alt="${p.name}" loading="lazy"/></div>
@@ -1092,7 +1213,7 @@ document.querySelectorAll('.cpill').forEach(b=>b.addEventListener('click',()=>{
   b.classList.add('active'); activeCat=b.dataset.cat; render();
 }));
 
-// ══ CART ════════════════════════════════════════════════════════════
+// ══ CART ═════════════════════════════════════════════════════════════
 function addCart(id, qty=1){
   const p=PRODUCTS.find(x=>x.id===id);
   if(!p||p.stock===0){toast('Out of stock');return;}
@@ -1149,7 +1270,7 @@ function renderDrawer(){
 function openDrawer(){ renderDrawer(); document.getElementById('cartDrawer').classList.add('open'); document.getElementById('cartOverlay').classList.add('open'); }
 function closeDrawer(){ document.getElementById('cartDrawer').classList.remove('open'); document.getElementById('cartOverlay').classList.remove('open'); }
 
-// ══ WISHLIST ════════════════════════════════════════════════════════
+// ══ WISHLIST ══════════════════════════════════════════════════════════
 function toggleWish(id,e){
   if(e)e.stopPropagation();
   const idx=wishlist.indexOf(id);
@@ -1180,7 +1301,7 @@ function closeWishlist(){
   document.getElementById('wishOverlay').classList.remove('open');
 }
 
-// ══ PRODUCT DETAIL ══════════════════════════════════════════════════
+// ══ PRODUCT DETAIL ════════════════════════════════════════════════════
 function openPD(id){
   pdId=id; pdQty=1;
   const p=PRODUCTS.find(x=>x.id===id);
@@ -1210,7 +1331,7 @@ function pdChgQty(d){ const p=PRODUCTS.find(x=>x.id===pdId); pdQty=Math.max(1,Ma
 function pdAddCart(){ addCart(pdId,pdQty); }
 function pdToggleWish(){ toggleWish(pdId,null); }
 
-// ══ REVIEWS ═════════════════════════════════════════════════════════
+// ══ REVIEWS ══════════════════════════════════════════════════════════
 function renderPDReviews(id){
   const rList=reviews[id]||[];
   pickedStar=5;
@@ -1242,7 +1363,7 @@ function submitReview(id){
   save(); renderPDReviews(id); toast('✅ Review submitted!');
 }
 
-// ══ CHECKOUT ════════════════════════════════════════════════════════
+// ══ CHECKOUT ═════════════════════════════════════════════════════════
 function openCheckout(){
   closeDrawer();
   if(user){
@@ -1287,10 +1408,7 @@ async function placeOrder(){
     payment:document.querySelector('[name=pay]:checked').value,
     notes:document.getElementById('notes').value
   });
-  // Save to Supabase if configured
-  try {
-    await window._sb.from('orders').insert(orders[0]);
-  } catch(_){}
+  try { await window._sb.from('orders').insert(orders[0]); } catch(_){}
   cart.forEach(ci=>{ const p=PRODUCTS.find(x=>x.id===ci.id); if(p) p.stock=Math.max(0,p.stock-ci.qty); });
   save();
   document.getElementById('oNum').textContent='Order #'+oid;
@@ -1299,7 +1417,7 @@ async function placeOrder(){
   btn.disabled=false; btn.textContent='Place Order 🎉';
 }
 
-// ══ INVOICE ═════════════════════════════════════════════════════════
+// ══ INVOICE ══════════════════════════════════════════════════════════
 function viewInvoice(){
   const o=orders.find(x=>x.id===lastOrderId)||orders[0]; if(!o)return;
   document.getElementById('invoiceContent').innerHTML=`
@@ -1327,7 +1445,7 @@ function viewInvoice(){
   document.getElementById('invoiceModal').classList.add('open');
 }
 
-// ══ SEARCH ══════════════════════════════════════════════════════════
+// ══ SEARCH ════════════════════════════════════════════════════════════
 function openSearch(){ document.getElementById('searchOverlay').classList.add('open'); setTimeout(()=>document.getElementById('searchInput').focus(),80); }
 function closeSearch(){ document.getElementById('searchOverlay').classList.remove('open'); document.getElementById('searchInput').value=''; document.getElementById('searchResults').innerHTML=''; }
 function doSearch(q){
@@ -1344,7 +1462,7 @@ function doSearch(q){
 }
 document.addEventListener('keydown', e=>{if(e.key==='Escape')closeSearch();});
 
-// ══ COUNTDOWN TIMER ═════════════════════════════════════════════════
+// ══ COUNTDOWN TIMER ══════════════════════════════════════════════════
 (function(){
   let end=localStorage.getItem('sc_timer');
   if(!end||Date.now()>Number(end)){end=Date.now()+(6*3600+47*60+23)*1000;localStorage.setItem('sc_timer',end);}
@@ -1358,13 +1476,13 @@ document.addEventListener('keydown', e=>{if(e.key==='Escape')closeSearch();});
   },1000);
 })();
 
-// ══ STORAGE SYNC (updates from admin/products pages in other tabs) ══
+// ══ STORAGE SYNC ═════════════════════════════════════════════════════
 window.addEventListener('storage', e=>{
   if(e.key==='sc_products'){PRODUCTS=JSON.parse(e.newValue||'null')||PRODUCTS;render();}
   if(e.key==='sc_cart'){cart=JSON.parse(e.newValue||'[]');updateBadges();}
 });
 
-// ══ LOAD PRODUCTS FROM SUPABASE ══════════════════════════════════
+// ══ LOAD PRODUCTS FROM SUPABASE ═══════════════════════════════════════
 async function loadProductsFromDB(){
   try {
     const { data, error } = await window._sb.from('products').select('*').order('id');
@@ -1381,7 +1499,6 @@ async function loadProductsFromDB(){
   } catch(e){ console.warn('Using cached products'); }
 }
 
-// Setup realtime product updates from admin
 function setupRealtimeProducts(){
   try {
     window._sb.channel('shop-products')
@@ -1391,10 +1508,10 @@ function setupRealtimeProducts(){
   } catch(_){}
 }
 
-// ══ INIT ════════════════════════════════════════════════════════════
+// ══ INIT ═════════════════════════════════════════════════════════════
 updateBadges();
 render();
-initAuth(); // connects Supabase session, shows admin menu if admin
+initAuth();
 loadProductsFromDB();
 setupRealtimeProducts();
 </script>

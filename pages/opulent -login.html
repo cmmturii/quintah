@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>SunUp Collections — Sign In</title>
+<title>opulent Collections — Sign In</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -133,7 +133,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
 
 <!-- TOPBAR -->
 <header class="topbar">
-  <a href="sunup-shop__1_.html" class="logo">
+  <a href="opulent__1_.html" class="logo">
     <div class="logo-icon">
       <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
         <circle cx="11" cy="11" r="5" fill="#fff"/>
@@ -446,7 +446,7 @@ document.getElementById('forgot-modal').addEventListener('click', function(e) {
 // ============================================================
 (async () => {
   const { data: { session } } = await supabase.auth.getSession();
-  if (session) window.location.href = 'sunup-shop__1_.html';
+  if (session) window.location.href = 'opulent.html';
 })();
 </script>
 </body>

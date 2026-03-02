@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Opulent Collections — Admin Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --pink:#C0547A;--pink-light:#E06E8A;--pink-pale:#FDF0F4;--pink-border:#F2D0DB;
+  --bg:#FFF8FB;--text:#2E1A22;--muted:#9B6B7A;
+}
+body{
+  font-family:'Nunito',sans-serif;background:var(--bg);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background-image:radial-gradient(circle at 20% 20%, #fce4ec 0%, transparent 50%),
+                   radial-gradient(circle at 80% 80%, #fce4ec 0%, transparent 50%);
+}
+.card{
+  background:#fff;border-radius:24px;box-shadow:0 8px 40px rgba(192,84,122,0.13);
+  width:100%;max-width:420px;overflow:hidden;
+}
+.card-top{
+  background:linear-gradient(135deg,var(--pink),var(--pink-light));
+  padding:36px 32px 28px;text-align:center;
+}
+.logo-icon{
+  width:56px;height:56px;background:rgba(255,255,255,.2);border-radius:16px;
+  display:flex;align-items:center;justify-content:center;font-size:26px;
+  margin:0 auto 14px;
+}
+.card-top h1{color:#fff;font-size:22px;font-weight:900;margin-bottom:4px;}
+.card-top p{color:rgba(255,255,255,.8);font-size:13px;font-weight:600;}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;
+  background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);
+  color:#fff;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;
+  padding:5px 14px;border-radius:100px;margin-top:12px;
+}
+.card-body{padding:28px 32px 32px;}
+.err{
+  background:#FFEBEE;border:1.5px solid #FFCDD2;border-radius:10px;
+  padding:10px 14px;font-size:13px;font-weight:700;color:#c62828;
+  display:none;margin-bottom:18px;
+}
+.err.show{display:block;}
+.fg{margin-bottom:16px;}
+.fg label{
+  display:block;font-size:10.5px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.08em;color:var(--muted);margin-bottom:6px;
+}
+.fg input{
+  width:100%;padding:11px 14px;border:1.5px solid var(--pink-border);border-radius:11px;
+  font-size:14px;font-family:'Nunito',sans-serif;font-weight:600;color:var(--text);
+  background:var(--pink-pale);outline:none;transition:border-color .15s,background .15s;
+}
+.fg input:focus{border-color:var(--pink);background:#fff;}
+.pw-wrap{position:relative;}
+.pw-wrap input{padding-right:44px;}
+.pw-toggle{
+  position:absolute;right:12px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);
+}
+.sign-btn{
+  width:100%;padding:13px;background:var(--pink);color:#fff;border:none;
+  border-radius:100px;font-size:15px;font-weight:800;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:background .15s,transform .1s;margin-top:4px;
+}
+.sign-btn:hover{background:var(--pink-light);}
+.sign-btn:active{transform:scale(.98);}
+.sign-btn:disabled{opacity:.6;cursor:not-allowed;}
+.dots{display:flex;align-items:center;justify-content:center;gap:5px;height:20px;}
+.dots span{width:7px;height:7px;background:#fff;border-radius:50%;animation:bounce .7s infinite alternate;}
+.dots span:nth-child(2){animation-delay:.2s;}
+.dots span:nth-child(3){animation-delay:.4s;}
+@keyframes bounce{from{transform:translateY(0)}to{transform:translateY(-6px)}}
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="card-top">
+    <div class="logo-icon">💎</div>
+    <h1>Opulent Collections</h1>
+    <p>Admin Portal</p>
+    <div class="badge">🔒 Restricted Access</div>
+  </div>
+  <div class="card-body">
+    <div class="err" id="err"></div>
+    <div class="fg">
+      <label>Email Address</label>
+      <input type="email" id="email" placeholder="admin@example.com" autocomplete="username"/>
+    </div>
+    <div class="fg">
+      <label>Password</label>
+      <div class="pw-wrap">
+        <input type="password" id="pw" placeholder="••••••••" autocomplete="current-password"
+               onkeydown="if(event.key==='Enter')login()"/>
+        <button class="pw-toggle" onclick="togglePw()" type="button" id="pwToggle">👁</button>
+      </div>
+    </div>
+    <button class="sign-btn" id="loginBtn" onclick="login()">Sign In to Admin</button>
+  </div>
+</div>
+
+<script>
+// ── CREDENTIALS ─────────────────────────────────────────────────
+const ADMIN_EMAIL    = 'admin@opulentcollection.co.ke';
+const ADMIN_PASSWORD = 'opulentcollections';
+const ADMIN_PANEL    = 'opulent%20admin.html';
+
+// ── UI HELPERS ──────────────────────────────────────────────────
+function showErr(msg){
+  const el=document.getElementById('err');
+  el.textContent=msg; el.classList.add('show');
+}
+function hideErr(){ document.getElementById('err').classList.remove('show'); }
+
+function setLoading(on){
+  const btn=document.getElementById('loginBtn');
+  btn.disabled=on;
+  btn.innerHTML=on
+    ?'<div class="dots"><span></span><span></span><span></span></div>'
+    :'Sign In to Admin';
+}
+
+function togglePw(){
+  const inp=document.getElementById('pw'),tog=document.getElementById('pwToggle');
+  inp.type=inp.type==='password'?'text':'password';
+  tog.textContent=inp.type==='password'?'👁':'🙈';
+}
+
+// ── LOGIN ────────────────────────────────────────────────────────
+function login(){
+  const email=document.getElementById('email').value.trim().toLowerCase();
+  const pw=document.getElementById('pw').value;
+  hideErr();
+
+  if(!email||!pw){ showErr('Please enter your email and password.'); return; }
+
+  setLoading(true);
+
+  // Small delay so spinner shows
+  setTimeout(()=>{
+    if(email===ADMIN_EMAIL && pw===ADMIN_PASSWORD){
+      // Store session
+      sessionStorage.setItem('oc_admin', JSON.stringify({
+        email: ADMIN_EMAIL,
+        name: 'Admin',
+        loggedIn: true,
+        ts: Date.now()
+      }));
+      window.location.href = ADMIN_PANEL;
+    } else {
+      showErr('Incorrect email or password.');
+      setLoading(false);
+    }
+  }, 600);
+}
+</script>
+</body>
+</html>
