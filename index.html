@@ -1603,7 +1603,7 @@ async function loadProductsFromDB(){
         oldPrice:p.old_price,stock:p.stock,rating:Number(p.rating)||4.5,
         reviews:p.reviews||0,badge:p.badge||null,desc:p.description||'',
         img:p.img,
-        images: p.images ? (Array.isArray(p.images) ? p.images : [p.img]) : [p.img]
+        images: (() => { try { const a = typeof p.images === 'string' ? JSON.parse(p.images) : p.images; return (Array.isArray(a) && a.length) ? a : [p.img]; } catch(e) { return [p.img]; } })()
       }));
       localStorage.setItem('sc_products',JSON.stringify(PRODUCTS));
       render();
