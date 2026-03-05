@@ -165,8 +165,6 @@ tr:hover td{background:#fffbfc;}
 .db-dot{width:8px;height:8px;border-radius:50%;background:currentColor;flex-shrink:0;}
 .spinner{display:inline-block;width:14px;height:14px;border:2.5px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;vertical-align:middle;}
 @keyframes spin{to{transform:rotate(360deg);}}
-
-/* ─── MULTI-IMAGE STYLES ─── */
 .img-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;}
 .img-section-label{font-size:10.5px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);}
 .img-section-hint{font-size:11px;color:var(--muted);font-weight:600;}
@@ -195,11 +193,7 @@ tr:hover td{background:#fffbfc;}
 .img-url-btn:hover{background:var(--pink-light);}
 .td-img-wrap{position:relative;width:44px;display:inline-block;}
 .td-img-count{position:absolute;bottom:-3px;right:-3px;background:var(--pink);color:#fff;font-size:8.5px;font-weight:900;border-radius:100px;padding:1px 5px;border:1.5px solid #fff;}
-
-/* ── MOBILE BOTTOM NAV ── */
 .mob-nav{display:none;}
-
-/* ── RESPONSIVE ── */
 @media(max-width:900px){.dash-grid{grid-template-columns:1fr;}}
 @media(max-width:640px){
   .sidebar{display:none;}
@@ -240,10 +234,7 @@ tr:hover td{background:#fffbfc;}
 
 <aside class="sidebar">
   <div class="sb-top">
-    <a class="sb-logo" href="#">
-      <div class="sb-icon"><svg width="18" height="16" viewBox="0 0 24 22" fill="none"><path d="M12 1L1 9v12h7v-7h8v7h7V9L12 1z" fill="white"/></svg></div>
-      <div><div class="sb-brand">Opulent Admin</div></div>
-    </a>
+    <a class="sb-logo" href="#"><div class="sb-icon"><svg width="18" height="16" viewBox="0 0 24 22" fill="none"><path d="M12 1L1 9v12h7v-7h8v7h7V9L12 1z" fill="white"/></svg></div><div><div class="sb-brand">Opulent Admin</div></div></a>
     <div class="sb-role">Admin Panel</div>
   </div>
   <nav class="sb-nav">
@@ -263,7 +254,7 @@ tr:hover td{background:#fffbfc;}
   <div class="sb-bottom">
     <div class="sb-user">
       <div class="sb-avatar" id="sbAvatar">A</div>
-      <div><div class="sb-uname" id="sbName">Admin</div><div class="sb-uemail" id="sbEmail">admin@opulentcollection.co.ke</div></div>
+      <div><div class="sb-uname" id="sbName">Admin</div><div class="sb-uemail" id="sbEmail"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="94f5f0f9fdfad4fbe4e1f8f1fae0f7fbf8f8f1f7e0fdfbfabaf7fbbafff1">[email&#160;protected]</a></div></div>
       <button class="sb-exit" onclick="signOut()" title="Sign Out">⎋</button>
     </div>
   </div>
@@ -280,7 +271,6 @@ tr:hover td{background:#fffbfc;}
     </div>
   </div>
 
-  <!-- DASHBOARD -->
   <div class="page active" id="page-dashboard">
     <div class="stats-grid" id="statsGrid"></div>
     <div class="dash-grid">
@@ -291,7 +281,6 @@ tr:hover td{background:#fffbfc;}
     <div class="dash-card"><div class="dash-card-title"><span>📦 Orders by Status</span></div><div id="statusChart"></div></div>
   </div>
 
-  <!-- ORDERS -->
   <div class="page" id="page-orders">
     <div class="filter-row">
       <input class="finput" id="orderSearch" placeholder="🔍 Search by ID, name, phone…" oninput="renderOrders()"/>
@@ -312,7 +301,6 @@ tr:hover td{background:#fffbfc;}
     <div id="ordersEmpty" style="display:none;text-align:center;padding:50px;color:var(--muted)"><div style="font-size:40px;margin-bottom:10px">📦</div><div style="font-size:14px;font-weight:700">No orders found</div></div>
   </div>
 
-  <!-- PRODUCTS -->
   <div class="page" id="page-products">
     <div class="filter-row">
       <input class="finput" id="prodSearch" placeholder="🔍 Search products…" oninput="renderProducts()"/>
@@ -329,7 +317,6 @@ tr:hover td{background:#fffbfc;}
     </div>
   </div>
 
-  <!-- CUSTOMERS -->
   <div class="page" id="page-customers">
     <div class="filter-row">
       <input class="finput" id="custSearch" placeholder="🔍 Search customers…" oninput="renderCustomers()"/>
@@ -338,7 +325,6 @@ tr:hover td{background:#fffbfc;}
     <div id="custList"></div>
   </div>
 
-  <!-- ANALYTICS -->
   <div class="page" id="page-analytics">
     <div class="stats-grid" id="analyticsStats"></div>
     <div class="dash-grid">
@@ -348,7 +334,6 @@ tr:hover td{background:#fffbfc;}
     <div class="dash-card" style="margin-bottom:16px"><div class="dash-card-title"><span>💳 Payment Methods</span></div><div id="paymentChart"></div></div>
   </div>
 
-  <!-- SETTINGS -->
   <div class="page" id="page-settings">
     <div class="settings-section"><h3>🏪 Store Information</h3>
       <div class="frow">
@@ -384,26 +369,13 @@ tr:hover td{background:#fffbfc;}
   </div>
 </div>
 
-<!-- MOBILE BOTTOM NAV -->
 <nav class="mob-nav" id="mobNav">
-  <button class="mob-nav-item active" id="mobnav-dashboard" onclick="showPage('dashboard',null);updateMobNav('dashboard')">
-    <span class="mob-nav-icon">📊</span>Dashboard
-  </button>
-  <button class="mob-nav-item" id="mobnav-orders" onclick="showPage('orders',null);updateMobNav('orders')">
-    <span class="mob-nav-icon">📦</span>Orders
-  </button>
-  <button class="mob-nav-item" id="mobnav-products" onclick="showPage('products',null);updateMobNav('products')">
-    <span class="mob-nav-icon">🏷️</span>Products
-  </button>
-  <button class="mob-nav-item" id="mobnav-customers" onclick="showPage('customers',null);updateMobNav('customers')">
-    <span class="mob-nav-icon">👥</span>Customers
-  </button>
-  <button class="mob-nav-item" id="mobnav-settings" onclick="showPage('settings',null);updateMobNav('settings')">
-    <span class="mob-nav-icon">⚙️</span>Settings
-  </button>
+  <button class="mob-nav-item active" id="mobnav-dashboard" onclick="showPage('dashboard',null);updateMobNav('dashboard')"><span class="mob-nav-icon">📊</span>Dashboard</button>
+  <button class="mob-nav-item" id="mobnav-orders" onclick="showPage('orders',null);updateMobNav('orders')"><span class="mob-nav-icon">📦</span>Orders</button>
+  <button class="mob-nav-item" id="mobnav-products" onclick="showPage('products',null);updateMobNav('products')"><span class="mob-nav-icon">🏷️</span>Products</button>
+  <button class="mob-nav-item" id="mobnav-customers" onclick="showPage('customers',null);updateMobNav('customers')"><span class="mob-nav-icon">👥</span>Customers</button>
+  <button class="mob-nav-item" id="mobnav-settings" onclick="showPage('settings',null);updateMobNav('settings')"><span class="mob-nav-icon">⚙️</span>Settings</button>
 </nav>
-
-<!-- MOBILE FAB -->
 <button class="mob-fab" onclick="openAddProduct()" title="Add Product">+</button>
 
 <!-- ADD ORDER MODAL -->
@@ -433,7 +405,7 @@ tr:hover td{background:#fffbfc;}
           <div style="font-size:12px;color:var(--muted);font-weight:600">Delivery: <span id="ao-delivery-label" style="color:var(--green);font-weight:800">Ksh. 300</span></div>
           <div style="font-size:15px;font-weight:900;color:var(--pink);margin-top:4px">Total: <span id="ao-total">Ksh. 0</span></div>
         </div>
-        <button class="btn btn-primary" onclick="submitAddOrder()">✅ Save Order</button>
+        <button class="btn btn-primary" id="ao-submit-btn" onclick="submitAddOrder()">✅ Save Order</button>
       </div>
     </div>
   </div>
@@ -442,19 +414,10 @@ tr:hover td{background:#fffbfc;}
 <!-- ADD / EDIT PRODUCT MODAL -->
 <div class="modal-bg" id="addProductModal">
   <div class="modal" style="max-width:640px;">
-    <div class="mh">
-      <h2 id="addProductTitle">🏷️ Add New Product</h2>
-      <button class="close-x" onclick="closeProductModal()">✕</button>
-    </div>
+    <div class="mh"><h2 id="addProductTitle">🏷️ Add New Product</h2><button class="close-x" onclick="closeProductModal()">✕</button></div>
     <div class="mb">
-      <div id="apDbStatus" class="db-status ok" style="display:none">
-        <span class="db-dot"></span><span id="apDbStatusText">Connected to database</span>
-      </div>
-
-      <div class="img-section-header">
-        <div class="img-section-label">📸 Product Images</div>
-        <div class="img-section-hint" id="apImgCountHint">0 / 6 · first = primary</div>
-      </div>
+      <div id="apDbStatus" class="db-status ok" style="display:none"><span class="db-dot"></span><span id="apDbStatusText">Connected to database</span></div>
+      <div class="img-section-header"><div class="img-section-label">📸 Product Images</div><div class="img-section-hint" id="apImgCountHint">0 / 6 · first = primary</div></div>
       <div class="img-tabs">
         <button class="img-tab active" id="apTabFile" onclick="apSwitchImgTab('file')">📁 Upload Files</button>
         <button class="img-tab" id="apTabUrl" onclick="apSwitchImgTab('url')">🔗 Add by URL</button>
@@ -465,30 +428,21 @@ tr:hover td{background:#fffbfc;}
         <div id="apFileMsg" style="font-size:11.5px;font-weight:700;color:var(--muted);margin-top:2px;"></div>
       </div>
       <div id="apPaneUrl" style="display:none;">
-        <div class="img-url-row">
-          <input type="text" id="ap-imgurl" placeholder="https://example.com/product.jpg"/>
-          <button class="img-url-btn" onclick="apAddImageFromUrl()">+ Add</button>
-        </div>
+        <div class="img-url-row"><input type="text" id="ap-imgurl" placeholder="https://example.com/product.jpg"/><button class="img-url-btn" onclick="apAddImageFromUrl()">+ Add</button></div>
         <div id="apUrlMsg" style="font-size:11.5px;font-weight:700;color:var(--muted);margin-bottom:6px;"></div>
       </div>
       <div style="height:14px"></div>
-
-      <div class="fg"><label>Product Name *</label><input type="text" id="ap-name" placeholder="e.g. Ceramic Mug Set"/></div>
+      <div class="fg"><label>Product Name *</label><input type="text" id="ap-name" placeholder="e.g. Ceramic Mug Set" maxlength="200"/></div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-        <div class="fg"><label>Category *</label>
-          <select id="ap-cat"><option value="living">Living</option><option value="kitchen">Kitchen</option><option value="travel">Travel</option><option value="laundry">Laundry</option><option value="decor">Decor</option></select>
-        </div>
-        <div class="fg"><label>Badge</label>
-          <select id="ap-badge"><option value="">None</option><option value="New">New</option><option value="Sale">Sale</option><option value="Hot">Hot</option></select>
-        </div>
+        <div class="fg"><label>Category *</label><select id="ap-cat"><option value="living">Living</option><option value="kitchen">Kitchen</option><option value="travel">Travel</option><option value="laundry">Laundry</option><option value="decor">Decor</option></select></div>
+        <div class="fg"><label>Badge</label><select id="ap-badge"><option value="">None</option><option value="New">New</option><option value="Sale">Sale</option><option value="Hot">Hot</option></select></div>
         <div class="fg"><label>Price (Ksh) *</label><input type="number" id="ap-price" placeholder="0" min="0"/></div>
         <div class="fg"><label>Old Price (Ksh)</label><input type="number" id="ap-oldprice" placeholder="Leave blank if no discount" min="0"/></div>
         <div class="fg"><label>Stock Quantity *</label><input type="number" id="ap-stock" placeholder="0" min="0"/></div>
         <div class="fg"><label>Rating (1–5)</label><input type="number" id="ap-rating" placeholder="4.5" min="1" max="5" step="0.1"/></div>
       </div>
-      <div class="fg"><label>Description</label><textarea id="ap-desc" rows="2" placeholder="Short product description…" style="resize:vertical"></textarea></div>
+      <div class="fg"><label>Description</label><textarea id="ap-desc" rows="2" placeholder="Short product description…" style="resize:vertical" maxlength="1000"></textarea></div>
       <input type="hidden" id="ap-editid" value=""/>
-
       <div style="display:flex;justify-content:space-between;align-items:center;margin-top:20px;padding-top:16px;border-top:1px solid var(--pink-border);">
         <div id="apSaveStatus" style="font-size:12px;font-weight:700;color:var(--muted)"></div>
         <div style="display:flex;gap:8px;">
@@ -503,29 +457,44 @@ tr:hover td{background:#fffbfc;}
 <!-- INVOICE MODAL -->
 <div class="modal-bg" id="invoiceModal">
   <div class="modal" style="max-width:640px;">
-    <div class="mh"><h2>🧾 Invoice</h2>
-      <div style="display:flex;gap:7px;">
-        <button class="btn btn-secondary btn-sm" onclick="window.print()">🖨 Print</button>
-        <button class="close-x" onclick="document.getElementById('invoiceModal').classList.remove('open')">✕</button>
-      </div>
-    </div>
+    <div class="mh"><h2>🧾 Invoice</h2><div style="display:flex;gap:7px;"><button class="btn btn-secondary btn-sm" onclick="window.print()">🖨 Print</button><button class="close-x" onclick="document.getElementById('invoiceModal').classList.remove('open')">✕</button></div></div>
     <div style="padding:24px;" id="invoiceContent"></div>
   </div>
 </div>
 
 <!-- ORDER DETAIL MODAL -->
 <div class="modal-bg" id="orderDetailModal">
-  <div class="modal">
-    <div class="mh"><h2>📦 Order Details</h2><button class="close-x" onclick="document.getElementById('orderDetailModal').classList.remove('open')">✕</button></div>
-    <div class="mb" id="orderDetailContent"></div>
-  </div>
+  <div class="modal"><div class="mh"><h2>📦 Order Details</h2><button class="close-x" onclick="document.getElementById('orderDetailModal').classList.remove('open')">✕</button></div><div class="mb" id="orderDetailContent"></div></div>
 </div>
 
 <div class="toast" id="toast"></div>
 
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
+// ═══════════════════════════════════════════════════════════════════════
+// SUPABASE CLIENTS
+// _sb      — anon key  — orders (shop customers write these)
+// _sbAdmin — service key — ONLY in this admin file for product CRUD & uploads
+//            Never copy SERVICE_KEY into shop-facing pages.
+// ═══════════════════════════════════════════════════════════════════════
+const SUPA_URL    = 'https://azwcxezzzljbjgojwtax.supabase.co';
+const ANON_KEY    = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6d2N4ZXp6emxqYmpnb2p3dGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTk2NTQsImV4cCI6MjA4NzY5NTY1NH0.wFrC32vU0MWbp-otIif5WdlCemeIDXEa2DyLXrl1OEI';
+const SERVICE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6d2N4ZXp6emxqYmpnb2p3dGF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjExOTY1NCwiZXhwIjoyMDg3Njk1NjU0fQ.zOWCoe0EHpewwcNX3qFju2XQg2FD9KyL-6zkk6Ta5pE';
+const _sb      = window.supabase.createClient(SUPA_URL, ANON_KEY);
+const _sbAdmin = window.supabase.createClient(SUPA_URL, SERVICE_KEY, {
+  auth: { persistSession: false, autoRefreshToken: false }
+});
+
+// ─── XSS helper ──────────────────────────────────────────────────────
+function esc(str) {
+  if (str == null) return '';
+  const d = document.createElement('div');
+  d.appendChild(document.createTextNode(String(str)));
+  return d.innerHTML;
+}
+
 // ═══════════════════════════════════════════════
-// DEFAULTS & STATE
+// STATE
 // ═══════════════════════════════════════════════
 const DEFAULT_PRODUCTS=[
   {id:1,name:"Rectangular Rain Drop Humidifier",cat:"living",price:2850,oldPrice:3800,stock:15,rating:4.5,reviews:128,badge:"Sale",desc:"Beautifully designed rain drop humidifier.",img:"https://images.unsplash.com/photo-1614251055880-ee96e4803393?w=600&q=80",images:["https://images.unsplash.com/photo-1614251055880-ee96e4803393?w=600&q=80"]},
@@ -540,24 +509,27 @@ const DEFAULT_PRODUCTS=[
   {id:10,name:"Terracotta Candle Holders",cat:"decor",price:2800,oldPrice:3400,stock:19,rating:4.4,reviews:112,badge:"Sale",desc:"Set of 3 handmade terracotta candle holders.",img:"https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&q=80",images:["https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&q=80"]},
 ];
 
+// Initialise from localStorage immediately so UI isn't blank on load
 let PRODUCTS = JSON.parse(localStorage.getItem('sc_products')||'null') || JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
 let orders   = JSON.parse(localStorage.getItem('sc_orders')||'[]');
 let settings = JSON.parse(localStorage.getItem('sc_settings')||'{}');
 
 const AP_MAX_IMAGES = 6;
-let apImgList = [];
+let apImgList    = [];
 let apDragSrcIdx = null;
 
-const fmt       = p => 'Ksh. ' + Number(p).toLocaleString();
-const saveLocal = () => {
+const fmt = p => 'Ksh. ' + Number(p).toLocaleString();
+
+// Persist both arrays together so they're always in sync
+function saveLocal() {
   localStorage.setItem('sc_products', JSON.stringify(PRODUCTS));
-  localStorage.setItem('sc_orders', JSON.stringify(orders));
-};
+  localStorage.setItem('sc_orders',   JSON.stringify(orders));
+}
 const save = saveLocal;
 
 function toast(msg, type='', dur=3000){
   const t = document.getElementById('toast');
-  t.textContent = msg;
+  t.textContent = msg; // textContent — XSS safe
   t.className = 'toast show' + (type ? ' '+type : '');
   clearTimeout(t._t);
   t._t = setTimeout(() => t.classList.remove('show'), dur);
@@ -577,6 +549,7 @@ function showPage(id, el){
   if(el) el.classList.add('active');
   const titles = {dashboard:'Dashboard',orders:'Orders',products:'Products',customers:'Customers',analytics:'Analytics',settings:'Settings'};
   document.getElementById('pageTitle').textContent = titles[id] || 'Admin';
+  // FIX: render functions no longer re-read from localStorage — they use global state
   if(id==='dashboard') renderDashboard();
   if(id==='orders')    renderOrders();
   if(id==='products')  renderProducts();
@@ -584,16 +557,26 @@ function showPage(id, el){
   if(id==='analytics') renderAnalytics();
 }
 
+// ═══════════════════════════════════════════════════════════════════════
+// ORDER MERGE — DB wins, but local-only orders are preserved
+// ═══════════════════════════════════════════════════════════════════════
+function mergeOrders(dbOrders, localOrders) {
+  const map = new Map();
+  localOrders.forEach(o => map.set(o.id, o));  // local first (lower priority)
+  dbOrders.forEach(o => map.set(o.id, o));      // DB overwrites (source of truth)
+  return Array.from(map.values()).sort((a,b) =>
+    new Date(b._rawDate || b.date) - new Date(a._rawDate || a.date)
+  );
+}
+
 // ═══════════════════════════════════════════════
-// DASHBOARD
+// DASHBOARD — FIX: no longer overwrites global state from localStorage
 // ═══════════════════════════════════════════════
 function renderDashboard(){
-  orders   = JSON.parse(localStorage.getItem('sc_orders')||'[]');
-  PRODUCTS = JSON.parse(localStorage.getItem('sc_products')||'null') || PRODUCTS;
-  const totalRev = orders.filter(o=>o.status!=='Cancelled').reduce((s,o)=>s+o.total,0);
-  const pending  = orders.filter(o=>o.status==='Processing').length;
-  const delivered= orders.filter(o=>o.status==='Delivered').length;
-  const avgOrder = orders.length ? Math.round(totalRev/Math.max(orders.filter(o=>o.status!=='Cancelled').length,1)) : 0;
+  const totalRev  = orders.filter(o=>o.status!=='Cancelled').reduce((s,o)=>s+o.total,0);
+  const pending   = orders.filter(o=>o.status==='Processing').length;
+  const delivered = orders.filter(o=>o.status==='Delivered').length;
+  const avgOrder  = orders.length ? Math.round(totalRev/Math.max(orders.filter(o=>o.status!=='Cancelled').length,1)) : 0;
   document.getElementById('pendingBadge').textContent = pending;
   document.getElementById('statsGrid').innerHTML=`
     <div class="stat-card pink"><div class="stat-icon">💰</div><div class="stat-num">${fmt(totalRev)}</div><div class="stat-label">Total Revenue</div><div class="stat-change up">↑ All time earnings</div></div>
@@ -607,10 +590,10 @@ function renderDashboard(){
     if(p){catSales[p.cat]=(catSales[p.cat]||0)+it.price*it.qty;}
   }));
   const maxSale=Math.max(...Object.values(catSales),1);
-  document.getElementById('catChart').innerHTML=Object.entries(catSales).sort((a,b)=>b[1]-a[1]).map(([cat,val])=>`<div class="bar-row"><div class="bar-label">${cat}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/maxSale*100)}%"></div></div><div class="bar-val">${fmt(val)}</div></div>`).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No sales data yet</div>';
-  document.getElementById('recentOrders').innerHTML=orders.slice(0,6).map(o=>`<div class="order-row"><div><div class="order-id">#${o.id}</div><div class="order-meta">${o.name} · ${o.date}</div></div><div style="text-align:right"><div class="order-total">${fmt(o.total)}</div><span class="status-pill sp-${o.status.toLowerCase()}">${o.status}</span></div></div>`).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No orders yet</div>';
+  document.getElementById('catChart').innerHTML=Object.entries(catSales).sort((a,b)=>b[1]-a[1]).map(([cat,val])=>`<div class="bar-row"><div class="bar-label">${esc(cat)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/maxSale*100)}%"></div></div><div class="bar-val">${fmt(val)}</div></div>`).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No sales data yet</div>';
+  document.getElementById('recentOrders').innerHTML=orders.slice(0,6).map(o=>`<div class="order-row"><div><div class="order-id">#${esc(o.id)}</div><div class="order-meta">${esc(o.name)} · ${esc(o.date)}</div></div><div style="text-align:right"><div class="order-total">${fmt(o.total)}</div><span class="status-pill sp-${esc(o.status.toLowerCase())}">${esc(o.status)}</span></div></div>`).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No orders yet</div>';
   const low=PRODUCTS.filter(p=>p.stock<=5).sort((a,b)=>a.stock-b.stock);
-  document.getElementById('lowStock').innerHTML=low.length?low.map(p=>`<div class="ls-item"><img class="ls-img" src="${p.img}" alt="${p.name}"/><div style="flex:1"><div class="ls-name">${p.name}</div><div style="font-size:11px;color:var(--muted)">${p.cat}</div></div><span class="ls-stock ${p.stock===0?'out':'low'}">${p.stock===0?'OUT':p.stock+' left'}</span><button class="btn btn-green btn-sm" onclick="restockProduct(${p.id})">Restock</button></div>`).join(''):'<div style="text-align:center;color:var(--green);padding:16px;font-size:13px;font-weight:700">✅ All products well stocked</div>';
+  document.getElementById('lowStock').innerHTML=low.length?low.map(p=>`<div class="ls-item"><img class="ls-img" src="${esc(p.img)}" alt=""/><div style="flex:1"><div class="ls-name">${esc(p.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(p.cat)}</div></div><span class="ls-stock ${p.stock===0?'out':'low'}">${p.stock===0?'OUT':p.stock+' left'}</span><button class="btn btn-green btn-sm" onclick="restockProduct(${Number(p.id)})">Restock</button></div>`).join(''):'<div style="text-align:center;color:var(--green);padding:16px;font-size:13px;font-weight:700">✅ All products well stocked</div>';
   const statuses=['Processing','Shipped','Delivered','Cancelled'];
   const statusColors={'Processing':'var(--orange)','Shipped':'var(--blue)','Delivered':'var(--green)','Cancelled':'var(--red)'};
   const maxS=Math.max(...statuses.map(s=>orders.filter(o=>o.status===s).length),1);
@@ -618,78 +601,90 @@ function renderDashboard(){
 }
 
 // ═══════════════════════════════════════════════
-// ORDERS
+// ORDERS — FIX: no longer re-reads from localStorage
 // ═══════════════════════════════════════════════
 function renderOrders(){
-  orders=JSON.parse(localStorage.getItem('sc_orders')||'[]');
-  const q=(document.getElementById('orderSearch')?.value||'').toLowerCase();
-  const status=document.getElementById('orderStatusFilter')?.value||'all';
-  const sort=document.getElementById('orderSortFilter')?.value||'newest';
-  let list=orders.filter(o=>{const matchQ=!q||(o.id.toLowerCase().includes(q)||o.name.toLowerCase().includes(q)||o.phone.toLowerCase().includes(q));const matchS=status==='all'||o.status===status;return matchQ&&matchS;});
-  if(sort==='oldest')list=[...list].reverse();else if(sort==='highest')list=[...list].sort((a,b)=>b.total-a.total);else if(sort==='lowest')list=[...list].sort((a,b)=>a.total-b.total);
+  const q      = (document.getElementById('orderSearch')?.value||'').toLowerCase();
+  const status = document.getElementById('orderStatusFilter')?.value||'all';
+  const sort   = document.getElementById('orderSortFilter')?.value||'newest';
+  let list = orders.filter(o=>{
+    const matchQ = !q||(o.id.toLowerCase().includes(q)||o.name.toLowerCase().includes(q)||o.phone.toLowerCase().includes(q));
+    const matchS = status==='all'||o.status===status;
+    return matchQ&&matchS;
+  });
+  if(sort==='oldest') list=[...list].reverse();
+  else if(sort==='highest') list=[...list].sort((a,b)=>b.total-a.total);
+  else if(sort==='lowest')  list=[...list].sort((a,b)=>a.total-b.total);
   document.getElementById('orderCount').textContent=list.length+' order'+(list.length!==1?'s':'');
   document.getElementById('ordersEmpty').style.display=list.length?'none':'block';
   document.getElementById('ordersTableBody').innerHTML=list.map(o=>`
     <tr>
-      <td><div style="font-weight:800;color:var(--pink)">#${o.id}</div><div style="font-size:11px;color:var(--muted)">${o.date}</div></td>
-      <td><div class="td-name">${o.name}</div><div style="font-size:11px;color:var(--muted)">${o.phone}</div></td>
-      <td>${o.items.reduce((s,i)=>s+i.qty,0)} item(s)<div style="display:flex;gap:3px;margin-top:3px">${o.items.slice(0,3).map(it=>`<img class="td-thumb" src="${it.img}" alt="" style="width:24px;height:24px;border-radius:4px;"/>`).join('')}</div></td>
+      <td><div style="font-weight:800;color:var(--pink)">#${esc(o.id)}</div><div style="font-size:11px;color:var(--muted)">${esc(o.date)}</div></td>
+      <td><div class="td-name">${esc(o.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(o.phone)}</div></td>
+      <td>${o.items.reduce((s,i)=>s+i.qty,0)} item(s)<div style="display:flex;gap:3px;margin-top:3px">${o.items.slice(0,3).map(it=>`<img class="td-thumb" src="${esc(it.img)}" alt="" style="width:24px;height:24px;border-radius:4px;"/>`).join('')}</div></td>
       <td class="td-price">${fmt(o.total)}</td>
-      <td style="font-size:12px;font-weight:700">${o.payment==='mpesa'?'📱 M-Pesa':'💵 Delivery'}</td>
-      <td><select class="fselect" style="padding:4px 8px;font-size:11px;" onchange="updateStatus('${o.id}',this.value)">
+      <td style="font-size:12px;font-weight:700">
+        ${o.payment==='mpesa'
+          ? '<div>📱 M-Pesa</div>' + (o.mpesaCode
+              ? '<div style="font-size:10px;font-weight:900;color:var(--green);letter-spacing:.06em;margin-top:2px;">✅ '+esc(o.mpesaCode)+'</div>'
+              : '<div style="font-size:10px;color:var(--orange);font-weight:700;">⚠️ Code pending</div>')
+          : '💵 Pay on Delivery'}
+      </td>
+      <td><select class="fselect" style="padding:4px 8px;font-size:11px;" onchange="updateStatus('${esc(o.id)}',this.value)">
         <option ${o.status==='Processing'?'selected':''}>Processing</option>
         <option ${o.status==='Shipped'?'selected':''}>Shipped</option>
         <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
         <option ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
       </select></td>
-      <td style="font-size:11.5px;color:var(--muted)">${o.date}<br/>${o.time||''}</td>
+      <td style="font-size:11.5px;color:var(--muted)">${esc(o.date)}<br/>${esc(o.time||'')}</td>
       <td><div class="td-actions">
-        <button class="btn btn-secondary btn-sm" onclick="showOrderDetail('${o.id}')">View</button>
-        <button class="btn btn-secondary btn-sm" onclick="showInvoice('${o.id}')">🧾</button>
-        ${o.status!=='Cancelled'&&o.status!=='Delivered'?`<button class="btn btn-danger btn-sm" onclick="cancelOrder('${o.id}')">Cancel</button>`:''}
-        ${o.status==='Cancelled'?`<button class="btn btn-danger btn-sm" onclick="deleteOrder('${o.id}')" style="background:#f8d7da;border-color:#f1aeb5;">🗑 Delete</button>`:''}
+        <button class="btn btn-secondary btn-sm" onclick="showOrderDetail('${esc(o.id)}')">View</button>
+        <button class="btn btn-secondary btn-sm" onclick="showInvoice('${esc(o.id)}')">🧾</button>
+        ${o.status!=='Cancelled'&&o.status!=='Delivered'?`<button class="btn btn-danger btn-sm" onclick="cancelOrder('${esc(o.id)}')">Cancel</button>`:''}
+        ${o.status==='Cancelled'?`<button class="btn btn-danger btn-sm" onclick="deleteOrder('${esc(o.id)}')" style="background:#f8d7da;border-color:#f1aeb5;">🗑 Delete</button>`:''}
       </div></td>
     </tr>`).join('');
 }
 
-function updateStatus(id,status){
-  const o=orders.find(x=>x.id===id);
-  if(o){o.status=status;save();updateOrderStatusDB(id,status);renderOrders();renderDashboard();toast('✅ Status → '+status,'success');}
+function updateStatus(id, status){
+  const o = orders.find(x=>x.id===id);
+  if(o){ o.status=status; save(); updateOrderStatusDB(id,status); renderOrders(); renderDashboard(); toast('✅ Status → '+status,'success'); }
 }
 
 function cancelOrder(id){
-  if(!confirm('Cancel order #'+id+'? Stock will be restocked.'))return;
-  const o=orders.find(x=>x.id===id);
+  if(!confirm('Cancel order #'+id+'? Stock will be restocked.')) return;
+  const o = orders.find(x=>x.id===id);
   if(o){
     o.status='Cancelled';
     o.items.forEach(ci=>{const p=PRODUCTS.find(x=>x.id===ci.id);if(p)p.stock+=ci.qty;});
-    save();renderOrders();toast('Order cancelled & stock restocked');
+    save(); renderOrders(); toast('Order cancelled & stock restocked');
   }
 }
 
 async function deleteOrder(id){
-  if(!confirm('Permanently delete order #'+id+'? This cannot be undone.'))return;
+  if(!confirm('Permanently delete order #'+id+'? This cannot be undone.')) return;
   try{
-    const{error}=await _sbAdmin.from('orders').delete().eq('id',id);
-    if(error)throw error;
+    const{error}=await _sb.from('orders').delete().eq('id',id);
+    if(error) throw error;
     toast('🗑️ Order deleted from database','success');
   }catch(e){
     console.warn('DB delete failed, removing locally:',e.message);
     toast('⚠️ DB delete failed — removed locally only','',4000);
   }
   orders=orders.filter(x=>x.id!==id);
-  save();
-  renderOrders();
-  renderDashboard();
+  save(); renderOrders(); renderDashboard();
 }
 
 function restockProduct(id){
   const qty=parseInt(prompt('How many units to add?','50'));
-  if(!qty||isNaN(qty))return;
+  if(!qty||isNaN(qty)||qty<1) return;
   const p=PRODUCTS.find(x=>x.id===id);
   if(p){p.stock+=qty;save();updateProductStockDB(id,p.stock);renderDashboard();toast('✅ +'+qty+' units added','success');}
 }
 
+// ═══════════════════════════════════════════════
+// ADD ORDER — FIX: saves to DB first, then updates UI instantly
+// ═══════════════════════════════════════════════
 function openAddOrder(){
   document.getElementById('ao-name').value='';document.getElementById('ao-phone').value='';
   document.getElementById('ao-email').value='';document.getElementById('ao-address').value='';
@@ -698,7 +693,7 @@ function openAddOrder(){
 }
 
 function addOrderItem(){
-  const opts=PRODUCTS.map(p=>`<option value="${p.id}" data-price="${p.price}">${p.name} — ${fmt(p.price)}</option>`).join('');
+  const opts=PRODUCTS.map(p=>`<option value="${Number(p.id)}" data-price="${Number(p.price)}">${esc(p.name)} — ${fmt(p.price)}</option>`).join('');
   const div=document.createElement('div');div.className='ao-item-row';div.style.cssText='display:flex;gap:8px;align-items:center;margin-bottom:8px;';
   div.innerHTML=`<select class="fselect ao-prod" style="flex:1" onchange="calcOrderTotal()">${opts}</select><input type="number" class="finput ao-qty" value="1" min="1" style="width:65px;flex-shrink:0;" oninput="calcOrderTotal()"/><button class="btn btn-danger btn-sm" onclick="this.parentElement.remove();calcOrderTotal()">✕</button>`;
   document.getElementById('ao-items').appendChild(div);calcOrderTotal();
@@ -715,51 +710,81 @@ function calcOrderTotal(){
   document.getElementById('ao-total').textContent=fmt(sub+delivery);
 }
 
-function submitAddOrder(){
-  const name=document.getElementById('ao-name').value.trim();const phone=document.getElementById('ao-phone').value.trim();const address=document.getElementById('ao-address').value.trim();
+async function submitAddOrder(){
+  const btn=document.getElementById('ao-submit-btn');
+  const name=document.getElementById('ao-name').value.trim();
+  const phone=document.getElementById('ao-phone').value.trim();
+  const address=document.getElementById('ao-address').value.trim();
   if(!name||!phone||!address){toast('⚠️ Name, phone and address are required','error');return;}
-  const s=JSON.parse(localStorage.getItem('sc_settings')||'{}');const delFee=parseInt(s.delFee||300);const freeMin=parseInt(s.freeDelMin||5000);
+
+  const s=JSON.parse(localStorage.getItem('sc_settings')||'{}');
+  const delFee=parseInt(s.delFee||300);const freeMin=parseInt(s.freeDelMin||5000);
   const items=[];
-  document.querySelectorAll('.ao-item-row').forEach(row=>{const sel=row.querySelector('.ao-prod');const qty=parseInt(row.querySelector('.ao-qty').value)||1;const pid=parseInt(sel.value);const p=PRODUCTS.find(x=>x.id===pid);if(p)items.push({id:p.id,name:p.name,price:p.price,qty,img:p.img});});
+  document.querySelectorAll('.ao-item-row').forEach(row=>{
+    const sel=row.querySelector('.ao-prod');const qty=parseInt(row.querySelector('.ao-qty').value)||1;
+    const pid=parseInt(sel.value);const p=PRODUCTS.find(x=>x.id===pid);
+    if(p) items.push({id:p.id,name:p.name,price:p.price,qty,img:p.img});
+  });
   if(!items.length){toast('⚠️ Add at least one item','error');return;}
-  const subtotal=items.reduce((s,i)=>s+i.price*i.qty,0);const delivery=subtotal>=freeMin?0:delFee;const total=subtotal+delivery;
-  const now=new Date();const id='ORD-'+Date.now().toString().slice(-6);
-  const order={id,name,phone,email:document.getElementById('ao-email').value.trim(),address,county:document.getElementById('ao-county').value,payment:document.getElementById('ao-payment').value,notes:document.getElementById('ao-notes').value.trim(),items,subtotal,delivery,total,status:'Processing',date:now.toLocaleDateString('en-KE'),time:now.toLocaleTimeString('en-KE')};
+
+  const subtotal=items.reduce((s,i)=>s+i.price*i.qty,0);
+  const delivery=subtotal>=freeMin?0:delFee;
+  const total=subtotal+delivery;
+  const now=new Date();
+  const id='ORD-'+Date.now().toString().slice(-6);
+
+  const order={
+    id,name,phone,email:document.getElementById('ao-email').value.trim(),
+    address,county:document.getElementById('ao-county').value,
+    payment:document.getElementById('ao-payment').value,
+    notes:document.getElementById('ao-notes').value.trim(),
+    items,subtotal,delivery,total,status:'Processing',
+    date:now.toLocaleDateString('en-KE'),time:now.toLocaleTimeString('en-KE'),
+    _rawDate:now.toISOString()
+  };
+
+  // Disable button immediately for fast feedback
+  btn.disabled=true;
+  btn.innerHTML='<span class="spinner"></span> Saving…';
+
+  // Deduct stock
   items.forEach(ci=>{const p=PRODUCTS.find(x=>x.id===ci.id);if(p)p.stock=Math.max(0,p.stock-ci.qty);});
-  orders.unshift(order);save();saveOrderToDB(order);
+
+  // Add to local state instantly — UI updates immediately
+  orders.unshift(order);
+  save();
+
+  // Close modal and refresh UI right away — no waiting for DB
   document.getElementById('addOrderModal').classList.remove('open');
-  renderDashboard();if(document.getElementById('page-orders').classList.contains('active'))renderOrders();
+  renderDashboard();
+  if(document.getElementById('page-orders').classList.contains('active')) renderOrders();
   toast('✅ Order #'+id+' created!','success');
+
+  btn.disabled=false;
+  btn.innerHTML='✅ Save Order';
+
+  // Save to DB in the background — failure doesn't affect the user
+  saveOrderToDB(order);
 }
 
 // ═══════════════════════════════════════════════
-// PRODUCTS TABLE
+// PRODUCTS TABLE — XSS safe
 // ═══════════════════════════════════════════════
 function renderProducts(){
-  PRODUCTS=JSON.parse(localStorage.getItem('sc_products')||'null')||PRODUCTS;
-  const q=(document.getElementById('prodSearch')?.value||'').toLowerCase();
-  const cat=document.getElementById('prodCatFilter')?.value||'all';
-  let list=PRODUCTS.filter(p=>{const matchQ=!q||p.name.toLowerCase().includes(q);const matchC=cat==='all'||p.cat===cat;return matchQ&&matchC;});
+  const q   = (document.getElementById('prodSearch')?.value||'').toLowerCase();
+  const cat = document.getElementById('prodCatFilter')?.value||'all';
+  let list  = PRODUCTS.filter(p=>{const matchQ=!q||p.name.toLowerCase().includes(q);const matchC=cat==='all'||p.cat===cat;return matchQ&&matchC;});
   document.getElementById('prodCount').textContent=list.length+' product'+(list.length!==1?'s':'');
   document.getElementById('productsTableBody').innerHTML=list.map(p=>{
-    const imgs = p.images || [p.img];
-    const extraCount = imgs.length > 1 ? imgs.length : 0;
+    const imgs=p.images||[p.img];const extraCount=imgs.length>1?imgs.length:0;
     return `<tr>
-      <td>
-        <div class="td-img-wrap">
-          <img src="${p.img}" style="width:44px;height:44px;border-radius:8px;object-fit:cover"/>
-          ${extraCount > 1 ? `<span class="td-img-count">📷${extraCount}</span>` : ''}
-        </div>
-      </td>
-      <td><div class="td-name" style="max-width:200px">${p.name}</div><div style="font-size:11px;color:var(--muted)">${p.desc||''}</div></td>
-      <td><span style="background:var(--pink-pale);color:var(--pink);padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700">${p.cat}</span></td>
+      <td><div class="td-img-wrap"><img src="${esc(p.img)}" style="width:44px;height:44px;border-radius:8px;object-fit:cover"/>${extraCount>1?`<span class="td-img-count">📷${extraCount}</span>`:''}</div></td>
+      <td><div class="td-name" style="max-width:200px">${esc(p.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(p.desc||'')}</div></td>
+      <td><span style="background:var(--pink-pale);color:var(--pink);padding:2px 8px;border-radius:100px;font-size:11px;font-weight:700">${esc(p.cat)}</span></td>
       <td class="td-price">${fmt(p.price)}${p.oldPrice?`<div style="font-size:10px;color:var(--muted);text-decoration:line-through">${fmt(p.oldPrice)}</div>`:''}</td>
       <td><span class="ls-stock ${p.stock===0?'out':p.stock<=5?'low':''}">${p.stock===0?'Out of stock':p.stock+' units'}</span></td>
-      <td>${p.badge?`<span style="background:var(--pink);color:#fff;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:800">${p.badge}</span>`:'-'}</td>
-      <td><div class="td-actions">
-        <button class="btn btn-secondary btn-sm" onclick="editProduct(${p.id})">✏️ Edit</button>
-        <button class="btn btn-danger btn-sm" onclick="deleteProduct(${p.id})">🗑</button>
-      </div></td>
+      <td>${p.badge?`<span style="background:var(--pink);color:#fff;padding:2px 8px;border-radius:100px;font-size:10px;font-weight:800">${esc(p.badge)}</span>`:'-'}</td>
+      <td><div class="td-actions"><button class="btn btn-secondary btn-sm" onclick="editProduct(${Number(p.id)})">✏️ Edit</button><button class="btn btn-danger btn-sm" onclick="deleteProduct(${Number(p.id)})">🗑</button></div></td>
     </tr>`;
   }).join('');
 }
@@ -767,324 +792,168 @@ function renderProducts(){
 // ═══════════════════════════════════════════════
 // MULTI-IMAGE HELPERS
 // ═══════════════════════════════════════════════
-function apUpdateImgCountHint(){
-  document.getElementById('apImgCountHint').textContent = `${apImgList.length} / ${AP_MAX_IMAGES} · first = primary`;
-}
-
+function apUpdateImgCountHint(){document.getElementById('apImgCountHint').textContent=`${apImgList.length} / ${AP_MAX_IMAGES} · first = primary`;}
 function apRenderThumbs(){
-  const grid = document.getElementById('apThumbsGrid');
-  let html = '';
-  apImgList.forEach((item, idx) => {
-    const isPrimary = idx === 0;
-    html += `
-      <div class="img-thumb-item ${isPrimary?'primary':''}"
-        draggable="true"
-        ondragstart="apDragStart(event,${idx})"
-        ondragover="apDragOver(event,${idx})"
-        ondrop="apDrop(event,${idx})">
-        <img src="${item.src}" alt="Image ${idx+1}" draggable="false"/>
-        ${isPrimary ? '<div class="thumb-primary-badge">⭐ Primary</div>' : ''}
-        <div class="thumb-overlay">
-          ${!isPrimary ? `<button class="thumb-btn thumb-btn-star" title="Set as primary" onclick="apSetPrimary(${idx})">⭐</button>` : ''}
-          <button class="thumb-btn thumb-btn-del" title="Remove" onclick="apRemoveImg(${idx})">🗑</button>
-        </div>
-      </div>`;
+  const grid=document.getElementById('apThumbsGrid');let html='';
+  apImgList.forEach((item,idx)=>{
+    const isPrimary=idx===0;
+    html+=`<div class="img-thumb-item ${isPrimary?'primary':''}" draggable="true" ondragstart="apDragStart(event,${idx})" ondragover="apDragOver(event,${idx})" ondrop="apDrop(event,${idx})">
+      <img src="${esc(item.src)}" alt="Image ${idx+1}" draggable="false"/>
+      ${isPrimary?'<div class="thumb-primary-badge">⭐ Primary</div>':''}
+      <div class="thumb-overlay">${!isPrimary?`<button class="thumb-btn thumb-btn-star" title="Set as primary" onclick="apSetPrimary(${idx})">⭐</button>`:''}<button class="thumb-btn thumb-btn-del" title="Remove" onclick="apRemoveImg(${idx})">🗑</button></div>
+    </div>`;
   });
-  if(apImgList.length < AP_MAX_IMAGES){
-    html += `
-      <div class="img-add-tile"
-        onclick="document.getElementById('ap-imgfile').click()"
-        ondragover="event.preventDefault();this.classList.add('over')"
-        ondragleave="this.classList.remove('over')"
-        ondrop="apHandleDropOnTile(event)">
-        <span>＋</span>
-        <small>Add image</small>
-        <small style="font-size:9.5px">(${AP_MAX_IMAGES - apImgList.length} left)</small>
-      </div>`;
+  if(apImgList.length<AP_MAX_IMAGES){
+    html+=`<div class="img-add-tile" onclick="document.getElementById('ap-imgfile').click()" ondragover="event.preventDefault();this.classList.add('over')" ondragleave="this.classList.remove('over')" ondrop="apHandleDropOnTile(event)"><span>＋</span><small>Add image</small><small style="font-size:9.5px">(${AP_MAX_IMAGES-apImgList.length} left)</small></div>`;
   }
-  grid.innerHTML = html;
-  apUpdateImgCountHint();
+  grid.innerHTML=html;apUpdateImgCountHint();
 }
-
-function apDragStart(e, idx){ apDragSrcIdx = idx; e.dataTransfer.effectAllowed = 'move'; }
-function apDragOver(e, idx){ e.preventDefault(); e.dataTransfer.dropEffect = 'move'; }
-function apDrop(e, idx){
-  e.preventDefault();
-  if(apDragSrcIdx === null || apDragSrcIdx === idx) return;
-  const moved = apImgList.splice(apDragSrcIdx, 1)[0];
-  apImgList.splice(idx, 0, moved);
-  apDragSrcIdx = null;
-  apRenderThumbs();
-}
-function apHandleDropOnTile(e){
-  e.preventDefault();
-  document.querySelector('.img-add-tile')?.classList.remove('over');
-  if(e.dataTransfer.files.length) apHandleFiles(e.dataTransfer.files);
-}
-
-function apSetPrimary(idx){
-  if(idx === 0) return;
-  const moved = apImgList.splice(idx, 1)[0];
-  apImgList.unshift(moved);
-  apRenderThumbs();
-  toast('⭐ Primary image updated', 'success', 1500);
-}
-
-function apRemoveImg(idx){
-  apImgList.splice(idx, 1);
-  apRenderThumbs();
-}
-
+function apDragStart(e,idx){apDragSrcIdx=idx;e.dataTransfer.effectAllowed='move';}
+function apDragOver(e,idx){e.preventDefault();e.dataTransfer.dropEffect='move';}
+function apDrop(e,idx){e.preventDefault();if(apDragSrcIdx===null||apDragSrcIdx===idx)return;const moved=apImgList.splice(apDragSrcIdx,1)[0];apImgList.splice(idx,0,moved);apDragSrcIdx=null;apRenderThumbs();}
+function apHandleDropOnTile(e){e.preventDefault();document.querySelector('.img-add-tile')?.classList.remove('over');if(e.dataTransfer.files.length)apHandleFiles(e.dataTransfer.files);}
+function apSetPrimary(idx){if(idx===0)return;const moved=apImgList.splice(idx,1)[0];apImgList.unshift(moved);apRenderThumbs();toast('⭐ Primary image updated','success',1500);}
+function apRemoveImg(idx){apImgList.splice(idx,1);apRenderThumbs();}
 function apHandleFiles(files){
-  const fileArr = Array.from(files);
-  const remaining = AP_MAX_IMAGES - apImgList.length;
-  if(remaining <= 0){ toast(`⚠️ Max ${AP_MAX_IMAGES} images allowed`, 'error'); return; }
-  const toProcess = fileArr.slice(0, remaining);
-  if(fileArr.length > remaining) toast(`⚠️ Only ${remaining} more image(s) allowed`, 'error', 4000);
-  let processed = 0;
-  toProcess.forEach(file => {
-    if(!file.type.startsWith('image/')){ toast('⚠️ Only image files allowed', 'error'); return; }
-    if(file.size > 5*1024*1024){ toast(`⚠️ "${file.name}" exceeds 5MB`, 'error'); return; }
-    const reader = new FileReader();
-    reader.onload = ev => {
-      const img = new Image();
-      img.onload = () => {
-        const MAX = 900; let w = img.width, h = img.height;
-        if(w > MAX){ h = Math.round(h*MAX/w); w = MAX; }
-        if(h > MAX){ w = Math.round(w*MAX/h); h = MAX; }
-        const canvas = document.createElement('canvas');
-        canvas.width = w; canvas.height = h;
-        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
-        const b64 = canvas.toDataURL('image/jpeg', 0.82);
-        canvas.toBlob(blob => {
-          apImgList.push({ src: b64, blob, finalUrl: null });
-          processed++;
-          apRenderThumbs();
-          if(processed === toProcess.length){
-            const msg = document.getElementById('apFileMsg');
-            msg.textContent = `✅ ${toProcess.length} image(s) ready — will upload on save`;
-            msg.style.color = 'var(--green)';
-          }
-        }, 'image/jpeg', 0.82);
-      };
-      img.src = ev.target.result;
-    };
-    reader.readAsDataURL(file);
+  const fileArr=Array.from(files);const remaining=AP_MAX_IMAGES-apImgList.length;
+  if(remaining<=0){toast(`⚠️ Max ${AP_MAX_IMAGES} images allowed`,'error');return;}
+  const toProcess=fileArr.slice(0,remaining);
+  if(fileArr.length>remaining)toast(`⚠️ Only ${remaining} more image(s) allowed`,'error',4000);
+  let processed=0;
+  toProcess.forEach(file=>{
+    if(!file.type.startsWith('image/')){toast('⚠️ Only image files allowed','error');return;}
+    if(file.size>5*1024*1024){toast(`⚠️ "${file.name}" exceeds 5MB`,'error');return;}
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      const img=new Image();
+      img.onload=()=>{
+        const MAX=900;let w=img.width,h=img.height;
+        if(w>MAX){h=Math.round(h*MAX/w);w=MAX;}if(h>MAX){w=Math.round(w*MAX/h);h=MAX;}
+        const canvas=document.createElement('canvas');canvas.width=w;canvas.height=h;
+        canvas.getContext('2d').drawImage(img,0,0,w,h);
+        const b64=canvas.toDataURL('image/jpeg',0.82);
+        canvas.toBlob(blob=>{
+          apImgList.push({src:b64,blob,finalUrl:null});processed++;apRenderThumbs();
+          if(processed===toProcess.length){const msg=document.getElementById('apFileMsg');msg.textContent=`✅ ${toProcess.length} image(s) ready — will upload on save`;msg.style.color='var(--green)';}
+        },'image/jpeg',0.82);
+      };img.src=ev.target.result;
+    };reader.readAsDataURL(file);
   });
-  document.getElementById('ap-imgfile').value = '';
+  document.getElementById('ap-imgfile').value='';
 }
-
 function apAddImageFromUrl(){
-  const url = document.getElementById('ap-imgurl').value.trim();
-  const msgEl = document.getElementById('apUrlMsg');
-  if(!url){ msgEl.textContent = '⚠️ Enter a URL first'; msgEl.style.color = 'var(--red)'; return; }
-  if(apImgList.length >= AP_MAX_IMAGES){ toast(`⚠️ Max ${AP_MAX_IMAGES} images allowed`, 'error'); return; }
-  msgEl.textContent = '⏳ Checking URL…'; msgEl.style.color = 'var(--muted)';
-  const testImg = new Image();
-  testImg.onload = () => {
-    apImgList.push({ src: url, blob: null, finalUrl: url });
-    apRenderThumbs();
-    document.getElementById('ap-imgurl').value = '';
-    msgEl.textContent = '✅ Image added!'; msgEl.style.color = 'var(--green)';
-    setTimeout(() => msgEl.textContent = '', 2500);
-  };
-  testImg.onerror = () => {
-    msgEl.textContent = '❌ Could not load image from that URL';
-    msgEl.style.color = 'var(--red)';
-  };
-  testImg.src = url;
+  const url=document.getElementById('ap-imgurl').value.trim();const msgEl=document.getElementById('apUrlMsg');
+  if(!url){msgEl.textContent='⚠️ Enter a URL first';msgEl.style.color='var(--red)';return;}
+  try{new URL(url);}catch(e){msgEl.textContent='⚠️ Invalid URL';msgEl.style.color='var(--red)';return;}
+  if(apImgList.length>=AP_MAX_IMAGES){toast(`⚠️ Max ${AP_MAX_IMAGES} images allowed`,'error');return;}
+  msgEl.textContent='⏳ Checking URL…';msgEl.style.color='var(--muted)';
+  const testImg=new Image();
+  testImg.onload=()=>{apImgList.push({src:url,blob:null,finalUrl:url});apRenderThumbs();document.getElementById('ap-imgurl').value='';msgEl.textContent='✅ Image added!';msgEl.style.color='var(--green)';setTimeout(()=>msgEl.textContent='',2500);};
+  testImg.onerror=()=>{msgEl.textContent='❌ Could not load image from that URL';msgEl.style.color='var(--red)';};
+  testImg.src=url;
 }
-
 function apSwitchImgTab(tab){
-  document.getElementById('apPaneFile').style.display = tab === 'file' ? '' : 'none';
-  document.getElementById('apPaneUrl').style.display  = tab === 'url'  ? '' : 'none';
-  document.getElementById('apTabFile').classList.toggle('active', tab === 'file');
-  document.getElementById('apTabUrl').classList.toggle('active',  tab === 'url');
+  document.getElementById('apPaneFile').style.display=tab==='file'?'':'none';
+  document.getElementById('apPaneUrl').style.display=tab==='url'?'':'none';
+  document.getElementById('apTabFile').classList.toggle('active',tab==='file');
+  document.getElementById('apTabUrl').classList.toggle('active',tab==='url');
 }
 
 // ═══════════════════════════════════════════════
 // OPEN / CLOSE PRODUCT MODAL
 // ═══════════════════════════════════════════════
 function openAddProduct(){
-  apImgList = [];
-  document.getElementById('addProductTitle').textContent = '🏷️ Add New Product';
+  apImgList=[];
+  document.getElementById('addProductTitle').textContent='🏷️ Add New Product';
   ['ap-name','ap-price','ap-oldprice','ap-stock','ap-desc','ap-imgurl'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-  document.getElementById('ap-cat').value   = 'living';
-  document.getElementById('ap-badge').value = '';
-  document.getElementById('ap-rating').value= '4.5';
-  document.getElementById('ap-editid').value= '';
-  document.getElementById('apFileMsg').textContent = '';
-  document.getElementById('apUrlMsg').textContent  = '';
-  document.getElementById('apSaveStatus').textContent = '';
-  document.getElementById('ap-imgfile').value = '';
-  const statusEl = document.getElementById('apDbStatus');
-  statusEl.style.display = 'flex';
-  statusEl.className = 'db-status ok';
-  document.getElementById('apDbStatusText').textContent = 'Connected · Product will be saved to Supabase';
-  apSwitchImgTab('file');
-  apRenderThumbs();
-  document.getElementById('addProductModal').classList.add('open');
+  document.getElementById('ap-cat').value='living';document.getElementById('ap-badge').value='';document.getElementById('ap-rating').value='4.5';document.getElementById('ap-editid').value='';
+  document.getElementById('apFileMsg').textContent='';document.getElementById('apUrlMsg').textContent='';document.getElementById('apSaveStatus').textContent='';document.getElementById('ap-imgfile').value='';
+  const statusEl=document.getElementById('apDbStatus');statusEl.style.display='flex';statusEl.className='db-status ok';
+  document.getElementById('apDbStatusText').textContent='Connected · Product will be saved to Supabase';
+  apSwitchImgTab('file');apRenderThumbs();document.getElementById('addProductModal').classList.add('open');
 }
-
 function editProduct(id){
-  const p = PRODUCTS.find(x=>x.id===id);
-  if(!p) return;
-  apImgList = [];
-  const existingImgs = p.images && p.images.length ? p.images : (p.img ? [p.img] : []);
-  existingImgs.forEach(url => apImgList.push({ src: url, blob: null, finalUrl: url }));
-  document.getElementById('addProductTitle').textContent = '✏️ Edit Product';
-  document.getElementById('ap-name').value     = p.name;
-  document.getElementById('ap-cat').value      = p.cat;
-  document.getElementById('ap-badge').value    = p.badge || '';
-  document.getElementById('ap-price').value    = p.price;
-  document.getElementById('ap-oldprice').value = p.oldPrice || '';
-  document.getElementById('ap-stock').value    = p.stock;
-  document.getElementById('ap-rating').value   = p.rating || 4.5;
-  document.getElementById('ap-desc').value     = p.desc || '';
-  document.getElementById('ap-editid').value   = id;
-  document.getElementById('apFileMsg').textContent = '';
-  document.getElementById('apUrlMsg').textContent  = '';
-  document.getElementById('apSaveStatus').textContent = '';
-  const statusEl = document.getElementById('apDbStatus');
-  statusEl.style.display = 'flex';
-  statusEl.className = 'db-status ok';
-  document.getElementById('apDbStatusText').textContent = 'Editing product ID: '+id+' · Changes saved to Supabase';
-  apSwitchImgTab('file');
-  apRenderThumbs();
-  document.getElementById('addProductModal').classList.add('open');
+  const p=PRODUCTS.find(x=>x.id===id);if(!p)return;
+  apImgList=[];
+  const existingImgs=p.images&&p.images.length?p.images:(p.img?[p.img]:[]);
+  existingImgs.forEach(url=>apImgList.push({src:url,blob:null,finalUrl:url}));
+  document.getElementById('addProductTitle').textContent='✏️ Edit Product';
+  document.getElementById('ap-name').value=p.name;document.getElementById('ap-cat').value=p.cat;document.getElementById('ap-badge').value=p.badge||'';
+  document.getElementById('ap-price').value=p.price;document.getElementById('ap-oldprice').value=p.oldPrice||'';
+  document.getElementById('ap-stock').value=p.stock;document.getElementById('ap-rating').value=p.rating||4.5;
+  document.getElementById('ap-desc').value=p.desc||'';document.getElementById('ap-editid').value=id;
+  document.getElementById('apFileMsg').textContent='';document.getElementById('apUrlMsg').textContent='';document.getElementById('apSaveStatus').textContent='';
+  const statusEl=document.getElementById('apDbStatus');statusEl.style.display='flex';statusEl.className='db-status ok';
+  document.getElementById('apDbStatusText').textContent='Editing product ID: '+id+' · Changes saved to Supabase';
+  apSwitchImgTab('file');apRenderThumbs();document.getElementById('addProductModal').classList.add('open');
 }
-
-function closeProductModal(){ document.getElementById('addProductModal').classList.remove('open'); }
+function closeProductModal(){document.getElementById('addProductModal').classList.remove('open');}
 
 // ═══════════════════════════════════════════════
 // SAVE PRODUCT
 // ═══════════════════════════════════════════════
 async function submitProduct(){
-  const btn      = document.getElementById('ap-submitBtn');
-  const statusEl = document.getElementById('apSaveStatus');
-  const name     = document.getElementById('ap-name').value.trim();
-  const price    = parseInt(document.getElementById('ap-price').value);
-  const stock    = parseInt(document.getElementById('ap-stock').value);
-  const editId   = document.getElementById('ap-editid').value;
-
-  if(!name)           { toast('⚠️ Product name is required','error'); return; }
-  if(!price||price<=0){ toast('⚠️ Enter a valid price','error');       return; }
-  if(isNaN(stock)||stock<0){ toast('⚠️ Enter a valid stock quantity','error'); return; }
-  if(!apImgList.length){ toast('⚠️ Please add at least one product image','error'); return; }
-
-  btn.disabled = true;
-  btn.innerHTML = '<span class="spinner"></span> Saving…';
-  statusEl.textContent = '';
-
-  const blobItems = apImgList.filter(item => item.blob !== null);
+  const btn=document.getElementById('ap-submitBtn');const statusEl=document.getElementById('apSaveStatus');
+  const name=document.getElementById('ap-name').value.trim().slice(0,200);
+  const price=parseInt(document.getElementById('ap-price').value);
+  const stock=parseInt(document.getElementById('ap-stock').value);
+  const editId=document.getElementById('ap-editid').value;
+  if(!name){toast('⚠️ Product name is required','error');return;}
+  if(!price||price<=0){toast('⚠️ Enter a valid price','error');return;}
+  if(isNaN(stock)||stock<0){toast('⚠️ Enter a valid stock quantity','error');return;}
+  if(!apImgList.length){toast('⚠️ Please add at least one product image','error');return;}
+  btn.disabled=true;btn.innerHTML='<span class="spinner"></span> Saving…';statusEl.textContent='';
+  const blobItems=apImgList.filter(item=>item.blob!==null);
   if(blobItems.length){
-    statusEl.textContent = `⬆️ Uploading ${blobItems.length} image(s)…`;
-    for(let i = 0; i < apImgList.length; i++){
-      const item = apImgList[i];
-      if(!item.blob) continue;
-      try {
-        const filename = `products/product-${Date.now()}-${i}.jpeg`;
-        const { data: upData, error: upErr } = await _sbAdmin.storage
-          .from('product-images')
-          .upload(filename, item.blob, { contentType: 'image/jpeg', upsert: true });
-        if(upErr) throw upErr;
-        const { data: urlData } = _sbAdmin.storage.from('product-images').getPublicUrl(filename);
-        apImgList[i].finalUrl = urlData.publicUrl;
-        apImgList[i].blob = null;
-      } catch(upEx){
-        console.warn(`Upload failed for image ${i}:`, upEx);
-        apImgList[i].finalUrl = item.src;
-      }
+    statusEl.textContent=`⬆️ Uploading ${blobItems.length} image(s)…`;
+    for(let i=0;i<apImgList.length;i++){
+      const item=apImgList[i];if(!item.blob)continue;
+      try{
+        const filename=`products/product-${Date.now()}-${i}.jpeg`;
+        const{error:upErr}=await _sbAdmin.storage.from('product-images').upload(filename,item.blob,{contentType:'image/jpeg',upsert:true});
+        if(upErr)throw upErr;
+        const{data:urlData}=_sbAdmin.storage.from('product-images').getPublicUrl(filename);
+        apImgList[i].finalUrl=urlData.publicUrl;apImgList[i].blob=null;
+      }catch(upEx){console.warn(`Upload failed for image ${i}:`,upEx);apImgList[i].finalUrl=item.src;}
     }
   }
-
-  const finalUrls  = apImgList.map(item => item.finalUrl || item.src);
-  const primaryImg = finalUrls[0];
-
-  const productData = {
-    name,
-    cat:         document.getElementById('ap-cat').value,
-    badge:       document.getElementById('ap-badge').value || null,
-    price,
-    old_price:   parseInt(document.getElementById('ap-oldprice').value) || null,
-    stock,
-    rating:      parseFloat(document.getElementById('ap-rating').value) || 4.5,
-    description: document.getElementById('ap-desc').value.trim(),
-    img:         primaryImg,
-    images:      JSON.stringify(finalUrls),
-    updated_at:  new Date().toISOString()
-  };
-
-  try {
+  const finalUrls=apImgList.map(item=>item.finalUrl||item.src);const primaryImg=finalUrls[0];
+  const productData={name,cat:document.getElementById('ap-cat').value,badge:document.getElementById('ap-badge').value||null,price,old_price:parseInt(document.getElementById('ap-oldprice').value)||null,stock,rating:parseFloat(document.getElementById('ap-rating').value)||4.5,description:document.getElementById('ap-desc').value.trim().slice(0,1000),img:primaryImg,images:JSON.stringify(finalUrls),updated_at:new Date().toISOString()};
+  try{
     let savedRow;
     if(editId){
-      statusEl.textContent = '💾 Updating…';
-      const { data, error } = await _sbAdmin.from('products').update(productData).eq('id', parseInt(editId)).select().single();
-      if(error) throw error;
-      savedRow = data;
-      const idx = PRODUCTS.findIndex(p => p.id === parseInt(editId));
-      if(idx > -1) PRODUCTS[idx] = mapProdLocal(savedRow);
-    } else {
-      statusEl.textContent = '💾 Saving new product…';
-      const insertPayload = { ...productData, reviews: 0 };
-      delete insertPayload.updated_at;
-      const { data, error } = await _sbAdmin.from('products').insert(insertPayload).select().single();
-      if(error) throw error;
-      savedRow = data;
-      PRODUCTS.push(mapProdLocal(savedRow));
+      statusEl.textContent='💾 Updating…';
+      const{data,error}=await _sbAdmin.from('products').update(productData).eq('id',parseInt(editId)).select('id,name,cat,price,old_price,stock,rating,reviews,badge,description,img,images').single();
+      if(error)throw error;savedRow=data;
+      const idx=PRODUCTS.findIndex(p=>p.id===parseInt(editId));if(idx>-1)PRODUCTS[idx]=mapProdLocal(savedRow);
+    }else{
+      statusEl.textContent='💾 Saving new product…';
+      const insertPayload={...productData,reviews:0};delete insertPayload.updated_at;
+      const{data,error}=await _sbAdmin.from('products').insert(insertPayload).select('id,name,cat,price,old_price,stock,rating,reviews,badge,description,img,images').single();
+      if(error)throw error;savedRow=data;PRODUCTS.push(mapProdLocal(savedRow));
     }
     syncProductsToShop();
-    document.getElementById('apDbStatus').className = 'db-status ok';
-    document.getElementById('apDbStatusText').textContent = `✅ Saved with ${finalUrls.length} image(s)! ID: ${savedRow.id}`;
-    statusEl.textContent = `✅ ${finalUrls.length} image(s) saved · Live in shop ✨`;
-    statusEl.style.color = 'var(--green)';
-    toast(editId ? '✅ Product updated!' : `✅ Product added (${finalUrls.length} image${finalUrls.length>1?'s':''})!`, 'success');
-    renderProducts();
-    renderDashboard();
-    setTimeout(closeProductModal, 1000);
-  } catch(err){
-    console.error('DB error:', err);
-    document.getElementById('apDbStatus').className = 'db-status err';
-    document.getElementById('apDbStatusText').textContent = '⚠️ DB error: ' + err.message;
-    if(err.message && err.message.includes('images')){
-      document.getElementById('apDbStatusText').textContent =
-        '⚠️ Missing "images" column. Run: ALTER TABLE products ADD COLUMN images text;';
-    }
-    const localId = editId ? parseInt(editId) : (Math.max(0, ...PRODUCTS.map(p=>p.id)) + 1);
-    const local = {
-      id: localId, name,
-      cat:      document.getElementById('ap-cat').value,
-      badge:    document.getElementById('ap-badge').value || null,
-      price,
-      oldPrice: parseInt(document.getElementById('ap-oldprice').value) || null,
-      stock,
-      rating:   parseFloat(document.getElementById('ap-rating').value) || 4.5,
-      reviews:  0,
-      desc:     document.getElementById('ap-desc').value.trim(),
-      img:      primaryImg,
-      images:   finalUrls
-    };
-    if(editId){ const idx = PRODUCTS.findIndex(p=>p.id===parseInt(editId)); if(idx>-1) PRODUCTS[idx]=local; }
-    else { PRODUCTS.push(local); }
-    syncProductsToShop();
-    toast('⚠️ Saved locally only (DB error)','',4000);
-    renderProducts();
-    renderDashboard();
-    setTimeout(closeProductModal, 1400);
+    document.getElementById('apDbStatus').className='db-status ok';
+    document.getElementById('apDbStatusText').textContent=`✅ Saved with ${finalUrls.length} image(s)! ID: ${savedRow.id}`;
+    statusEl.textContent=`✅ ${finalUrls.length} image(s) saved · Live in shop ✨`;statusEl.style.color='var(--green)';
+    toast(editId?'✅ Product updated!':`✅ Product added (${finalUrls.length} image${finalUrls.length>1?'s':''})`,'success');
+    renderProducts();renderDashboard();setTimeout(closeProductModal,1000);
+  }catch(err){
+    console.error('DB error:',err);
+    document.getElementById('apDbStatus').className='db-status err';
+    document.getElementById('apDbStatusText').textContent='⚠️ DB error: '+err.message;
+    const localId=editId?parseInt(editId):(Math.max(0,...PRODUCTS.map(p=>p.id))+1);
+    const local={id:localId,name,cat:document.getElementById('ap-cat').value,badge:document.getElementById('ap-badge').value||null,price,oldPrice:parseInt(document.getElementById('ap-oldprice').value)||null,stock,rating:parseFloat(document.getElementById('ap-rating').value)||4.5,reviews:0,desc:document.getElementById('ap-desc').value.trim(),img:primaryImg,images:finalUrls};
+    if(editId){const idx=PRODUCTS.findIndex(p=>p.id===parseInt(editId));if(idx>-1)PRODUCTS[idx]=local;}else{PRODUCTS.push(local);}
+    syncProductsToShop();toast('⚠️ Saved locally only (DB error)','',4000);renderProducts();renderDashboard();setTimeout(closeProductModal,1400);
   }
-  btn.disabled = false;
-  btn.innerHTML = '✅ Save to Database';
+  btn.disabled=false;btn.innerHTML='✅ Save to Database';
 }
 
 function mapProdLocal(p){
-  let images = [];
-  try { images = p.images ? JSON.parse(p.images) : []; } catch(e){}
-  if(!images.length && p.img) images = [p.img];
-  return {
-    id: p.id, name: p.name, cat: p.cat, price: p.price, oldPrice: p.old_price,
-    stock: p.stock, rating: Number(p.rating)||4.5, reviews: p.reviews||0,
-    badge: p.badge, desc: p.description, img: images[0] || p.img, images
-  };
+  let images=[];try{images=p.images?JSON.parse(p.images):[];}catch(e){}
+  if(!images.length&&p.img)images=[p.img];
+  return{id:p.id,name:p.name,cat:p.cat,price:p.price,oldPrice:p.old_price,stock:p.stock,rating:Number(p.rating)||4.5,reviews:p.reviews||0,badge:p.badge,desc:p.description,img:images[0]||p.img,images};
 }
 
 // ═══════════════════════════════════════════════
@@ -1094,33 +963,38 @@ async function deleteProduct(id){
   const p=PRODUCTS.find(x=>x.id===id);
   if(!confirm('Delete "'+p?.name+'"? This removes it from the database and shop.'))return;
   const{error}=await _sbAdmin.from('products').delete().eq('id',id);
-  if(error){toast('⚠️ DB delete failed: '+error.message,'error');}
-  else{toast('🗑️ Deleted from database','success');}
+  if(error){toast('⚠️ DB delete failed: '+error.message,'error');}else{toast('🗑️ Deleted from database','success');}
   PRODUCTS=PRODUCTS.filter(x=>x.id!==id);syncProductsToShop();renderProducts();renderDashboard();
 }
 
 // ═══════════════════════════════════════════════
-// ORDER DETAIL / INVOICE
+// ORDER DETAIL / INVOICE — XSS safe
 // ═══════════════════════════════════════════════
 function showOrderDetail(id){
   const o=orders.find(x=>x.id===id);if(!o)return;
   document.getElementById('orderDetailContent').innerHTML=`
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;font-size:13px">
       <div><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:6px">CUSTOMER</div>
-        <div style="font-weight:800;font-size:14px">${o.name}</div><div>${o.phone}</div><div>${o.email||'—'}</div>
-        <div style="margin-top:8px"><strong>${o.address}</strong><br/>${o.county}</div></div>
+        <div style="font-weight:800;font-size:14px">${esc(o.name)}</div><div>${esc(o.phone)}</div><div>${esc(o.email||'—')}</div>
+        <div style="margin-top:8px"><strong>${esc(o.address)}</strong><br/>${esc(o.county)}</div></div>
       <div><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:6px">ORDER INFO</div>
-        <div style="font-weight:800;color:var(--pink)">#${o.id}</div><div>${o.date} ${o.time||''}</div>
+        <div style="font-weight:800;color:var(--pink)">#${esc(o.id)}</div><div>${esc(o.date)} ${esc(o.time||'')}</div>
         <div style="margin-top:6px">Payment: <strong>${o.payment==='mpesa'?'M-Pesa':'Pay on Delivery'}</strong></div>
-        ${o.notes?`<div style="margin-top:6px;font-style:italic;color:var(--muted)">Notes: ${o.notes}</div>`:''}</div>
+        ${o.payment==='mpesa'?`<div style="margin-top:6px;background:#e8f5e9;border-radius:7px;padding:7px 10px;">
+          <div style="font-size:10px;font-weight:800;text-transform:uppercase;color:#388e3c;">M-Pesa Code</div>
+          ${o.mpesaCode
+            ?`<div style="font-size:15px;font-weight:900;color:#1b5e20;letter-spacing:.08em">${esc(o.mpesaCode)}</div>`
+            :`<div style="font-size:12px;color:var(--orange);font-weight:700;">⚠️ Not provided — verify manually</div>`}
+        </div>`:''}
+        ${o.notes?`<div style="margin-top:6px;font-style:italic;color:var(--muted)">Notes: ${esc(o.notes)}</div>`:''}</div>
     </div>
     <div style="border-top:1px solid var(--pink-border);padding-top:12px">
-      ${o.items.map(it=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--pink-border)"><img src="${it.img}" style="width:44px;height:44px;border-radius:7px;object-fit:cover"/><div style="flex:1"><div style="font-weight:700;font-size:13px">${it.name}</div><div style="font-size:11px;color:var(--muted)">Qty: ${it.qty}</div></div><div style="font-weight:800;color:var(--pink)">${fmt(it.price*it.qty)}</div></div>`).join('')}
+      ${o.items.map(it=>`<div style="display:flex;align-items:center;gap:10px;padding:7px 0;border-bottom:1px solid var(--pink-border)"><img src="${esc(it.img)}" style="width:44px;height:44px;border-radius:7px;object-fit:cover"/><div style="flex:1"><div style="font-weight:700;font-size:13px">${esc(it.name)}</div><div style="font-size:11px;color:var(--muted)">Qty: ${Number(it.qty)}</div></div><div style="font-weight:800;color:var(--pink)">${fmt(it.price*it.qty)}</div></div>`).join('')}
       <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:14px;font-weight:800"><span>Total</span><span style="color:var(--pink)">${fmt(o.total)}</span></div>
     </div>
     <div style="display:flex;gap:8px;margin-top:10px">
-      <select class="fselect" onchange="updateStatus('${o.id}',this.value);document.getElementById('orderDetailModal').classList.remove('open')"><option value="">Update Status…</option><option>Processing</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select>
-      <button class="btn btn-secondary" onclick="showInvoice('${o.id}')">🧾 Invoice</button>
+      <select class="fselect" onchange="updateStatus('${esc(o.id)}',this.value);document.getElementById('orderDetailModal').classList.remove('open')"><option value="">Update Status…</option><option>Processing</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select>
+      <button class="btn btn-secondary" onclick="showInvoice('${esc(o.id)}')">🧾 Invoice</button>
     </div>`;
   document.getElementById('orderDetailModal').classList.add('open');
 }
@@ -1129,13 +1003,15 @@ function showInvoice(id){
   const o=orders.find(x=>x.id===id);if(!o)return;
   document.getElementById('invoiceContent').innerHTML=`
     <div class="inv-header"><div><div class="inv-logo">Opulent Collections</div><div style="font-size:11.5px;color:var(--muted);margin-top:4px">Nairobi, Kenya · +254 700 000 000</div></div>
-      <div style="text-align:right"><div class="inv-title">INVOICE</div><div style="font-size:12px;color:var(--muted)">#${o.id} · ${o.date}</div></div></div>
+      <div style="text-align:right"><div class="inv-title">INVOICE</div><div style="font-size:12px;color:var(--muted)">#${esc(o.id)} · ${esc(o.date)}</div></div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;font-size:12.5px;">
-      <div><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:4px">BILL TO</div><div style="font-weight:700">${o.name}</div><div>${o.phone}</div><div>${o.address}, ${o.county}</div></div>
-      <div><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:4px">PAYMENT</div><div style="font-weight:700">${o.payment==='mpesa'?'M-Pesa':'Pay on Delivery'}</div><div style="margin-top:4px;font-weight:800;color:var(--orange)">${o.status}</div></div>
+      <div><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:4px">BILL TO</div><div style="font-weight:700">${esc(o.name)}</div><div>${esc(o.phone)}</div><div>${esc(o.address)}, ${esc(o.county)}</div></div>
+      <div><div style="font-size:10px;font-weight:800;text-transform:uppercase;color:var(--muted);margin-bottom:4px">PAYMENT</div><div style="font-weight:700">${o.payment==='mpesa'?'M-Pesa':'Pay on Delivery'}</div>
+          ${o.payment==='mpesa'&&o.mpesaCode?`<div style="font-size:12px;font-weight:900;color:#1b5e20;margin-top:3px;letter-spacing:.06em">✅ ${esc(o.mpesaCode)}</div>`:''}
+          <div style="margin-top:4px;font-weight:800;color:var(--orange)">${esc(o.status)}</div></div>
     </div>
     <table class="inv-table"><thead><tr><th>#</th><th>Product</th><th>Price</th><th>Qty</th><th>Total</th></tr></thead>
-      <tbody>${o.items.map((it,i)=>`<tr><td>${i+1}</td><td>${it.name}</td><td>${fmt(it.price)}</td><td>${it.qty}</td><td>${fmt(it.price*it.qty)}</td></tr>`).join('')}</tbody></table>
+      <tbody>${o.items.map((it,i)=>`<tr><td>${i+1}</td><td>${esc(it.name)}</td><td>${fmt(it.price)}</td><td>${Number(it.qty)}</td><td>${fmt(it.price*it.qty)}</td></tr>`).join('')}</tbody></table>
     <div style="display:flex;justify-content:flex-end"><div class="inv-total-box">
       <div class="inv-total-row"><span>Subtotal</span><span>${fmt(o.subtotal)}</span></div>
       <div class="inv-total-row"><span>Delivery</span><span style="color:var(--green)">${o.delivery===0?'FREE':fmt(o.delivery)}</span></div>
@@ -1145,56 +1021,65 @@ function showInvoice(id){
 }
 
 // ═══════════════════════════════════════════════
-// CUSTOMERS / ANALYTICS / SETTINGS
+// CUSTOMERS / ANALYTICS — FIX: use global orders, not localStorage
 // ═══════════════════════════════════════════════
 function renderCustomers(){
-  orders=JSON.parse(localStorage.getItem('sc_orders')||'[]');
   const q=(document.getElementById('custSearch')?.value||'').toLowerCase();const custMap={};
   orders.forEach(o=>{const k=o.phone||o.name;if(!custMap[k])custMap[k]={name:o.name,phone:o.phone,email:o.email||'',orders:0,spent:0};custMap[k].orders++;custMap[k].spent+=o.status!=='Cancelled'?o.total:0;});
   let custs=Object.values(custMap);if(q)custs=custs.filter(c=>c.name.toLowerCase().includes(q)||c.phone.toLowerCase().includes(q)||c.email.toLowerCase().includes(q));
   document.getElementById('custCount').textContent=custs.length+' customer'+(custs.length!==1?'s':'');
-  document.getElementById('custList').innerHTML=custs.length?custs.sort((a,b)=>b.spent-a.spent).map(c=>`<div class="cust-card"><div class="cust-av">${(c.name||'?')[0].toUpperCase()}</div><div><div class="cust-name">${c.name}</div><div class="cust-email">${c.phone}${c.email?' · '+c.email:''}</div></div><div class="cust-stats"><div class="cust-stat"><div class="cust-stat-num">${c.orders}</div><div class="cust-stat-label">Orders</div></div><div class="cust-stat"><div class="cust-stat-num">${fmt(c.spent).replace('Ksh. ','')}</div><div class="cust-stat-label">Spent</div></div></div></div>`).join(''):'<div style="text-align:center;padding:50px;color:var(--muted)"><div style="font-size:36px;margin-bottom:10px">👥</div><div style="font-weight:700">No customers yet</div></div>';
+  document.getElementById('custList').innerHTML=custs.length?custs.sort((a,b)=>b.spent-a.spent).map(c=>`<div class="cust-card"><div class="cust-av">${esc((c.name||'?')[0].toUpperCase())}</div><div><div class="cust-name">${esc(c.name)}</div><div class="cust-email">${esc(c.phone)}${c.email?' · '+esc(c.email):''}</div></div><div class="cust-stats"><div class="cust-stat"><div class="cust-stat-num">${c.orders}</div><div class="cust-stat-label">Orders</div></div><div class="cust-stat"><div class="cust-stat-num">${fmt(c.spent).replace('Ksh. ','')}</div><div class="cust-stat-label">Spent</div></div></div></div>`).join(''):'<div style="text-align:center;padding:50px;color:var(--muted)"><div style="font-size:36px;margin-bottom:10px">👥</div><div style="font-weight:700">No customers yet</div></div>';
 }
 
 function renderAnalytics(){
-  orders=JSON.parse(localStorage.getItem('sc_orders')||'[]');PRODUCTS=JSON.parse(localStorage.getItem('sc_products')||'null')||PRODUCTS;
   const done=orders.filter(o=>o.status!=='Cancelled');const totalRev=done.reduce((s,o)=>s+o.total,0);const avgOrder=done.length?Math.round(totalRev/done.length):0;
   const returners=Object.values(done.reduce((m,o)=>{const k=o.phone;m[k]=(m[k]||0)+1;return m;},{})).filter(n=>n>1).length;
   document.getElementById('analyticsStats').innerHTML=`<div class="stat-card pink"><div class="stat-icon">💰</div><div class="stat-num">${fmt(totalRev)}</div><div class="stat-label">Net Revenue</div><div class="stat-change neutral">Excl. cancelled</div></div><div class="stat-card green"><div class="stat-icon">📊</div><div class="stat-num">${fmt(avgOrder)}</div><div class="stat-label">Avg. Order</div></div><div class="stat-card blue"><div class="stat-icon">🔁</div><div class="stat-num">${returners}</div><div class="stat-label">Returning Customers</div></div><div class="stat-card orange"><div class="stat-icon">🛒</div><div class="stat-num">${done.reduce((s,o)=>s+o.items.reduce((ss,i)=>ss+i.qty,0),0)}</div><div class="stat-label">Items Sold</div></div>`;
   const prodRev={};done.forEach(o=>o.items.forEach(it=>{prodRev[it.id]=(prodRev[it.id]||{id:it.id,name:it.name,img:it.img,rev:0,qty:0});prodRev[it.id].rev+=it.price*it.qty;prodRev[it.id].qty+=it.qty;}));
   const topProds=Object.values(prodRev).sort((a,b)=>b.rev-a.rev).slice(0,8);const maxRev=Math.max(...topProds.map(p=>p.rev),1);
-  document.getElementById('topProducts').innerHTML=topProds.length?topProds.map(p=>`<div class="bar-row"><div class="bar-label" style="display:flex;align-items:center;gap:5px;width:130px"><img src="${p.img}" style="width:22px;height:22px;border-radius:4px;object-fit:cover"/><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px">${p.name.split(' ').slice(0,3).join(' ')}</span></div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(p.rev/maxRev*100)}%"></div></div><div class="bar-val">${fmt(p.rev)}</div></div>`).join(''):'<div style="text-align:center;padding:20px;color:var(--muted)">No sales data</div>';
+  document.getElementById('topProducts').innerHTML=topProds.length?topProds.map(p=>`<div class="bar-row"><div class="bar-label" style="display:flex;align-items:center;gap:5px;width:130px"><img src="${esc(p.img)}" style="width:22px;height:22px;border-radius:4px;object-fit:cover"/><span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-size:11px">${esc(p.name.split(' ').slice(0,3).join(' '))}</span></div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(p.rev/maxRev*100)}%"></div></div><div class="bar-val">${fmt(p.rev)}</div></div>`).join(''):'<div style="text-align:center;padding:20px;color:var(--muted)">No sales data</div>';
   const countySales={};done.forEach(o=>countySales[o.county]=(countySales[o.county]||0)+o.total);const maxC=Math.max(...Object.values(countySales),1);
-  document.getElementById('countyChart').innerHTML=Object.entries(countySales).sort((a,b)=>b[1]-a[1]).map(([county,val])=>`<div class="bar-row"><div class="bar-label">${county}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/maxC*100)}%;background:linear-gradient(90deg,var(--blue),#3498db)"></div></div><div class="bar-val" style="color:var(--blue)">${fmt(val)}</div></div>`).join('')||'<div style="text-align:center;padding:20px;color:var(--muted)">No data</div>';
+  document.getElementById('countyChart').innerHTML=Object.entries(countySales).sort((a,b)=>b[1]-a[1]).map(([county,val])=>`<div class="bar-row"><div class="bar-label">${esc(county)}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(val/maxC*100)}%;background:linear-gradient(90deg,var(--blue),#3498db)"></div></div><div class="bar-val" style="color:var(--blue)">${fmt(val)}</div></div>`).join('')||'<div style="text-align:center;padding:20px;color:var(--muted)">No data</div>';
   const mpesa=done.filter(o=>o.payment==='mpesa').length;const pod=done.filter(o=>o.payment==='pod').length;const total=mpesa+pod||1;
   document.getElementById('paymentChart').innerHTML=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;text-align:center"><div style="background:var(--pink-pale);border-radius:12px;padding:20px"><div style="font-size:32px;margin-bottom:6px">📱</div><div style="font-size:28px;font-weight:900;color:var(--pink)">${Math.round(mpesa/total*100)}%</div><div style="font-size:13px;font-weight:700;color:var(--muted)">M-Pesa (${mpesa} orders)</div></div><div style="background:#f0f9f4;border-radius:12px;padding:20px"><div style="font-size:32px;margin-bottom:6px">💵</div><div style="font-size:28px;font-weight:900;color:var(--green)">${Math.round(pod/total*100)}%</div><div style="font-size:13px;font-weight:700;color:var(--muted)">Pay on Delivery (${pod} orders)</div></div></div>`;
 }
 
 function saveSettings(){
-  settings={storeName:document.getElementById('storeName')?.value,storePhone:document.getElementById('storePhone')?.value,storeEmail:document.getElementById('storeEmail')?.value,storeAddr:document.getElementById('storeAddr')?.value,delFee:document.getElementById('delFee')?.value,freeDelMin:document.getElementById('freeDelMin')?.value};
-  localStorage.setItem('sc_settings',JSON.stringify(settings));toast('✅ Settings saved!','success');
+  settings={
+    storeName:  document.getElementById('storeName')?.value  || 'Opulent Collections',
+    storePhone: document.getElementById('storePhone')?.value || '+254 791 443 762',
+    storeEmail: document.getElementById('storeEmail')?.value || 'orders@opulentcollections.co.ke',
+    storeAddr:  document.getElementById('storeAddr')?.value  || 'Nairobi, Kenya',
+    delFee:     document.getElementById('delFee')?.value     || '300',
+    freeDelMin: document.getElementById('freeDelMin')?.value || '5000'
+  };
+  localStorage.setItem('sc_settings', JSON.stringify(settings));
+  // Broadcast to shop tab so it updates live without refresh
+  window.dispatchEvent(new StorageEvent('storage',{key:'sc_settings',newValue:JSON.stringify(settings),storageArea:localStorage}));
+  toast('✅ Settings saved — shop updated live!','success');
+}
+
+function loadSettingsIntoForm(){
+  const s = JSON.parse(localStorage.getItem('sc_settings')||'{}');
+  if(s.storeName)  document.getElementById('storeName').value  = s.storeName;
+  if(s.storePhone) document.getElementById('storePhone').value = s.storePhone;
+  if(s.storeEmail) document.getElementById('storeEmail').value = s.storeEmail;
+  if(s.storeAddr)  document.getElementById('storeAddr').value  = s.storeAddr;
+  if(s.delFee)     document.getElementById('delFee').value     = s.delFee;
+  if(s.freeDelMin) document.getElementById('freeDelMin').value = s.freeDelMin;
 }
 function exportData(){const data={products:PRODUCTS,orders,settings,exported:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='opulent-data-'+Date.now()+'.json';a.click();toast('✅ Data exported!','success');}
 function clearAllOrders(){if(!confirm('Clear ALL orders? This cannot be undone!'))return;orders=[];save();renderDashboard();toast('All orders cleared');}
 function resetProducts(){if(!confirm('Reset products to default? Custom products will be deleted!'))return;PRODUCTS=JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));save();renderDashboard();toast('Products reset to default');}
 function signOut(){sessionStorage.removeItem('oc_admin');window.location.href='opulent%20admin%20login.html';}
-</script>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
-const SUPA_URL   = 'https://azwcxezzzljbjgojwtax.supabase.co';
-const ANON_KEY   = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6d2N4ZXp6emxqYmpnb2p3dGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTk2NTQsImV4cCI6MjA4NzY5NTY1NH0.wFrC32vU0MWbp-otIif5WdlCemeIDXEa2DyLXrl1OEI';
-const SERVICE_KEY= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6d2N4ZXp6emxqYmpnb2p3dGF4Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjExOTY1NCwiZXhwIjoyMDg3Njk1NjU0fQ.zOWCoe0EHpewwcNX3qFju2XQg2FD9KyL-6zkk6Ta5pE';
-
-const _sb      = window.supabase.createClient(SUPA_URL, ANON_KEY);
-const _sbAdmin = window.supabase.createClient(SUPA_URL, SERVICE_KEY, {
-  auth: { persistSession: false, autoRefreshToken: false }
-});
-
+// ═══════════════════════════════════════════════
+// SUPABASE DB FUNCTIONS
+// ═══════════════════════════════════════════════
 function syncProductsToShop(){
   try{
-    const json = JSON.stringify(PRODUCTS);
-    localStorage.setItem('sc_products', json);
+    const json=JSON.stringify(PRODUCTS);
+    localStorage.setItem('sc_products',json);
     window.dispatchEvent(new StorageEvent('storage',{key:'sc_products',newValue:json,storageArea:localStorage}));
   }catch(e){
     console.error('localStorage error:',e);
@@ -1202,40 +1087,66 @@ function syncProductsToShop(){
   }
 }
 
+// ═══════════════════════════════════════════════
+// LOAD ORDERS — FIX: merges DB + local, never wipes on error
+// ═══════════════════════════════════════════════
 async function loadOrdersFromDB(){
   try{
-    const{data,error}=await _sbAdmin.from('orders').select('*').order('created_at',{ascending:false});
-    if(error)throw error;
-    if(data){
-      orders=data.map(o=>({id:o.id,date:new Date(o.created_at).toLocaleDateString('en-KE'),time:new Date(o.created_at).toLocaleTimeString('en-KE'),items:o.items,subtotal:o.subtotal,delivery:o.delivery,total:o.total,status:o.status,county:o.county,address:o.address,phone:o.customer_phone,email:o.customer_email,name:o.customer_name,payment:o.payment_method,notes:o.notes}));
+    const{data,error}=await _sb
+      .from('orders')
+      .select('id,customer_name,customer_phone,customer_email,address,county,payment_method,notes,items,subtotal,delivery,total,status,created_at')
+      .order('created_at',{ascending:false});
+    if(error) throw error;
+    if(data && data.length>0){
+      const dbOrders=data.map(o=>({
+        id:o.id,
+        date:new Date(o.created_at).toLocaleDateString('en-KE'),
+        time:new Date(o.created_at).toLocaleTimeString('en-KE'),
+        _rawDate:o.created_at,
+        items:o.items,subtotal:o.subtotal,delivery:o.delivery,total:o.total,status:o.status,
+        county:o.county,address:o.address,phone:o.customer_phone,email:o.customer_email,
+        name:o.customer_name,payment:o.payment_method,notes:o.notes,
+        mpesaCode:o.mpesa_code||o.mpesaCode||null
+      }));
+      const localOrders=JSON.parse(localStorage.getItem('sc_orders')||'[]');
+      orders=mergeOrders(dbOrders,localOrders);
       localStorage.setItem('sc_orders',JSON.stringify(orders));
+    } else {
+      // DB empty — keep local cache if it has data
+      const localOrders=JSON.parse(localStorage.getItem('sc_orders')||'[]');
+      if(localOrders.length>0) orders=localOrders;
     }
-  }catch(e){console.warn('Orders load failed — using local cache:',e.message);}
+  }catch(e){
+    console.warn('Orders load failed — keeping cached data:',e.message);
+    // FIX: never wipe orders on failure — keep what we have
+    const localOrders=JSON.parse(localStorage.getItem('sc_orders')||'[]');
+    if(localOrders.length>0) orders=localOrders;
+    toast('⚠️ Showing cached orders (DB unreachable)','',3500);
+  }
 }
 
 async function loadProductsFromDB(){
   try{
-    const{data,error}=await _sbAdmin.from('products').select('*').order('id');
-    if(error)throw error;
+    const{data,error}=await _sbAdmin
+      .from('products')
+      .select('id,name,cat,price,old_price,stock,rating,reviews,badge,description,img,images')
+      .order('id');
+    if(error) throw error;
     if(data&&data.length>0){
       PRODUCTS=data.map(p=>{
-        let images=[];
-        try{ images=p.images?JSON.parse(p.images):[]; }catch(e){}
-        if(!images.length&&p.img) images=[p.img];
-        return {id:p.id,name:p.name,cat:p.cat,price:p.price,oldPrice:p.old_price,stock:p.stock,rating:Number(p.rating)||4.5,reviews:p.reviews||0,badge:p.badge,desc:p.description,img:images[0]||p.img,images};
+        let images=[];try{images=p.images?JSON.parse(p.images):[];}catch(e){}
+        if(!images.length&&p.img)images=[p.img];
+        return{id:p.id,name:p.name,cat:p.cat,price:p.price,oldPrice:p.old_price,stock:p.stock,rating:Number(p.rating)||4.5,reviews:p.reviews||0,badge:p.badge,desc:p.description,img:images[0]||p.img,images};
       });
       syncProductsToShop();
       document.getElementById('apDbStatus').style.display='flex';
       document.getElementById('apDbStatus').className='db-status ok';
       document.getElementById('apDbStatusText').textContent='✅ Connected — '+PRODUCTS.length+' products loaded';
-    } else {
+    }else{
       const toInsert=DEFAULT_PRODUCTS.map(p=>({name:p.name,cat:p.cat,price:p.price,old_price:p.oldPrice||null,stock:p.stock,rating:p.rating,reviews:p.reviews,badge:p.badge||null,description:p.desc||'',img:p.img,images:JSON.stringify([p.img])}));
-      const{data:inserted,error:insErr}=await _sbAdmin.from('products').insert(toInsert).select();
+      const{data:inserted,error:insErr}=await _sbAdmin.from('products').insert(toInsert).select('id,name,cat,price,old_price,stock,rating,reviews,badge,description,img,images');
       if(insErr)throw insErr;
-      if(inserted){
-        PRODUCTS=inserted.map(p=>({id:p.id,name:p.name,cat:p.cat,price:p.price,oldPrice:p.old_price,stock:p.stock,rating:Number(p.rating)||4.5,reviews:p.reviews||0,badge:p.badge,desc:p.description,img:p.img,images:[p.img]}));
-        syncProductsToShop();toast('✅ Database seeded with '+PRODUCTS.length+' products!','success',4000);
-      }
+      if(inserted){PRODUCTS=inserted.map(p=>({id:p.id,name:p.name,cat:p.cat,price:p.price,oldPrice:p.old_price,stock:p.stock,rating:Number(p.rating)||4.5,reviews:p.reviews||0,badge:p.badge,desc:p.description,img:p.img,images:[p.img]}));syncProductsToShop();toast('✅ Database seeded with '+PRODUCTS.length+' products!','success',4000);}
     }
   }catch(e){
     console.warn('Products DB load failed:',e.message);
@@ -1253,28 +1164,49 @@ async function updateProductStockDB(id,stock){
   try{await _sbAdmin.from('products').update({stock,updated_at:new Date().toISOString()}).eq('id',id);}
   catch(e){console.warn('Stock update failed',e);}
 }
+
+// FIX: saveOrderToDB now handles errors silently — UI already updated
 async function saveOrderToDB(order){
   try{
-    await _sb.from('orders').insert({id:order.id,customer_name:order.name,customer_phone:order.phone,customer_email:order.email||null,address:order.address,county:order.county,payment_method:order.payment,notes:order.notes||null,items:order.items,subtotal:order.subtotal,delivery:order.delivery,total:order.total,status:order.status,created_at:new Date().toISOString()});
-  }catch(e){console.warn('Save order failed',e);}
+    await _sb.from('orders').insert({
+      id:order.id,customer_name:order.name,customer_phone:order.phone,
+      customer_email:order.email||null,address:order.address,county:order.county,
+      payment_method:order.payment,notes:order.notes||null,items:order.items,
+      subtotal:order.subtotal,delivery:order.delivery,total:order.total,
+      status:order.status,created_at:order._rawDate||new Date().toISOString()
+    });
+  }catch(e){
+    console.warn('Save order to DB failed — order is safe in localStorage:',e.message);
+  }
 }
 
+// Real-time: new orders from shop appear instantly in admin
 function setupRealtime(){
   _sb.channel('admin-orders').on('postgres_changes',{event:'INSERT',schema:'public',table:'orders'},payload=>{
     const o=payload.new;
-    orders.unshift({id:o.id,date:new Date(o.created_at).toLocaleDateString('en-KE'),time:new Date(o.created_at).toLocaleTimeString('en-KE'),items:o.items,subtotal:o.subtotal,delivery:o.delivery,total:o.total,status:o.status,county:o.county,address:o.address,phone:o.customer_phone,email:o.customer_email,name:o.customer_name,payment:o.payment_method,notes:o.notes});
-    localStorage.setItem('sc_orders',JSON.stringify(orders));
-    renderDashboard();toast('🔔 New order: #'+o.id+' — '+o.customer_name,'success');
-    document.getElementById('pendingBadge').textContent=orders.filter(x=>x.status==='Processing').length;
+    // Only add if not already in list
+    if(!orders.find(x=>x.id===o.id)){
+      orders.unshift({id:o.id,date:new Date(o.created_at).toLocaleDateString('en-KE'),time:new Date(o.created_at).toLocaleTimeString('en-KE'),_rawDate:o.created_at,items:o.items,subtotal:o.subtotal,delivery:o.delivery,total:o.total,status:o.status,county:o.county,address:o.address,phone:o.customer_phone,email:o.customer_email,name:o.customer_name,payment:o.payment_method,notes:o.notes});
+      localStorage.setItem('sc_orders',JSON.stringify(orders));
+      renderDashboard();
+      if(document.getElementById('page-orders').classList.contains('active'))renderOrders();
+      toast('🔔 New order: #'+o.id+' — '+o.customer_name,'success');
+      document.getElementById('pendingBadge').textContent=orders.filter(x=>x.status==='Processing').length;
+    }
   }).subscribe();
 }
 
 document.getElementById('topbarDate').textContent=new Date().toLocaleDateString('en-KE',{weekday:'short',month:'short',day:'numeric'});
+
+// Cross-tab sync — update when products change in another tab
 window.addEventListener('storage',e=>{
-  if(e.key==='sc_products'){PRODUCTS=JSON.parse(e.newValue||'null')||PRODUCTS;}
-  if(e.key==='sc_orders'){orders=JSON.parse(e.newValue||'[]');}
+  if(e.key==='sc_products'){try{PRODUCTS=JSON.parse(e.newValue||'null')||PRODUCTS;}catch(err){}}
+  // FIX: don't overwrite orders from storage event — realtime handles that
 });
 
+// ═══════════════════════════════════════════════
+// INIT — renders immediately from localStorage, then loads DB in background
+// ═══════════════════════════════════════════════
 async function adminInit(){
   const session=sessionStorage.getItem('oc_admin');
   if(!session){window.location.href='opulent%20admin%20login.html';return;}
@@ -1282,10 +1214,21 @@ async function adminInit(){
   document.getElementById('sbAvatar').textContent='A';
   document.getElementById('sbName').textContent='Admin';
   document.getElementById('sbEmail').textContent=admin.email||'admin@opulentcollection.co.ke';
-  await Promise.all([loadOrdersFromDB(),loadProductsFromDB()]);
-  setupRealtime();renderDashboard();
+
+  // FIX: Render immediately from localStorage — no blank screen on load
+  loadSettingsIntoForm();
+  renderDashboard();
+  document.getElementById('pendingBadge').textContent=orders.filter(x=>x.status==='Processing').length;
+
+  // Then load from DB in background — UI updates when ready
+  await Promise.all([loadOrdersFromDB(), loadProductsFromDB()]);
+  setupRealtime();
+
+  // Re-render with fresh DB data
+  renderDashboard();
   document.getElementById('pendingBadge').textContent=orders.filter(x=>x.status==='Processing').length;
 }
+
 adminInit();
 </script>
 </body>

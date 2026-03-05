@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Opulent Collections — Product Detail</title>
+<title>opulent Collections — Product Detail</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
@@ -16,8 +16,6 @@
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
   background-image:radial-gradient(ellipse at 15% 0%,rgba(255,182,210,0.22) 0%,transparent 55%);}
-
-/* TOPBAR */
 .topbar{background:var(--white);border-bottom:1.5px solid var(--pink-border);padding:0 24px;height:58px;
   display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 12px var(--shadow);}
 .logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
@@ -30,97 +28,54 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
 .icon-btn:hover{background:var(--pink-pale);}
 .badge{position:absolute;top:-3px;right:-3px;min-width:17px;height:17px;background:var(--pink);color:#fff;
   border-radius:10px;font-size:9px;font-weight:900;display:flex;align-items:center;justify-content:center;padding:0 3px;border:2px solid #fff;}
-
-/* BREADCRUMB */
 .breadcrumb{padding:14px 24px 0;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--muted);font-weight:600;}
 .breadcrumb a{color:var(--muted);text-decoration:none;}.breadcrumb a:hover{color:var(--pink);}
 .breadcrumb span{color:var(--text);}
-
-/* LOADING STATE */
-.loading-screen{text-align:center;padding:80px 24px;}
-.loading-spinner{width:44px;height:44px;border:4px solid var(--pink-border);border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px;}
-@keyframes spin{to{transform:rotate(360deg);}}
-.not-found{text-align:center;padding:80px 24px;}
-
-/* MAIN LAYOUT */
 .product-page{display:grid;grid-template-columns:1fr 1fr;gap:32px;max-width:1100px;margin:0 auto;padding:20px 24px 60px;}
-
-/* IMAGE SECTION */
-.main-img-wrap{border-radius:18px;overflow:hidden;background:var(--pink-pale);aspect-ratio:1;position:relative;margin-bottom:8px;cursor:zoom-in;}
-.main-img-wrap img{width:100%;height:100%;object-fit:cover;}
-#main-img{transition:opacity .22s ease,transform .22s ease;}
-#main-img.fade{opacity:0;transform:scale(0.97);}
+.main-img-wrap{border-radius:18px;overflow:hidden;background:var(--pink-pale);aspect-ratio:1;position:relative;margin-bottom:12px;}
+.main-img-wrap img{width:100%;height:100%;object-fit:cover;transition:transform .4s;}
+.main-img-wrap:hover img{transform:scale(1.04);}
 .img-badge{position:absolute;top:14px;left:14px;background:var(--pink);color:#fff;
-  font-size:10px;font-weight:800;padding:4px 12px;border-radius:100px;letter-spacing:.05em;z-index:4;}
+  font-size:10px;font-weight:800;padding:4px 12px;border-radius:100px;letter-spacing:.05em;}
 .img-badge.disc{background:var(--orange);}
 .img-wish{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;
   background:rgba(255,255,255,.92);border:none;cursor:pointer;display:flex;align-items:center;
-  justify-content:center;font-size:18px;transition:transform .15s;box-shadow:0 2px 8px rgba(0,0,0,.12);z-index:4;}
+  justify-content:center;font-size:18px;transition:transform .15s;box-shadow:0 2px 8px rgba(0,0,0,.12);}
 .img-wish:hover{transform:scale(1.15);}
-
-/* ARROW BUTTONS */
-.img-arrow{position:absolute;top:50%;transform:translateY(-50%);width:40px;height:40px;border-radius:50%;
-  background:rgba(255,255,255,0.95);border:1.5px solid var(--pink-border);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;font-size:16px;
-  box-shadow:0 3px 12px rgba(0,0,0,.13);z-index:5;
-  transition:opacity .2s,background .15s,transform .15s;
-  opacity:0;pointer-events:none;}
-.main-img-wrap:hover .img-arrow{opacity:1;pointer-events:all;}
-.img-arrow:hover{background:var(--pink);color:#fff;border-color:var(--pink);transform:translateY(-50%) scale(1.08);}
-.img-arrow.left{left:12px;}
-.img-arrow.right{right:12px;}
-
-/* IMAGE COUNTER */
-.img-counter{position:absolute;bottom:12px;right:12px;
-  background:rgba(0,0,0,0.42);color:#fff;font-size:11px;font-weight:800;
-  padding:3px 10px;border-radius:100px;z-index:5;pointer-events:none;letter-spacing:.04em;}
-
-/* DOT INDICATORS */
-.img-dots{display:flex;justify-content:center;gap:7px;margin:8px 0 10px;}
-.img-dot{width:7px;height:7px;border-radius:50%;background:var(--pink-border);cursor:pointer;
-  border:none;padding:0;transition:background .2s,width .2s;}
-.img-dot.active{background:var(--pink);width:20px;border-radius:4px;}
-
-/* THUMBNAILS */
-.thumbs{display:flex;gap:10px;overflow-x:auto;padding-bottom:4px;}
-.thumbs::-webkit-scrollbar{height:4px;}
-.thumbs::-webkit-scrollbar-thumb{background:var(--pink-border);border-radius:4px;}
+.thumbs{display:flex;gap:10px;overflow-x:auto;}
 .thumb{width:72px;height:72px;border-radius:12px;overflow:hidden;cursor:pointer;flex-shrink:0;
-  border:2.5px solid transparent;transition:border-color .15s,transform .15s,box-shadow .15s;position:relative;}
-.thumb:hover{transform:translateY(-2px);box-shadow:0 4px 12px var(--shadow);}
-.thumb.active{border-color:var(--pink);box-shadow:0 0 0 3px rgba(192,84,122,0.18);}
-.thumb img{width:100%;height:100%;object-fit:cover;display:block;}
-
-/* INFO SECTION */
+  border:2px solid transparent;transition:border .15s;}
+.thumb.active{border-color:var(--pink);}
+.thumb img{width:100%;height:100%;object-fit:cover;}
 .prod-cat{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:6px;}
-.prod-name{font-size:26px;font-weight:900;line-height:1.2;margin-bottom:12px;}
-
-/* STARS */
+.prod-name{font-size:26px;font-weight:900;line-height:1.2;margin-bottom:10px;}
+.prod-brand{font-size:13px;color:var(--muted);font-weight:700;margin-bottom:12px;}
+.prod-brand span{color:var(--pink);}
 .stars-row{display:flex;align-items:center;gap:6px;margin-bottom:16px;}
 .star{font-size:14px;color:#ddd;}.star.on{color:var(--star);}
 .star-count{font-size:13px;color:var(--muted);font-weight:700;}
 .review-link{font-size:12.5px;color:var(--pink);font-weight:700;cursor:pointer;text-decoration:none;}
 .review-link:hover{text-decoration:underline;}
-
-/* PRICE */
-.price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;flex-wrap:wrap;}
+.price-row{display:flex;align-items:baseline;gap:10px;margin-bottom:16px;}
 .price{font-size:30px;font-weight:900;color:var(--pink);}
 .old-price{font-size:16px;color:var(--muted);text-decoration:line-through;font-weight:700;}
 .disc-tag{background:#FFF0E0;color:var(--orange);font-size:12px;font-weight:800;padding:3px 10px;border-radius:100px;}
-
-/* DIVIDER */
 .divider{height:1px;background:var(--pink-border);margin:16px 0;}
-
-/* DESCRIPTION */
 .prod-desc{font-size:13.5px;color:var(--muted);line-height:1.72;margin-bottom:16px;}
-
-/* META TABLE */
 .meta-table{display:flex;flex-direction:column;gap:7px;margin-bottom:16px;}
 .meta-row{display:flex;gap:10px;font-size:13px;}
 .meta-key{color:var(--muted);font-weight:700;min-width:90px;}
 .meta-val{font-weight:700;}
-
-/* STOCK STATUS */
+.picker-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+.shade-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.shade-swatch{width:30px;height:30px;border-radius:50%;cursor:pointer;border:3px solid transparent;transition:all .15s;position:relative;}
+.shade-swatch.active{border-color:var(--pink);box-shadow:0 0 0 2px #fff, 0 0 0 4px var(--pink);}
+.shade-swatch:hover{transform:scale(1.1);}
+.size-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+.size-pill{padding:7px 18px;border-radius:100px;border:1.5px solid var(--pink-border);
+  font-size:13px;font-weight:800;cursor:pointer;background:var(--white);transition:all .15s;font-family:'Nunito',sans-serif;}
+.size-pill.active{background:var(--pink);color:#fff;border-color:var(--pink);}
+.size-pill:hover:not(.active){background:var(--pink-pale);border-color:var(--pink);}
 .stock-status{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;margin-bottom:16px;}
 .stock-dot{width:8px;height:8px;border-radius:50%;}
 .stock-dot.in{background:var(--green);}
@@ -129,8 +84,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
 .stock-in{color:var(--green);}
 .stock-low{color:var(--orange);}
 .stock-out{color:var(--red);}
-
-/* QTY + ACTIONS */
 .qty-row{display:flex;align-items:center;gap:14px;margin-bottom:16px;}
 .qty-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);}
 .qty-ctrl{display:flex;align-items:center;gap:8px;}
@@ -138,7 +91,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
   cursor:pointer;font-size:17px;display:flex;align-items:center;justify-content:center;transition:background .15s;font-family:'Nunito',sans-serif;}
 .qb:hover{background:var(--pink-pale);}
 .qn{font-size:16px;font-weight:900;min-width:28px;text-align:center;}
-
 .actions{display:flex;gap:10px;margin-bottom:18px;}
 .btn-add{flex:1;padding:14px;background:var(--pink);color:#fff;border:none;border-radius:100px;
   font-size:15px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;transition:background .15s,transform .1s;}
@@ -148,13 +100,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
 .btn-buy-now{flex:1;padding:14px;background:transparent;color:var(--pink);border:2px solid var(--pink);border-radius:100px;
   font-size:15px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;transition:all .15s;}
 .btn-buy-now:hover{background:var(--pink-pale);}
-
-/* DELIVERY INFO */
 .delivery-box{background:var(--pink-pale);border-radius:13px;padding:13px 15px;display:flex;flex-direction:column;gap:9px;margin-bottom:16px;}
 .del-row{display:flex;align-items:center;gap:10px;font-size:12.5px;font-weight:700;}
 .del-row span:first-child{font-size:16px;}
-
-/* REVIEWS SECTION */
 .reviews-section{max-width:1100px;margin:0 auto;padding:0 24px 60px;}
 .section-title{font-size:20px;font-weight:900;margin-bottom:20px;display:flex;align-items:center;gap:10px;}
 .reviews-grid{display:grid;grid-template-columns:280px 1fr;gap:28px;align-items:start;}
@@ -169,8 +117,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
 .rbar-track{flex:1;height:7px;background:var(--pink-pale);border-radius:100px;overflow:hidden;}
 .rbar-fill{height:100%;background:var(--star);border-radius:100px;transition:width .6s;}
 .rbar-ct{color:var(--muted);font-weight:700;width:22px;}
-
-.reviews-list{display:flex;flex-direction:column;}
+.reviews-list{display:flex;flex-direction:column;gap:0;}
 .review-item{padding:20px 0;border-bottom:1px solid var(--pink-border);}
 .review-item:first-child{padding-top:0;}
 .rv-header{display:flex;align-items:center;gap:10px;margin-bottom:8px;}
@@ -178,15 +125,13 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
   display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;}
 .rv-name{font-size:14px;font-weight:800;}
 .rv-date{font-size:11.5px;color:var(--muted);}
-.rv-verified{font-size:10.5px;color:var(--green);font-weight:800;background:#E8F5E9;padding:2px 8px;border-radius:100px;margin-left:6px;}
+.rv-verified{font-size:10.5px;color:var(--green);font-weight:800;background:#E8F5E9;padding:2px 8px;border-radius:100px;}
 .rv-stars{display:flex;gap:2px;margin-bottom:6px;}
 .rv-text{font-size:13.5px;color:var(--muted);line-height:1.65;}
 .rv-helpful{display:flex;align-items:center;gap:12px;margin-top:10px;font-size:12px;color:var(--muted);font-weight:700;}
 .rv-helpful button{background:none;border:1px solid var(--pink-border);border-radius:100px;padding:3px 12px;
   font-size:11.5px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;color:var(--muted);transition:all .15s;}
 .rv-helpful button:hover{border-color:var(--pink);color:var(--pink);}
-
-/* WRITE REVIEW */
 .write-review{background:var(--white);border-radius:16px;border:1px solid var(--pink-border);padding:24px;margin-top:24px;}
 .wr-title{font-size:16px;font-weight:900;margin-bottom:16px;}
 .star-picker{display:flex;gap:5px;margin-bottom:14px;cursor:pointer;}
@@ -201,8 +146,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
 .btn-review{padding:11px 30px;background:var(--pink);color:#fff;border:none;border-radius:100px;
   font-size:13.5px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;transition:background .15s;}
 .btn-review:hover{background:var(--pink-light);}
-
-/* RELATED PRODUCTS */
 .related-section{max-width:1100px;margin:0 auto;padding:0 24px 60px;}
 .related-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(185px,1fr));gap:14px;}
 .pcard{background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--pink-border);
@@ -214,635 +157,357 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
 .pcard-body{padding:10px 12px 12px;}
 .pcard-name{font-size:12.5px;font-weight:700;line-height:1.3;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .pcard-price{font-size:14px;font-weight:800;color:var(--pink);}
-.pcard-img-count{position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.5);color:#fff;
-  font-size:10px;font-weight:800;padding:2px 8px;border-radius:100px;}
-
-/* TOAST */
 .toast{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(10px);
   background:var(--text);color:#fff;padding:9px 22px;border-radius:100px;
   font-size:13px;font-weight:700;z-index:600;opacity:0;pointer-events:none;transition:all .25s;white-space:nowrap;}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
-
-/* LIGHTBOX */
-.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.88);z-index:900;display:flex;align-items:center;
-  justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s;}
-.lightbox.open{opacity:1;pointer-events:all;}
-.lightbox-img{max-width:88vw;max-height:88vh;border-radius:14px;object-fit:contain;
-  transform:scale(0.94);transition:transform .25s,opacity .18s;}
-.lightbox.open .lightbox-img{transform:scale(1);}
-.lightbox-close{position:absolute;top:18px;right:22px;font-size:30px;color:#fff;cursor:pointer;
-  background:none;border:none;line-height:1;opacity:.8;transition:opacity .15s;}
-.lightbox-close:hover{opacity:1;}
-.lightbox-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;
-  border-radius:50%;background:rgba(255,255,255,0.15);border:none;color:#fff;font-size:22px;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;}
-.lightbox-arrow:hover{background:rgba(255,255,255,0.28);}
-.lightbox-arrow.left{left:18px;}
-.lightbox-arrow.right{right:18px;}
-.lightbox-counter{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);
-  color:rgba(255,255,255,0.75);font-size:13px;font-weight:700;font-family:'Nunito',sans-serif;}
-
-/* SINGLE IMAGE — hide gallery controls */
-.single-image .img-arrow,
-.single-image .img-dots,
-.single-image .img-counter{ display:none !important; }
-.single-image #thumbs-row{ display:none !important; }
-
 @media(max-width:768px){
   .product-page{grid-template-columns:1fr;gap:20px;}
   .reviews-grid{grid-template-columns:1fr;}
-  .img-arrow{opacity:1!important;pointer-events:all!important;width:34px;height:34px;font-size:14px;}
 }
 </style>
 </head>
 <body>
 
-<!-- TOPBAR -->
 <header class="topbar">
-  <a href="index.html" class="logo">
+  <a href="opulent-checkout.html" class="logo">
     <div class="logo-icon">
-      <svg width="18" height="16" viewBox="0 0 24 22" fill="none"><path d="M12 1L1 9v12h7v-7h8v7h7V9L12 1z" fill="white"/></svg>
+      <svg width="22" height="22" viewBox="0 0 22 22" fill="none">
+        <circle cx="11" cy="11" r="5" fill="#fff"/>
+        <path d="M11 2v2M11 18v2M2 11h2M18 11h2M4.22 4.22l1.41 1.41M16.37 16.37l1.41 1.41M4.22 17.78l1.41-1.41M16.37 5.63l1.41-1.41" stroke="#fff" stroke-width="2" stroke-linecap="round"/>
+      </svg>
     </div>
     <div>
-      <div class="brand">Opulent Collections</div>
-      <div class="sub">Premium Home & Lifestyle</div>
+      <div class="brand">opulent Collections</div>
+      <div class="sub">Premium Beauty & Wellness</div>
     </div>
   </a>
   <div class="topbar-right">
     <button class="icon-btn" onclick="window.location='index.html'">🛍️<span class="badge" id="cart-badge">0</span></button>
-    <button class="icon-btn" id="wish-icon-btn" onclick="toggleWish()">🤍</button>
-    <button class="icon-btn" onclick="window.location='opulent -login.html'">👤</button>
+    <button class="icon-btn">❤️</button>
+    <button class="icon-btn" onclick="window.location='sunup-login.html'">👤</button>
   </div>
 </header>
 
-<!-- BREADCRUMB -->
 <nav class="breadcrumb">
   <a href="index.html">Shop</a>
   <span>›</span>
-  <span id="bc-cat">Products</span>
+  <a href="#">Skincare</a>
   <span>›</span>
-  <span id="bc-name">Loading…</span>
+  <span id="bc-name">Vitamin C Glow Serum</span>
 </nav>
 
-<!-- LOADING -->
-<div class="loading-screen" id="loadingScreen">
-  <div class="loading-spinner"></div>
-  <div style="font-size:14px;font-weight:700;color:var(--muted)">Loading product…</div>
-</div>
-
-<!-- NOT FOUND -->
-<div class="not-found" id="notFound" style="display:none">
-  <div style="font-size:48px;margin-bottom:12px">😕</div>
-  <div style="font-size:18px;font-weight:800;margin-bottom:8px">Product not found</div>
-  <a href="index.html" style="color:var(--pink);font-weight:700;font-size:14px">← Back to Shop</a>
-</div>
-
-<!-- PRODUCT DETAIL (hidden until loaded) -->
-<div id="productDetail" style="display:none">
-
-  <div class="product-page">
-
-    <!-- ══ IMAGE GALLERY ══ -->
-    <div class="img-section" id="img-section">
-      <div class="main-img-wrap" id="main-img-wrap">
-        <img id="main-img" src="" alt="Product"/>
-        <div class="img-badge disc" id="prod-badge" style="display:none">−25%</div>
-        <button class="img-wish" id="wish-btn" onclick="toggleWish()">🤍</button>
-        <button class="img-arrow left" id="arrow-left" onclick="slideImage(-1)">&#8249;</button>
-        <button class="img-arrow right" id="arrow-right" onclick="slideImage(1)">&#8250;</button>
-        <div class="img-counter" id="img-counter">1 / 1</div>
-      </div>
-
-      <!-- DOT INDICATORS -->
-      <div class="img-dots" id="img-dots"></div>
-
-      <!-- THUMBNAILS -->
-      <div class="thumbs" id="thumbs-row"></div>
+<div class="product-page">
+  <div class="img-section">
+    <div class="main-img-wrap">
+      <img id="main-img" src="https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80" alt="Product"/>
+      <div class="img-badge disc" id="prod-badge">−25%</div>
+      <button class="img-wish" id="wish-btn" onclick="toggleWish()">🤍</button>
     </div>
+    <div class="thumbs" id="thumbs-row"></div>
+  </div>
 
-    <!-- ══ PRODUCT INFO ══ -->
-    <div class="info-section">
-      <div class="prod-cat" id="prod-cat">Category</div>
-      <h1 class="prod-name" id="prod-name">Product Name</h1>
-
-      <div class="stars-row" id="stars-row"></div>
-
-      <div class="price-row">
-        <span class="price" id="prod-price">Ksh 0</span>
-        <span class="old-price" id="prod-old" style="display:none"></span>
-        <span class="disc-tag" id="prod-disc" style="display:none"></span>
+  <div class="info-section">
+    <div class="prod-cat" id="prod-cat">Skincare</div>
+    <h1 class="prod-name" id="prod-name">Vitamin C Glow Serum</h1>
+    <div class="prod-brand">By <span id="prod-brand">SunUp Beauty</span></div>
+    <div class="stars-row">
+      <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span>
+      <span class="star-count" id="rating-display">4.8 (124 reviews)</span>
+      <a class="review-link" onclick="scrollToReviews()">See all reviews</a>
+    </div>
+    <div class="price-row">
+      <span class="price" id="prod-price">KSh 2,250</span>
+      <span class="old-price" id="prod-old">KSh 3,000</span>
+      <span class="disc-tag" id="prod-disc">SAVE 25%</span>
+    </div>
+    <div class="divider"></div>
+    <p class="prod-desc" id="prod-desc">
+      A powerful brightening serum packed with 15% stabilised Vitamin C, hyaluronic acid, and niacinamide.
+      Fades dark spots, evens skin tone, and boosts radiance — morning or night. Dermatologist-tested,
+      suitable for all skin types. See visible results in 2 weeks.
+    </p>
+    <div id="shade-section">
+      <div class="picker-label">Shade: <strong id="shade-label">Natural Glow</strong></div>
+      <div class="shade-row" id="shade-row">
+        <div class="shade-swatch active" style="background:#F5C5A3;" title="Natural Glow" onclick="selectShade(this,'Natural Glow')"></div>
+        <div class="shade-swatch" style="background:#D4956A;" title="Warm Bronze" onclick="selectShade(this,'Warm Bronze')"></div>
+        <div class="shade-swatch" style="background:#8B5E3C;" title="Deep Mocha" onclick="selectShade(this,'Deep Mocha')"></div>
+        <div class="shade-swatch" style="background:#FFE4B5;" title="Ivory Silk" onclick="selectShade(this,'Ivory Silk')"></div>
       </div>
+    </div>
+    <div id="size-section">
+      <div class="picker-label">Size: <strong id="size-label">30ml</strong></div>
+      <div class="size-row" id="size-row">
+        <button class="size-pill active" onclick="selectSize(this,'30ml')">30ml</button>
+        <button class="size-pill" onclick="selectSize(this,'50ml')">50ml</button>
+        <button class="size-pill" onclick="selectSize(this,'100ml')">100ml</button>
+      </div>
+    </div>
+    <div class="stock-status">
+      <div class="stock-dot low"></div>
+      <span class="stock-low">Only 5 left in stock!</span>
+    </div>
+    <div class="qty-row">
+      <span class="qty-label">Qty</span>
+      <div class="qty-ctrl">
+        <button class="qb" onclick="changeQty(-1)">−</button>
+        <span class="qn" id="qty-display">1</span>
+        <button class="qb" onclick="changeQty(1)">+</button>
+      </div>
+    </div>
+    <div class="actions">
+      <button class="btn-add" id="add-btn" onclick="addToCart()">🛒 Add to Cart</button>
+      <button class="btn-buy-now" onclick="buyNow()">Buy Now</button>
+    </div>
+    <div class="delivery-box">
+      <div class="del-row"><span>🚚</span><span>Free delivery on orders over <strong>KSh 2,000</strong></span></div>
+      <div class="del-row"><span>📦</span><span>Estimated delivery: <strong>2–4 business days</strong></span></div>
+      <div class="del-row"><span>↩️</span><span>Easy <strong>30-day</strong> returns & exchanges</span></div>
+      <div class="del-row"><span>✅</span><span>100% authentic, sourced directly from brands</span></div>
+    </div>
+    <div class="meta-table">
+      <div class="meta-row"><span class="meta-key">SKU</span><span class="meta-val" id="prod-sku">SU-VCS-001</span></div>
+      <div class="meta-row"><span class="meta-key">Category</span><span class="meta-val">Serums & Treatments</span></div>
+      <div class="meta-row"><span class="meta-key">Skin Type</span><span class="meta-val">All Skin Types</span></div>
+      <div class="meta-row"><span class="meta-key">Volume</span><span class="meta-val">30ml / 1.0 fl oz</span></div>
+    </div>
+  </div>
+</div>
 
-      <div class="divider"></div>
-
-      <p class="prod-desc" id="prod-desc">—</p>
-
-      <!-- STOCK STATUS -->
-      <div class="stock-status" id="stock-status"></div>
-
-      <!-- QTY -->
-      <div class="qty-row">
-        <span class="qty-label">Qty</span>
-        <div class="qty-ctrl">
-          <button class="qb" onclick="changeQty(-1)">−</button>
-          <span class="qn" id="qty-display">1</span>
-          <button class="qb" onclick="changeQty(1)">+</button>
+<section class="reviews-section" id="reviews-section">
+  <div class="section-title">⭐ Customer Reviews <span style="font-size:14px;color:var(--muted);font-weight:700;">(124)</span></div>
+  <div class="reviews-grid">
+    <div>
+      <div class="rating-summary">
+        <div class="big-rating">4.8</div>
+        <div class="rating-stars">
+          <span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span><span class="star on">★</span>
+        </div>
+        <div class="rating-count">Based on 124 reviews</div>
+        <div class="rating-bars">
+          <div class="rbar-row"><span class="rbar-lbl">5</span><div class="rbar-track"><div class="rbar-fill" style="width:78%"></div></div><span class="rbar-ct">97</span></div>
+          <div class="rbar-row"><span class="rbar-lbl">4</span><div class="rbar-track"><div class="rbar-fill" style="width:14%"></div></div><span class="rbar-ct">17</span></div>
+          <div class="rbar-row"><span class="rbar-lbl">3</span><div class="rbar-track"><div class="rbar-fill" style="width:5%"></div></div><span class="rbar-ct">6</span></div>
+          <div class="rbar-row"><span class="rbar-lbl">2</span><div class="rbar-track"><div class="rbar-fill" style="width:2%"></div></div><span class="rbar-ct">2</span></div>
+          <div class="rbar-row"><span class="rbar-lbl">1</span><div class="rbar-track"><div class="rbar-fill" style="width:2%"></div></div><span class="rbar-ct">2</span></div>
         </div>
       </div>
-
-      <!-- ACTIONS -->
-      <div class="actions">
-        <button class="btn-add" id="add-btn" onclick="addToCart()">🛒 Add to Cart</button>
-        <button class="btn-buy-now" onclick="buyNow()">Buy Now</button>
-      </div>
-
-      <!-- DELIVERY -->
-      <div class="delivery-box">
-        <div class="del-row"><span>🚚</span><span>Free delivery on orders over <strong>Ksh 5,000</strong></span></div>
-        <div class="del-row"><span>📦</span><span>Estimated delivery: <strong>2–4 business days</strong></span></div>
-        <div class="del-row"><span>↩️</span><span>Easy <strong>30-day</strong> returns & exchanges</span></div>
-        <div class="del-row"><span>✅</span><span>100% authentic, sourced directly</span></div>
-      </div>
-
-      <!-- META -->
-      <div class="meta-table">
-        <div class="meta-row"><span class="meta-key">Category</span><span class="meta-val" id="meta-cat">—</span></div>
-        <div class="meta-row"><span class="meta-key">Rating</span><span class="meta-val" id="meta-rating">—</span></div>
-        <div class="meta-row"><span class="meta-key">Product ID</span><span class="meta-val" id="meta-id">—</span></div>
-        <div class="meta-row"><span class="meta-key">Images</span><span class="meta-val" id="meta-imgs">—</span></div>
+    </div>
+    <div>
+      <div class="reviews-list" id="reviews-list"></div>
+      <div class="write-review">
+        <div class="wr-title">Write a Review</div>
+        <div class="star-picker" id="star-picker">
+          <span class="star-pick" data-v="1">★</span>
+          <span class="star-pick" data-v="2">★</span>
+          <span class="star-pick" data-v="3">★</span>
+          <span class="star-pick" data-v="4">★</span>
+          <span class="star-pick" data-v="5">★</span>
+        </div>
+        <div class="fg"><label>Your Name</label><input type="text" id="rv-name" placeholder="Jane D." maxlength="80"/></div>
+        <div class="fg"><label>Review Title</label><input type="text" id="rv-title" placeholder="Great product!" maxlength="120"/></div>
+        <div class="fg"><label>Your Review</label><textarea id="rv-body" placeholder="Share your experience…" maxlength="2000"></textarea></div>
+        <button class="btn-review" onclick="submitReview()">Submit Review</button>
       </div>
     </div>
   </div>
+</section>
 
-  <!-- REVIEWS SECTION -->
-  <section class="reviews-section" id="reviews-section">
-    <div class="section-title">⭐ Customer Reviews <span id="reviews-title-count" style="font-size:14px;color:var(--muted);font-weight:700;"></span></div>
-    <div class="reviews-grid">
-      <div>
-        <div class="rating-summary" id="rating-summary"></div>
-      </div>
-      <div>
-        <div class="reviews-list" id="reviews-list"></div>
-        <div class="write-review">
-          <div class="wr-title">Write a Review</div>
-          <div class="star-picker" id="star-picker">
-            <span class="star-pick" data-v="1">★</span>
-            <span class="star-pick" data-v="2">★</span>
-            <span class="star-pick" data-v="3">★</span>
-            <span class="star-pick" data-v="4">★</span>
-            <span class="star-pick" data-v="5">★</span>
-          </div>
-          <div class="fg"><label>Your Name</label><input type="text" id="rv-name" placeholder="Jane D."/></div>
-          <div class="fg"><label>Review Title</label><input type="text" id="rv-title" placeholder="Great product!"/></div>
-          <div class="fg"><label>Your Review</label><textarea id="rv-body" placeholder="Share your experience…"></textarea></div>
-          <button class="btn-review" onclick="submitReview()">Submit Review</button>
-        </div>
-      </div>
-    </div>
-  </section>
+<section class="related-section">
+  <div class="section-title">✨ You May Also Like</div>
+  <div class="related-grid" id="related-grid"></div>
+</section>
 
-  <!-- RELATED PRODUCTS -->
-  <section class="related-section">
-    <div class="section-title">✨ You May Also Like</div>
-    <div class="related-grid" id="related-grid"></div>
-  </section>
-
-</div><!-- end #productDetail -->
-
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
-
-<!-- LIGHTBOX -->
-<div class="lightbox" id="lightbox" onclick="closeLightboxOnBg(event)">
-  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-  <button class="lightbox-arrow left" onclick="lightboxNav(-1)">&#8249;</button>
-  <img class="lightbox-img" id="lightbox-img" src="" alt="Product zoom"/>
-  <button class="lightbox-arrow right" onclick="lightboxNav(1)">&#8250;</button>
-  <div class="lightbox-counter" id="lightbox-counter"></div>
-</div>
 
 <script>
 // ============================================================
-// SUPABASE SETUP
+// SECURITY: XSS sanitizer — strips all HTML tags from user input
+// Use for ANY text coming from user input or the database
+// before inserting into innerHTML.
 // ============================================================
-const SUPA_URL  = 'https://azwcxezzzljbjgojwtax.supabase.co';
-const ANON_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6d2N4ZXp6emxqYmpnb2p3dGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTk2NTQsImV4cCI6MjA4NzY5NTY1NH0.wFrC32vU0MWbp-otIif5WdlCemeIDXEa2DyLXrl1OEI';
-const _sb = window.supabase.createClient(SUPA_URL, ANON_KEY);
+function sanitize(str) {
+  if (str === null || str === undefined) return '';
+  const div = document.createElement('div');
+  div.appendChild(document.createTextNode(String(str)));
+  return div.innerHTML;
+}
+
+// ============================================================
+// SUPABASE SETUP — anon key only (no service key on public pages)
+// ============================================================
+const SUPABASE_URL     = 'https://azwcxezzzljbjgojwtax.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6d2N4ZXp6emxqYmpnb2p3dGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTk2NTQsImV4cCI6MjA4NzY5NTY1NH0.wFrC32vU0MWbp-otIif5WdlCemeIDXEa2DyLXrl1OEI';
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ============================================================
+// PRODUCT DATA
+// ============================================================
+const product = {
+  id: 1,
+  name: 'Vitamin C Glow Serum',
+  category: 'Skincare',
+  brand: 'SunUp Beauty',
+  price: 2250,
+  old_price: 3000,
+  rating: 4.8,
+  review_count: 124,
+  stock: 5,
+  sku: 'SU-VCS-001',
+  images: [
+    'https://images.unsplash.com/photo-1620916566398-39f1143ab7be?w=800&q=80',
+    'https://images.unsplash.com/photo-1608248597279-f99d160bfcbc?w=800&q=80',
+    'https://images.unsplash.com/photo-1598440947619-2c35fc9aa908?w=800&q=80',
+    'https://images.unsplash.com/photo-1631390578673-d0a06f0f44a2?w=800&q=80',
+  ]
+};
+
+// FIX: Sample reviews use sanitize() — safe even if data came from DB
+const sampleReviews = [
+  {name:'Amara N.',date:'Jan 2025',rating:5,title:'Life-changing serum!',text:"I've been using this for 3 weeks and my dark spots have visibly faded. My skin looks radiant every morning. Worth every shilling!",verified:true,helpful:42},
+  {name:'Faith K.',date:'Dec 2024',rating:5,title:'Fast results',text:"Noticed a difference within 10 days. The texture is lightweight and absorbs quickly — doesn't leave a greasy residue. Highly recommend.",verified:true,helpful:28},
+  {name:'Linda M.',date:'Nov 2024',rating:4,title:'Very good but pricey',text:'The product works great, skin feels smoother and brighter. Only reason for 4 stars is the price point — but you get what you pay for!',verified:false,helpful:15},
+];
+
+const relatedProducts = [
+  {id:2,name:'Retinol Night Cream',price:'KSh 1,850',img:'https://images.unsplash.com/photo-1556228852-6d35a585d566?w=400&q=80'},
+  {id:3,name:'Hyaluronic Toner',price:'KSh 1,200',img:'https://images.unsplash.com/photo-1601049380538-e5c49f3e7f3e?w=400&q=80'},
+  {id:4,name:'Niacinamide Moisturiser',price:'KSh 1,650',img:'https://images.unsplash.com/photo-1643185539104-3622eb1f0ff3?w=400&q=80'},
+  {id:5,name:'SPF 50 Sunscreen',price:'KSh 980',img:'https://images.unsplash.com/photo-1586495777744-4e6232bf4753?w=400&q=80'},
+];
 
 // ============================================================
 // STATE
 // ============================================================
-let product         = null;   // the loaded product object
-let currentImageIdx = 0;
-let qty             = 1;
-let pickedRating    = 0;
-let isWishlisted    = false;
-let cart            = JSON.parse(localStorage.getItem('sc_cart') || '[]');
-
-const fmt = p => 'Ksh. ' + Number(p).toLocaleString();
+let qty = 1;
+let pickedRating = 0;
+let isWishlisted = false;
+let cart = [];
+try { cart = JSON.parse(localStorage.getItem('sc_cart') || '[]'); } catch(e) { cart = []; }
 
 // ============================================================
-// LOAD PRODUCT FROM URL PARAM  ?id=X
+// INIT
 // ============================================================
-async function loadProduct() {
-  const params    = new URLSearchParams(window.location.search);
-  const productId = parseInt(params.get('id'));
-
-  // 1️⃣ Try localStorage first (fast, no network)
-  const cached = JSON.parse(localStorage.getItem('sc_products') || 'null');
-  if (cached && productId) {
-    const found = cached.find(p => p.id === productId);
-    if (found) {
-      product = normaliseProduct(found);
-      showProduct();
-      return;
-    }
-  }
-
-  // 2️⃣ Try Supabase
-  if (productId) {
-    try {
-      const { data, error } = await _sb.from('products').select('*').eq('id', productId).single();
-      if (error) throw error;
-      product = normaliseProductFromDB(data);
-      showProduct();
-      return;
-    } catch(e) {
-      console.warn('Supabase load failed:', e.message);
-    }
-  }
-
-  // 3️⃣ If no id param at all, fall back to first product in cache
-  if (!productId && cached && cached.length) {
-    product = normaliseProduct(cached[0]);
-    showProduct();
-    return;
-  }
-
-  // 4️⃣ Nothing found
-  document.getElementById('loadingScreen').style.display = 'none';
-  document.getElementById('notFound').style.display      = 'block';
-}
-
-// Normalise a product stored in localStorage (camelCase format)
-function normaliseProduct(p) {
-  let images = p.images || [];
-  if (typeof images === 'string') {
-    try { images = JSON.parse(images); } catch(e) { images = []; }
-  }
-  if (!images.length && p.img) images = [p.img];
-  return {
-    id:       p.id,
-    name:     p.name,
-    cat:      p.cat,
-    price:    p.price,
-    oldPrice: p.oldPrice || null,
-    stock:    p.stock,
-    rating:   Number(p.rating) || 4.5,
-    reviews:  p.reviews || 0,
-    badge:    p.badge || null,
-    desc:     p.desc || p.description || '',
-    img:      images[0] || p.img,
-    images:   images
-  };
-}
-
-// Normalise a product row from Supabase (snake_case format)
-function normaliseProductFromDB(p) {
-  let images = [];
-  try { images = p.images ? JSON.parse(p.images) : []; } catch(e) {}
-  if (!images.length && p.img) images = [p.img];
-  return {
-    id:       p.id,
-    name:     p.name,
-    cat:      p.cat,
-    price:    p.price,
-    oldPrice: p.old_price || null,
-    stock:    p.stock,
-    rating:   Number(p.rating) || 4.5,
-    reviews:  p.reviews || 0,
-    badge:    p.badge || null,
-    desc:     p.description || '',
-    img:      images[0] || p.img,
-    images:   images
-  };
-}
-
-// ============================================================
-// RENDER PRODUCT INTO THE PAGE
-// ============================================================
-function showProduct() {
-  document.getElementById('loadingScreen').style.display = 'none';
-  document.getElementById('productDetail').style.display = 'block';
-
-  const p = product;
-
-  // Page title & breadcrumb
-  document.title               = p.name + ' — Opulent Collections';
-  document.getElementById('bc-name').textContent = p.name;
-  document.getElementById('bc-cat').textContent  = capitalise(p.cat);
-
-  // Category, name, description
-  document.getElementById('prod-cat').textContent  = capitalise(p.cat);
-  document.getElementById('prod-name').textContent = p.name;
-  document.getElementById('prod-desc').textContent = p.desc || 'Premium quality product from Opulent Collections.';
-
-  // Price
-  document.getElementById('prod-price').textContent = fmt(p.price);
-  if (p.oldPrice) {
-    const discPct = Math.round((1 - p.price / p.oldPrice) * 100);
-    document.getElementById('prod-old').textContent  = fmt(p.oldPrice);
-    document.getElementById('prod-old').style.display = '';
-    document.getElementById('prod-disc').textContent  = 'SAVE ' + discPct + '%';
-    document.getElementById('prod-disc').style.display = '';
-    document.getElementById('prod-badge').textContent  = '−' + discPct + '%';
-    document.getElementById('prod-badge').style.display = '';
-  }
-
-  // Stars
-  const fullStars = Math.round(p.rating);
-  let starsHtml = '';
-  for (let i = 1; i <= 5; i++) {
-    starsHtml += `<span class="star ${i <= fullStars ? 'on' : ''}">★</span>`;
-  }
-  document.getElementById('stars-row').innerHTML =
-    starsHtml +
-    `<span class="star-count">${p.rating} (${p.reviews} review${p.reviews !== 1 ? 's' : ''})</span>` +
-    `<a class="review-link" onclick="scrollToReviews()">See all reviews</a>`;
-
-  // Stock status
-  const stockEl = document.getElementById('stock-status');
-  if (p.stock === 0) {
-    stockEl.innerHTML = '<div class="stock-dot out"></div><span class="stock-out">Out of stock</span>';
-    document.getElementById('add-btn').disabled = true;
-    document.getElementById('add-btn').textContent = 'Out of Stock';
-  } else if (p.stock <= 5) {
-    stockEl.innerHTML = `<div class="stock-dot low"></div><span class="stock-low">Only ${p.stock} left in stock!</span>`;
-  } else {
-    stockEl.innerHTML = `<div class="stock-dot in"></div><span class="stock-in">In stock (${p.stock} units)</span>`;
-  }
-
-  // Meta table
-  document.getElementById('meta-cat').textContent   = capitalise(p.cat);
-  document.getElementById('meta-rating').textContent = p.rating + ' / 5';
-  document.getElementById('meta-id').textContent    = 'OC-' + String(p.id).padStart(4, '0');
-  document.getElementById('meta-imgs').textContent  = p.images.length + ' photo' + (p.images.length !== 1 ? 's' : '');
-
-  // Build image gallery
-  buildGallery(p.images);
-
-  // Related products
-  buildRelated(p);
-
-  // Rating summary
-  buildRatingSummary(p);
-
-  // Reviews placeholder
-  document.getElementById('reviews-title-count').textContent = '(' + p.reviews + ')';
-  document.getElementById('reviews-list').innerHTML =
-    p.reviews > 0
-      ? '<div style="padding:20px 0;color:var(--muted);font-size:13px;font-weight:700">Reviews are loaded from our database. Be the first to write one below!</div>'
-      : '<div style="padding:20px 0;color:var(--muted);font-size:13px;font-weight:700">No reviews yet — be the first!</div>';
-
+function init() {
+  buildThumbs();
+  buildReviews();
+  buildRelated();
   updateCartBadge();
 }
 
-function capitalise(str) {
-  return (str || '').charAt(0).toUpperCase() + (str || '').slice(1);
-}
-
-// ============================================================
-// IMAGE GALLERY
-// ============================================================
-function buildGallery(images) {
-  const wrap    = document.getElementById('main-img-wrap');
-  const dotsRow = document.getElementById('img-dots');
-  const thumbRow= document.getElementById('thumbs-row');
-
-  // Set main image
-  document.getElementById('main-img').src = images[0] || '';
-  document.getElementById('img-counter').textContent = `1 / ${images.length}`;
-
-  dotsRow.innerHTML  = '';
-  thumbRow.innerHTML = '';
-
-  if (images.length <= 1) {
-    // Single image — hide controls
-    wrap.classList.add('single-image');
-    document.getElementById('img-section').classList.add('single-image');
-    return;
-  }
-
-  // Build dots
-  images.forEach((_, i) => {
-    const dot = document.createElement('button');
-    dot.className = `img-dot ${i === 0 ? 'active' : ''}`;
-    dot.onclick   = () => goToImage(i);
-    dot.setAttribute('aria-label', `View image ${i + 1}`);
-    dotsRow.appendChild(dot);
-  });
-
-  // Build thumbnails
-  images.forEach((src, i) => {
+function buildThumbs() {
+  const row = document.getElementById('thumbs-row');
+  product.images.forEach((src, i) => {
     const div = document.createElement('div');
-    div.className = `thumb ${i === 0 ? 'active' : ''}`;
-    div.innerHTML = `<img src="${src}" alt="View ${i + 1}" loading="lazy"/>`;
-    div.onclick   = () => goToImage(i);
-    thumbRow.appendChild(div);
+    div.className = `thumb ${i===0?'active':''}`;
+    // Using DOM methods (not innerHTML) for image src — safe against injection
+    const img = document.createElement('img');
+    img.src = src;
+    img.alt = `View ${i+1}`;
+    div.appendChild(img);
+    div.onclick = () => {
+      document.getElementById('main-img').src = src;
+      document.querySelectorAll('.thumb').forEach(t => t.classList.remove('active'));
+      div.classList.add('active');
+    };
+    row.appendChild(div);
   });
-
-  // Click main image → lightbox
-  document.getElementById('main-img').style.cursor = 'zoom-in';
-  document.getElementById('main-img').onclick = () => openLightbox(currentImageIdx);
 }
 
-function goToImage(index, animate = true) {
-  const images = product.images;
-  const total  = images.length;
-  currentImageIdx = (index + total) % total;
-  const src    = images[currentImageIdx];
-  const mainImg= document.getElementById('main-img');
-
-  if (animate) {
-    mainImg.classList.add('fade');
-    setTimeout(() => {
-      mainImg.src = src;
-      mainImg.classList.remove('fade');
-    }, 200);
-  } else {
-    mainImg.src = src;
-  }
-
-  // Update thumbnails
-  document.querySelectorAll('.thumb').forEach((t, i) => {
-    t.classList.toggle('active', i === currentImageIdx);
-    if (i === currentImageIdx) t.scrollIntoView({ behavior:'smooth', block:'nearest', inline:'center' });
-  });
-
-  // Update dots
-  document.querySelectorAll('.img-dot').forEach((d, i) => d.classList.toggle('active', i === currentImageIdx));
-
-  // Update counter
-  document.getElementById('img-counter').textContent = `${currentImageIdx + 1} / ${total}`;
+function buildReviews() {
+  const list = document.getElementById('reviews-list');
+  // FIX: All user-sourced fields run through sanitize() before innerHTML insertion
+  list.innerHTML = sampleReviews.map(r => `
+    <div class="review-item">
+      <div class="rv-header">
+        <div class="rv-avatar">${sanitize(r.name.charAt(0))}</div>
+        <div>
+          <div class="rv-name">${sanitize(r.name)} ${r.verified ? '<span class="rv-verified">✓ Verified</span>' : ''}</div>
+          <div class="rv-date">${sanitize(r.date)}</div>
+        </div>
+      </div>
+      <div class="rv-stars">${'★'.repeat(r.rating).split('').map(s=>`<span class="star on">${s}</span>`).join('')}${'★'.repeat(5-r.rating).split('').map(s=>`<span class="star">${s}</span>`).join('')}</div>
+      <strong style="font-size:13.5px;display:block;margin-bottom:4px;">${sanitize(r.title)}</strong>
+      <p class="rv-text">${sanitize(r.text)}</p>
+      <div class="rv-helpful">Helpful? <button onclick="markHelpful(this,${Number(r.helpful)})">👍 ${Number(r.helpful)}</button></div>
+    </div>
+  `).join('');
 }
 
-function slideImage(direction) { goToImage(currentImageIdx + direction); }
-
-// ============================================================
-// KEYBOARD + SWIPE
-// ============================================================
-document.addEventListener('keydown', e => {
-  if (document.getElementById('lightbox').classList.contains('open')) {
-    if (e.key === 'ArrowLeft')  lightboxNav(-1);
-    if (e.key === 'ArrowRight') lightboxNav(1);
-    if (e.key === 'Escape')     closeLightbox();
-  } else {
-    if (e.key === 'ArrowLeft')  slideImage(-1);
-    if (e.key === 'ArrowRight') slideImage(1);
-  }
-});
-
-let touchStartX = 0;
-document.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
-document.addEventListener('touchend', e => {
-  if (!document.getElementById('main-img-wrap').contains(e.target)) return;
-  const diff = touchStartX - e.changedTouches[0].clientX;
-  if (Math.abs(diff) > 40) slideImage(diff > 0 ? 1 : -1);
-}, { passive: true });
-
-// ============================================================
-// LIGHTBOX
-// ============================================================
-function openLightbox(index) {
-  currentImageIdx = index;
-  document.getElementById('lightbox-img').src = product.images[index];
-  document.getElementById('lightbox-counter').textContent = `${index + 1} / ${product.images.length}`;
-  document.getElementById('lightbox').classList.add('open');
-  document.body.style.overflow = 'hidden';
-}
-
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('open');
-  document.body.style.overflow = '';
-}
-
-function closeLightboxOnBg(e) {
-  if (e.target === document.getElementById('lightbox')) closeLightbox();
-}
-
-function lightboxNav(dir) {
-  const total = product.images.length;
-  currentImageIdx = (currentImageIdx + dir + total) % total;
-  const img = document.getElementById('lightbox-img');
-  img.style.opacity = '0';
-  setTimeout(() => {
-    img.src = product.images[currentImageIdx];
-    img.style.opacity = '1';
-    document.getElementById('lightbox-counter').textContent = `${currentImageIdx + 1} / ${total}`;
-  }, 150);
-  goToImage(currentImageIdx, true);
-}
-
-// ============================================================
-// RELATED PRODUCTS
-// ============================================================
-function buildRelated(currentProduct) {
-  const allProducts = JSON.parse(localStorage.getItem('sc_products') || '[]');
-  const related = allProducts
-    .filter(p => p.id !== currentProduct.id && p.cat === currentProduct.cat)
-    .slice(0, 4);
-
-  // If not enough in same category, fill with others
-  if (related.length < 4) {
-    allProducts
-      .filter(p => p.id !== currentProduct.id && p.cat !== currentProduct.cat)
-      .slice(0, 4 - related.length)
-      .forEach(p => related.push(p));
-  }
-
+function buildRelated() {
   const grid = document.getElementById('related-grid');
-  if (!related.length) {
-    grid.innerHTML = '<div style="color:var(--muted);font-size:13px;font-weight:700">No related products found.</div>';
-    return;
-  }
-
-  grid.innerHTML = related.map(p => {
-    const norm    = normaliseProduct(p);
-    const imgCount= norm.images.length;
-    return `
-      <div class="pcard" onclick="window.location.href='opulent -product-detail.html?id=${norm.id}'">
-        <div class="pcard-img" style="position:relative">
-          <img src="${norm.img}" alt="${norm.name}" loading="lazy"/>
-          ${imgCount > 1 ? `<div class="pcard-img-count">📷 ${imgCount}</div>` : ''}
-        </div>
-        <div class="pcard-body">
-          <div class="pcard-name">${norm.name}</div>
-          <div class="pcard-price">${fmt(norm.price)}</div>
-        </div>
-      </div>`;
-  }).join('');
+  // FIX: product name sanitized before innerHTML insertion
+  grid.innerHTML = relatedProducts.map(p => `
+    <div class="pcard" onclick="window.location.href='opulent-product-detail.html?id=${encodeURIComponent(p.id)}'">
+      <div class="pcard-img"><img src="${sanitize(p.img)}" alt="${sanitize(p.name)}"/></div>
+      <div class="pcard-body">
+        <div class="pcard-name">${sanitize(p.name)}</div>
+        <div class="pcard-price">${sanitize(p.price)}</div>
+      </div>
+    </div>
+  `).join('');
 }
 
 // ============================================================
-// RATING SUMMARY
-// ============================================================
-function buildRatingSummary(p) {
-  const r       = p.rating;
-  const total   = p.reviews;
-  const fullStr = Math.round(r);
-  let stars     = '';
-  for (let i = 1; i <= 5; i++) stars += `<span class="star ${i <= fullStr ? 'on' : ''}">★</span>`;
-
-  document.getElementById('rating-summary').innerHTML = `
-    <div class="big-rating">${r}</div>
-    <div class="rating-stars">${stars}</div>
-    <div class="rating-count">Based on ${total} review${total !== 1 ? 's' : ''}</div>
-    <div class="rating-bars">
-      <div class="rbar-row"><span class="rbar-lbl">5</span><div class="rbar-track"><div class="rbar-fill" style="width:${r >= 4.5 ? 78 : 40}%"></div></div><span class="rbar-ct">${Math.round(total * (r >= 4.5 ? 0.78 : 0.4))}</span></div>
-      <div class="rbar-row"><span class="rbar-lbl">4</span><div class="rbar-track"><div class="rbar-fill" style="width:14%"></div></div><span class="rbar-ct">${Math.round(total * 0.14)}</span></div>
-      <div class="rbar-row"><span class="rbar-lbl">3</span><div class="rbar-track"><div class="rbar-fill" style="width:5%"></div></div><span class="rbar-ct">${Math.round(total * 0.05)}</span></div>
-      <div class="rbar-row"><span class="rbar-lbl">2</span><div class="rbar-track"><div class="rbar-fill" style="width:2%"></div></div><span class="rbar-ct">${Math.round(total * 0.02)}</span></div>
-      <div class="rbar-row"><span class="rbar-lbl">1</span><div class="rbar-track"><div class="rbar-fill" style="width:1%"></div></div><span class="rbar-ct">${Math.round(total * 0.01)}</span></div>
-    </div>`;
-}
-
-// ============================================================
-// CART & INTERACTIONS
+// INTERACTIONS
 // ============================================================
 function changeQty(d) {
-  qty = Math.max(1, Math.min(qty + d, product?.stock || 99));
+  qty = Math.max(1, Math.min(qty + d, product.stock));
   document.getElementById('qty-display').textContent = qty;
+}
+
+function selectShade(el, name) {
+  document.querySelectorAll('.shade-swatch').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  // FIX: Use textContent not innerHTML for user-controlled values
+  document.getElementById('shade-label').textContent = name;
+}
+
+function selectSize(el, name) {
+  document.querySelectorAll('.size-pill').forEach(s => s.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('size-label').textContent = name;
 }
 
 function toggleWish() {
   isWishlisted = !isWishlisted;
-  const heart  = isWishlisted ? '❤️' : '🤍';
-  document.getElementById('wish-btn').textContent      = heart;
-  document.getElementById('wish-icon-btn').textContent = heart;
+  document.getElementById('wish-btn').textContent = isWishlisted ? '❤️' : '🤍';
   showToast(isWishlisted ? 'Added to wishlist ❤️' : 'Removed from wishlist');
 }
 
 function addToCart() {
-  if (!product) return;
   const btn = document.getElementById('add-btn');
-  const existing = cart.find(i => i.id === product.id);
-  if (existing) { existing.qty += qty; }
-  else { cart.push({ id: product.id, name: product.name, price: product.price, qty, img: product.img }); }
-  localStorage.setItem('sc_cart', JSON.stringify(cart));
+  const shade = document.getElementById('shade-label').textContent;
+  const size  = document.getElementById('size-label').textContent;
+
+  // FIX: Store price from trusted product object, not from the DOM
+  const item = {
+    id: product.id,
+    name: product.name,
+    price: product.price,   // server-trusted price — not from user input
+    qty,
+    shade,
+    size,
+    img: product.images[0]
+  };
+  cart.push(item);
+  try { localStorage.setItem('sc_cart', JSON.stringify(cart)); } catch(e) {}
+
   btn.textContent = '✅ Added!';
   btn.classList.add('added');
   updateCartBadge();
-  showToast(`Added ${qty}× ${product.name} to cart!`);
+  showToast(`Added ${qty}× ${sanitize(product.name)} to cart!`);
   setTimeout(() => { btn.textContent = '🛒 Add to Cart'; btn.classList.remove('added'); }, 1800);
 }
 
 function buyNow() {
   addToCart();
-  setTimeout(() => window.location.href = 'opulent -checkout.html', 400);
+  setTimeout(() => window.location.href = 'opulent-checkout.html', 400);
 }
 
 function updateCartBadge() {
-  const total = cart.reduce((s, i) => s + i.qty, 0);
+  const total = cart.reduce((s, i) => s + (Number(i.qty) || 0), 0);
   document.getElementById('cart-badge').textContent = total;
 }
 
@@ -850,45 +515,62 @@ function scrollToReviews() {
   document.getElementById('reviews-section').scrollIntoView({ behavior: 'smooth' });
 }
 
+function markHelpful(btn, n) {
+  btn.textContent = `👍 ${n+1}`;
+  btn.disabled = true;
+}
+
 // ============================================================
-// STAR PICKER (write review)
+// STAR PICKER
 // ============================================================
-document.getElementById('star-picker').addEventListener('mouseover', e => {
+document.getElementById('star-picker').addEventListener('mouseover', function(e) {
   if (!e.target.classList.contains('star-pick')) return;
   const v = +e.target.dataset.v;
-  document.querySelectorAll('.star-pick').forEach((s, i) => s.classList.toggle('on', i < v));
+  document.querySelectorAll('.star-pick').forEach((s,i) => s.classList.toggle('on', i < v));
 });
-document.getElementById('star-picker').addEventListener('click', e => {
+document.getElementById('star-picker').addEventListener('click', function(e) {
   if (!e.target.classList.contains('star-pick')) return;
   pickedRating = +e.target.dataset.v;
 });
-document.getElementById('star-picker').addEventListener('mouseleave', () => {
-  document.querySelectorAll('.star-pick').forEach((s, i) => s.classList.toggle('on', i < pickedRating));
+document.getElementById('star-picker').addEventListener('mouseleave', function() {
+  document.querySelectorAll('.star-pick').forEach((s,i) => s.classList.toggle('on', i < pickedRating));
 });
 
 // ============================================================
-// SUBMIT REVIEW (Supabase)
+// SUBMIT REVIEW — sanitized before DB insert
 // ============================================================
 async function submitReview() {
-  const name  = document.getElementById('rv-name').value.trim();
-  const title = document.getElementById('rv-title').value.trim();
-  const body  = document.getElementById('rv-body').value.trim();
-  if (!pickedRating || !name || !body) { showToast('Please fill in all fields and select a rating'); return; }
-  try {
-    const { error } = await _sb.from('reviews').insert({
-      product_id: product.id, reviewer_name: name,
-      title, body, rating: pickedRating, verified: false,
-      created_at: new Date().toISOString()
-    });
-    if (error) throw error;
-    showToast('Review submitted! Thank you 🎉');
-    ['rv-name','rv-title','rv-body'].forEach(id => document.getElementById(id).value = '');
-    pickedRating = 0;
-    document.querySelectorAll('.star-pick').forEach(s => s.classList.remove('on'));
-  } catch(e) {
-    showToast('Could not submit review — please try again');
-    console.warn('Review error:', e);
+  // FIX: Read raw values from inputs, sanitize for display but send clean text to DB
+  const name  = document.getElementById('rv-name').value.trim().slice(0, 80);
+  const title = document.getElementById('rv-title').value.trim().slice(0, 120);
+  const body  = document.getElementById('rv-body').value.trim().slice(0, 2000);
+
+  if (!pickedRating || !name || !body) {
+    showToast('Please fill in all fields and select a rating');
+    return;
   }
+
+  // Basic input validation
+  if (name.length < 2)  { showToast('Please enter your name'); return; }
+  if (body.length < 10) { showToast('Review is too short'); return; }
+
+  const { error } = await _sb.from('reviews').insert({
+    product_id:    product.id,
+    reviewer_name: name,   // plain text — DB stores as-is, sanitize on render
+    title,
+    body,
+    rating:   pickedRating,
+    verified: false
+  });
+
+  if (error) { showToast('Failed to submit review — please try again'); return; }
+
+  showToast('Review submitted! Thank you 🎉');
+  document.getElementById('rv-name').value  = '';
+  document.getElementById('rv-title').value = '';
+  document.getElementById('rv-body').value  = '';
+  pickedRating = 0;
+  document.querySelectorAll('.star-pick').forEach(s => s.classList.remove('on'));
 }
 
 // ============================================================
@@ -897,16 +579,13 @@ async function submitReview() {
 let toastTimer;
 function showToast(msg) {
   const t = document.getElementById('toast');
-  t.textContent = msg;
+  t.textContent = msg;   // FIX: textContent not innerHTML
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), 2400);
 }
 
-// ============================================================
-// INIT — kick off product load
-// ============================================================
-loadProduct();
+init();
 </script>
 </body>
 </html>

@@ -240,7 +240,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
   background:var(--pink);color:#fff;font-size:10px;font-weight:900;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
 }
-.og-step-content{}
+/* FIX 1: Removed empty .og-step-content{} ruleset (was causing css(emptyRules) warning) */
 .og-step-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:2px;}
 .og-step-desc{font-size:10.5px;color:var(--muted);line-height:1.5;}
 .og-footer{
@@ -299,8 +299,15 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
 .pcard:hover .pcard-img img{transform:scale(1.07);}
 .pcard-body{padding:10px 11px 12px;}
 .pcard-cat{display:none;}
-.pcard-name{font-size:13px;font-weight:700;line-height:1.35;margin-bottom:6px;
-  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.pcard-name{
+  font-size:13px;font-weight:700;line-height:1.35;margin-bottom:6px;
+  /* FIX 2: Added standard line-clamp alongside vendor-prefixed version */
+  display:-webkit-box;
+  -webkit-line-clamp:2;
+  -webkit-box-orient:vertical;
+  line-clamp:2;
+  overflow:hidden;
+}
 .pcard-stars{display:none;}
 .star{color:#ddd;font-size:11px;}.star.on{color:var(--star);}
 .star-count{font-size:10px;color:var(--muted);font-weight:600;}
@@ -850,6 +857,15 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
   </div>
 </div>
 
+<!-- ORDERS DRAWER -->
+<div class="drawer" id="ordersDrawer" style="left:auto;right:0;">
+  <div class="dh">
+    <h2>📦 My Orders</h2>
+    <button class="close-x" onclick="closeOrdersDrawer()">✕</button>
+  </div>
+  <div class="ditems" id="ordersDrawerList" style="padding:0 16px;"></div>
+</div>
+
 <!-- PRODUCT DETAIL MODAL -->
 <div class="pd-overlay" id="pdOverlay" onclick="if(event.target===this)closePD()">
   <div class="pd-modal">
@@ -926,14 +942,26 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
           <div class="po">
             <label class="popt active" id="omPay" onclick="selPay('mpesa')">
               <input type="radio" name="pay" value="mpesa" checked/>
-              <div class="popt-ic">📱</div><div class="popt-nm">M-Pesa</div><div class="popt-sb">STK Push</div>
+              <div class="popt-ic">📱</div><div class="popt-nm">M-Pesa</div><div class="popt-sb">Send Payment</div>
             </label>
             <label class="popt" id="opPay" onclick="selPay('pod')">
               <input type="radio" name="pay" value="pod"/>
               <div class="popt-ic">💵</div><div class="popt-nm">Pay on Delivery</div><div class="popt-sb">Cash / Card</div>
             </label>
           </div>
-          <div class="mnote show" id="mpesaNote">📲 M-Pesa STK Push will be sent to your Safaricom number.</div>
+          <div class="mnote show" id="mpesaNote">
+            <div style="font-size:13px;font-weight:800;color:#1b5e20;margin-bottom:8px;">📱 Pay via M-Pesa</div>
+            <div style="background:#fff;border-radius:8px;padding:10px 14px;margin-bottom:10px;border:1.5px solid #b9f6ca;">
+              <div style="font-size:10.5px;font-weight:800;text-transform:uppercase;color:#388e3c;letter-spacing:.05em;margin-bottom:3px;">Send payment to</div>
+              <div style="font-size:20px;font-weight:900;color:#1b5e20;letter-spacing:.04em;">0791 443 762</div>
+              <div style="font-size:11px;color:#388e3c;margin-top:2px;font-weight:600;">Opulent Collections · Queenta Wachira</div>
+            </div>
+            <div style="font-size:11.5px;color:#2e7d32;margin-bottom:10px;">After sending, enter your <strong>M-Pesa confirmation code</strong> below:</div>
+            <input type="text" id="mpesaCode" placeholder="e.g. RGK4X2T8KL" maxlength="12"
+              style="width:100%;padding:9px 12px;border:1.5px solid #b9f6ca;border-radius:8px;font-size:13.5px;font-family:'Nunito',sans-serif;font-weight:800;text-transform:uppercase;letter-spacing:.08em;outline:none;color:#1b5e20;background:#f1fdf4;"
+              oninput="this.value=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'')"/>
+            <div style="font-size:10.5px;color:#66bb6a;margin-top:5px;">The code looks like: <strong>RGK4X2T8KL</strong> — from the SMS you received</div>
+          </div>
         </div>
         <div class="osum" id="orderSummary"></div>
         <button class="place-btn" id="placeBtn" onclick="placeOrder()">Place Order 🎉</button>
@@ -943,8 +971,9 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
       <div class="s-icon">🎉</div>
       <h3>Order Confirmed!</h3>
       <p>Thank you for shopping at Opulent Collections!<br/>We'll be in touch soon.</p>
-      <div class="onum" id="oNum"></div><br/>
-      <button class="btn btn-secondary btn-sm" onclick="viewInvoice()" style="margin-top:12px">🧾 View Invoice</button><br/>
+      <div class="onum" id="oNum"></div>
+      <div id="mpesaSuccessInfo" style="display:none;margin:4px 0 8px;"></div>
+      <button class="btn btn-secondary btn-sm" onclick="viewInvoice()" style="margin-top:8px">🧾 View Invoice</button><br/>
       <button class="cont-btn" onclick="closeCheckout();clearCart()">Continue Shopping</button>
     </div>
   </div>
@@ -960,8 +989,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
         <button class="auth-tab" id="tabUp" onclick="switchAuth('up')">Create Account</button>
       </div>
       <div id="signInForm">
-        <button class="social-btn" onclick="googleSignIn()">🌐 Continue with Google</button>
-        <div class="or-div">or</div>
         <div class="fg"><label>Email</label><input type="email" id="siEm" placeholder="jane@example.com"/></div>
         <div class="fg"><label>Password</label><input type="password" id="siPw" placeholder="••••••••"/></div>
         <button class="btn-auth" onclick="doSignIn()">Sign In</button>
@@ -1088,30 +1115,37 @@ const DEFAULT_PRODUCTS = [
   {id:20,name:"Adjustable Phone Stand",cat:"appliances",price:650,oldPrice:null,stock:80,rating:4.3,reviews:501,badge:null,desc:"Foldable aluminum desktop phone stand. Adjustable angle. Fits all phones and tablets.",img:"https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80",images:["https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80"]},
 ];
 
-let PRODUCTS = JSON.parse(localStorage.getItem('sc_products')||'null') || JSON.parse(JSON.stringify(DEFAULT_PRODUCTS));
-let cart     = JSON.parse(localStorage.getItem('sc_cart')   ||'[]');
-let wishlist = JSON.parse(localStorage.getItem('sc_wish')   ||'[]');
-let orders   = JSON.parse(localStorage.getItem('sc_orders') ||'[]');
-let user     = JSON.parse(localStorage.getItem('sc_user')   ||'null');
-let reviews  = JSON.parse(localStorage.getItem('sc_reviews')||'{}');
+// FIX 3: Safely read from localStorage with proper null handling
+let PRODUCTS = (() => { try { return JSON.parse(localStorage.getItem('sc_products') || 'null') || JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); } })();
+let cart     = (() => { try { return JSON.parse(localStorage.getItem('sc_cart')    || '[]'); } catch(e) { return []; } })();
+let wishlist = (() => { try { return JSON.parse(localStorage.getItem('sc_wish')    || '[]'); } catch(e) { return []; } })();
+let orders   = (() => { try { return JSON.parse(localStorage.getItem('sc_orders')  || '[]'); } catch(e) { return []; } })();
+let user     = (() => { try { return JSON.parse(localStorage.getItem('sc_user')    || 'null'); } catch(e) { return null; } })();
+let reviews  = (() => { try { return JSON.parse(localStorage.getItem('sc_reviews') || '{}'); } catch(e) { return {}; } })();
 let activeCat='all', pdId=null, pdQty=1, lastOrderId=null, pickedStar=5;
 let nextId = Math.max(...PRODUCTS.map(p=>p.id), 0) + 1;
 let pdImages = [];
 let pdImgIndex = 0;
 
 const save = () => {
-  localStorage.setItem('sc_products', JSON.stringify(PRODUCTS));
-  localStorage.setItem('sc_cart',     JSON.stringify(cart));
-  localStorage.setItem('sc_wish',     JSON.stringify(wishlist));
-  localStorage.setItem('sc_orders',   JSON.stringify(orders));
-  localStorage.setItem('sc_reviews',  JSON.stringify(reviews));
-  if (user) localStorage.setItem('sc_user', JSON.stringify(user));
+  try {
+    localStorage.setItem('sc_products', JSON.stringify(PRODUCTS));
+    localStorage.setItem('sc_cart',     JSON.stringify(cart));
+    localStorage.setItem('sc_wish',     JSON.stringify(wishlist));
+    localStorage.setItem('sc_orders',   JSON.stringify(orders));
+    localStorage.setItem('sc_reviews',  JSON.stringify(reviews));
+    if (user) localStorage.setItem('sc_user', JSON.stringify(user));
+  } catch(e) { console.warn('Storage save failed:', e); }
 };
 const fmt  = p => 'Ksh. ' + Number(p).toLocaleString();
 const disc = p => p.oldPrice ? Math.round((1 - p.price/p.oldPrice)*100) : 0;
 const cartCount = () => cart.reduce((s,c) => s+c.qty, 0);
 const cartSub   = () => cart.reduce((s,c) => s+c.price*c.qty, 0);
-const cartDel   = () => cartSub() >= 5000 ? 0 : 300;
+// Reads live from sc_settings so admin changes take effect immediately
+const getSettings = () => { try { return JSON.parse(localStorage.getItem('sc_settings')||'{}'); } catch(e) { return {}; } };
+const getDelFee   = () => parseInt(getSettings().delFee  || 300);
+const getFreeMin  = () => parseInt(getSettings().freeDelMin || 5000);
+const cartDel     = () => cartSub() >= getFreeMin() ? 0 : getDelFee();
 const stars = (r,sz=11) => Array.from({length:5},(_,i)=>`<span class="star${i<Math.round(r)?' on':''}" style="font-size:${sz}px">★</span>`).join('');
 
 function toast(msg, dur=2400){
@@ -1152,8 +1186,48 @@ function showOffers(){
   render(); scrollToGrid();
 }
 function openOrders(){
-  if(!orders.length){toast('📦 No orders yet. Shop something!');return;}
-  toast(`📦 You have ${orders.length} order${orders.length>1?'s':''}`);
+  renderOrdersDrawer();
+  document.getElementById('ordersDrawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeOrdersDrawer(){
+  document.getElementById('ordersDrawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+function renderOrdersDrawer(){
+  const list = document.getElementById('ordersDrawerList');
+  if(!orders.length){
+    list.innerHTML=`<div class="empty-cart"><div style="font-size:40px;margin-bottom:10px">📦</div><div style="font-size:14px;font-weight:700;color:var(--text)">No orders yet</div><div style="font-size:12px;margin-top:6px">Start shopping to see your orders here!</div></div>`;
+    return;
+  }
+  list.innerHTML = orders.map(o=>{
+    const statusColor = {Processing:'#F57C00',Shipped:'#1565C0',Delivered:'var(--green)',Cancelled:'var(--red)'}[o.status]||'var(--muted)';
+    const statusBg    = {Processing:'#FFF3E0',Shipped:'#E3F2FD',Delivered:'#E8F5E9',Cancelled:'#fdecea'}[o.status]||'#f5f5f5';
+    const itemPreviews = (o.items||[]).slice(0,4).map(it=>
+      `<img src="${it.img||''}" alt="${it.name||''}" style="width:36px;height:36px;border-radius:7px;object-fit:cover;border:1.5px solid var(--pink-border);flex-shrink:0;"/>`
+    ).join('');
+    const extraItems = o.items.length > 4 ? `<div style="width:36px;height:36px;border-radius:7px;background:var(--pink-pale);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:var(--pink);flex-shrink:0;">+${o.items.length-4}</div>` : '';
+    const itemNames = (o.items||[]).map(it=>`${it.name} ×${it.qty}`).join(', ');
+    return `<div style="padding:14px 0;border-bottom:1px solid var(--pink-border);">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
+        <div>
+          <div style="font-size:12px;font-weight:800;color:var(--pink)">#${o.id}</div>
+          <div style="font-size:10.5px;color:var(--muted);margin-top:1px">${o.date}${o.time?' · '+o.time:''}</div>
+        </div>
+        <span style="font-size:10px;font-weight:800;padding:3px 10px;border-radius:100px;background:${statusBg};color:${statusColor}">${o.status}</span>
+      </div>
+      <div style="display:flex;gap:5px;margin-bottom:8px;flex-wrap:wrap;">${itemPreviews}${extraItems}</div>
+      <div style="font-size:11.5px;color:var(--muted);margin-bottom:8px;line-height:1.4;">${itemNames}</div>
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="font-size:13px;font-weight:800;color:var(--text)">Total: <span style="color:var(--pink)">${fmt(o.total)}</span></div>
+        <button onclick="viewOrderInvoice('${o.id}')" style="padding:5px 13px;border-radius:100px;background:var(--pink-pale);color:var(--pink);border:1.5px solid var(--pink-border);font-size:11.5px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;">🧾 Invoice</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+function viewOrderInvoice(id){
+  closeOrdersDrawer();
+  setTimeout(()=>{ lastOrderId=id; viewInvoice(); }, 150);
 }
 
 async function initAuth() {
@@ -1273,7 +1347,7 @@ function getFiltered(){
   return list;
 }
 function render(){
-  PRODUCTS=JSON.parse(localStorage.getItem('sc_products')||'null')||PRODUCTS;
+  try { PRODUCTS=JSON.parse(localStorage.getItem('sc_products')||'null')||PRODUCTS; } catch(e) {}
   nextId=Math.max(...PRODUCTS.map(p=>p.id),0)+1;
   const list=getFiltered();
   document.getElementById('resultsCount').textContent=list.length+' product'+(list.length!==1?'s':'');
@@ -1338,7 +1412,7 @@ function renderDrawer(){
     <div class="ci-ctrl"><button class="qb" onclick="chQty(${it.id},-1)">−</button><span class="qn">${it.qty}</span><button class="qb" onclick="chQty(${it.id},1)">+</button></div></div>
     <button class="rm-btn" onclick="remItem(${it.id})">✕</button></div>`).join('');
   const sub=cartSub(),del=cartDel();
-  document.getElementById('freeDelNote').textContent=del===0?'🎉 You have FREE delivery!':'🚚 Add '+fmt(5000-sub)+' more for FREE delivery';
+  document.getElementById('freeDelNote').textContent=del===0?'🎉 You have FREE delivery!':'🚚 Add '+fmt(getFreeMin()-sub)+' more for FREE delivery';
   document.getElementById('dSub').textContent=fmt(sub);
   document.getElementById('dDel').innerHTML=del===0?'<span style="color:var(--green);font-weight:800">FREE</span>':fmt(del);
   document.getElementById('dTotal').textContent=fmt(sub+del);
@@ -1438,7 +1512,19 @@ document.addEventListener('keydown', e=>{
 function openPD(id){
   pdId=id; pdQty=1;
   const p=PRODUCTS.find(x=>x.id===id);
-  const imgs = (p.images && p.images.length) ? p.images : [p.img];
+  // FIX 4: Robust images resolution — handles string JSON, array, or missing
+  let imgs;
+  try {
+    const raw = p.images;
+    if (Array.isArray(raw) && raw.length) {
+      imgs = raw;
+    } else if (typeof raw === 'string') {
+      const parsed = JSON.parse(raw);
+      imgs = Array.isArray(parsed) && parsed.length ? parsed : [p.img];
+    } else {
+      imgs = [p.img];
+    }
+  } catch(e) { imgs = [p.img]; }
   buildPDGallery(imgs);
   pdGoToImage(0, false);
   document.getElementById('pdCat').textContent=p.cat.charAt(0).toUpperCase()+p.cat.slice(1);
@@ -1513,23 +1599,70 @@ function selPay(t){
   document.getElementById('omPay').classList.toggle('active',t==='mpesa');
   document.getElementById('opPay').classList.toggle('active',t==='pod');
   document.getElementById('mpesaNote').classList.toggle('show',t==='mpesa');
+  // Clear code when switching away from mpesa
+  if(t!=='mpesa'){ const c=document.getElementById('mpesaCode'); if(c) c.value=''; }
 }
 async function placeOrder(){
   const fn=document.getElementById('fn').value.trim(),ph=document.getElementById('ph').value.trim();
   const co=document.getElementById('co').value,ad=document.getElementById('ad').value.trim();
   if(!fn||!ph||!co||!ad){toast('⚠ Fill all required fields');return;}
+  const payMethod=document.querySelector('[name=pay]:checked').value;
+  const mpesaCode=(document.getElementById('mpesaCode')?.value||'').trim().toUpperCase();
+  if(payMethod==='mpesa'&&!mpesaCode){
+    toast('⚠ Enter your M-Pesa confirmation code');
+    document.getElementById('mpesaCode')?.focus();
+    return;
+  }
+  if(payMethod==='mpesa'&&mpesaCode.length<6){
+    toast('⚠ M-Pesa code looks too short — check your SMS');
+    return;
+  }
   const btn=document.getElementById('placeBtn'); btn.disabled=true; btn.textContent='Processing…';
-  await new Promise(r=>setTimeout(r,1800));
   const oid='SUN-'+Date.now().toString().slice(-6); lastOrderId=oid;
-  orders.unshift({id:oid,date:new Date().toLocaleDateString('en-KE'),time:new Date().toLocaleTimeString('en-KE'),
-    items:JSON.parse(JSON.stringify(cart)),subtotal:cartSub(),delivery:cartDel(),total:cartSub()+cartDel(),
-    status:'Processing',county:co,address:ad,phone:ph,email:document.getElementById('em').value,
-    name:fn+' '+document.getElementById('ln').value,payment:document.querySelector('[name=pay]:checked').value,
-    notes:document.getElementById('notes').value});
-  try { await window._sb.from('orders').insert(orders[0]); } catch(_){}
+  const orderObj={
+    id:oid,
+    date:new Date().toLocaleDateString('en-KE'),
+    time:new Date().toLocaleTimeString('en-KE'),
+    items:JSON.parse(JSON.stringify(cart)),
+    subtotal:cartSub(),delivery:cartDel(),total:cartSub()+cartDel(),
+    status: payMethod==='mpesa' ? 'Paid - Processing' : 'Processing',
+    county:co,address:ad,phone:ph,
+    email:document.getElementById('em').value,
+    name:fn+' '+document.getElementById('ln').value,
+    payment:payMethod,
+    mpesaCode: payMethod==='mpesa' ? mpesaCode : null,
+    notes:document.getElementById('notes').value
+  };
+  orders.unshift(orderObj);
+  try {
+    const dbPayload = {
+      id:orderObj.id, customer_name:orderObj.name, customer_phone:orderObj.phone,
+      customer_email:orderObj.email||null, address:orderObj.address, county:orderObj.county,
+      payment_method:orderObj.payment, notes:orderObj.notes||null,
+      items:orderObj.items, subtotal:orderObj.subtotal, delivery:orderObj.delivery,
+      total:orderObj.total, status:orderObj.status,
+      mpesa_code:orderObj.mpesaCode||null,
+      created_at:new Date().toISOString()
+    };
+    await window._sb.from('orders').insert(dbPayload);
+  } catch(_){}
   cart.forEach(ci=>{ const p=PRODUCTS.find(x=>x.id===ci.id); if(p)p.stock=Math.max(0,p.stock-ci.qty); });
   save();
   document.getElementById('oNum').textContent='Order #'+oid;
+  // Show mpesa code in success view
+  const mpesaSuccessEl=document.getElementById('mpesaSuccessInfo');
+  if(mpesaSuccessEl){
+    if(payMethod==='mpesa'){
+      mpesaSuccessEl.innerHTML=`<div style="background:#e8f5e9;border-radius:10px;padding:12px 16px;margin:10px 0;text-align:left;">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#388e3c;margin-bottom:4px;">✅ M-Pesa Payment Received</div>
+        <div style="font-size:13px;font-weight:700;color:#1b5e20;">Confirmation Code: <span style="font-size:15px;font-weight:900;letter-spacing:.08em">${mpesaCode}</span></div>
+        <div style="font-size:11.5px;color:#388e3c;margin-top:4px;">Keep this code for your records.</div>
+      </div>`;
+      mpesaSuccessEl.style.display='block';
+    } else {
+      mpesaSuccessEl.style.display='none';
+    }
+  }
   document.getElementById('checkoutForm').style.display='none';
   document.getElementById('successView').classList.add('show');
   btn.disabled=false; btn.textContent='Place Order 🎉';
@@ -1539,7 +1672,7 @@ function viewInvoice(){
   const o=orders.find(x=>x.id===lastOrderId)||orders[0]; if(!o)return;
   document.getElementById('invoiceContent').innerHTML=`
     <div class="inv-header">
-      <div><div class="inv-logo">Opulent Collections</div><div style="font-size:12px;color:var(--muted);margin-top:4px">Nairobi, Kenya<br/>📞 +254 791 443 762</div></div>
+      <div><div class="inv-logo">${getSettings().storeName||'Opulent Collections'}</div><div style="font-size:12px;color:var(--muted);margin-top:4px">${getSettings().storeAddr||'Nairobi, Kenya'}<br/>📞 ${getSettings().storePhone||'+254 791 443 762'}</div></div>
       <div style="text-align:right"><div class="inv-title">INVOICE</div><div style="font-size:12px;color:var(--muted)">#${o.id}<br/>${o.date}</div></div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px;font-size:12.5px;">
@@ -1577,8 +1710,12 @@ function doSearch(q){
 document.addEventListener('keydown', e=>{if(e.key==='Escape'&&!document.getElementById('pdLightbox').classList.contains('open'))closeSearch();});
 
 (function(){
-  let end=localStorage.getItem('sc_timer');
-  if(!end||Date.now()>Number(end)){end=Date.now()+(6*3600+47*60+23)*1000;localStorage.setItem('sc_timer',end);}
+  let end;
+  try { end = localStorage.getItem('sc_timer'); } catch(e) {}
+  if(!end||Date.now()>Number(end)){
+    end=Date.now()+(6*3600+47*60+23)*1000;
+    try { localStorage.setItem('sc_timer',end); } catch(e) {}
+  }
   setInterval(()=>{
     const d=Math.max(0,Number(end)-Date.now());
     const h=Math.floor(d/3600000),m=Math.floor(d%3600000/60000),s=Math.floor(d%60000/1000);
@@ -1590,8 +1727,14 @@ document.addEventListener('keydown', e=>{if(e.key==='Escape'&&!document.getEleme
 })();
 
 window.addEventListener('storage',e=>{
-  if(e.key==='sc_products'){PRODUCTS=JSON.parse(e.newValue||'null')||PRODUCTS;render();}
-  if(e.key==='sc_cart'){cart=JSON.parse(e.newValue||'[]');updateBadges();}
+  if(e.key==='sc_products'){ try { PRODUCTS=JSON.parse(e.newValue||'null')||PRODUCTS; render(); } catch(err){} }
+  if(e.key==='sc_cart'){ try { cart=JSON.parse(e.newValue||'[]'); updateBadges(); } catch(err){} }
+  if(e.key==='sc_settings'){
+    // Delivery fee changed in admin — update cart drawer and checkout live
+    updateCart();
+    const sumEl=document.getElementById('orderSummary');
+    if(sumEl && sumEl.innerHTML) renderOrderSummary();
+  }
 });
 
 async function loadProductsFromDB(){
@@ -1603,12 +1746,25 @@ async function loadProductsFromDB(){
         oldPrice:p.old_price,stock:p.stock,rating:Number(p.rating)||4.5,
         reviews:p.reviews||0,badge:p.badge||null,desc:p.description||'',
         img:p.img,
-        images: (() => { try { const a = typeof p.images === 'string' ? JSON.parse(p.images) : p.images; return (Array.isArray(a) && a.length) ? a : [p.img]; } catch(e) { return [p.img]; } })()
+        // FIX 4 (continued): Clean images parsing — handles Supabase returning
+        // either a native array or a JSON string from a text column
+        images: (() => {
+          try {
+            const raw = p.images;
+            if (Array.isArray(raw) && raw.length) return raw;
+            if (typeof raw === 'string') {
+              const parsed = JSON.parse(raw);
+              return Array.isArray(parsed) && parsed.length ? parsed : [p.img];
+            }
+            return [p.img];
+          } catch(e) { return [p.img]; }
+        })()
       }));
-      localStorage.setItem('sc_products',JSON.stringify(PRODUCTS));
+      // Persist to localStorage so the page survives a refresh without a DB round-trip
+      try { localStorage.setItem('sc_products', JSON.stringify(PRODUCTS)); } catch(e) {}
       render();
     }
-  } catch(e){ console.warn('Using cached products'); }
+  } catch(e){ console.warn('Using cached/default products'); }
 }
 function setupRealtimeProducts(){
   try {
