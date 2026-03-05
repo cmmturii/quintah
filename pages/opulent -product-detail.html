@@ -437,16 +437,37 @@ function buildReviews() {
 
 function buildRelated() {
   const grid = document.getElementById('related-grid');
-  // FIX: product name sanitized before innerHTML insertion
-  grid.innerHTML = relatedProducts.map(p => `
+  // Try to load real products from localStorage (synced from admin)
+  let allProds = [];
+  try { allProds = JSON.parse(localStorage.getItem('sc_products') || '[]'); } catch(e){}
+
+  let related = [];
+  if (allProds.length) {
+    // Show same category first, excluding current product
+    const sameCat = allProds.filter(p => p.cat === product.category?.toLowerCase() && p.id !== product.id);
+    const others  = allProds.filter(p => p.cat !== product.category?.toLowerCase() && p.id !== product.id);
+    related = [...sameCat, ...others].slice(0, 6);
+  }
+
+  // Fall back to hardcoded if no real products
+  if (!related.length) related = relatedProducts.map(p => ({
+    id: p.id, name: p.name, price: p.price, img: p.img, images: [p.img]
+  }));
+
+  if (!related.length) { grid.innerHTML = ''; return; }
+
+  grid.innerHTML = related.map(p => {
+    const img   = (p.images && p.images[0]) || p.img || '';
+    const price = p.price ? 'KSh ' + Number(p.price).toLocaleString() : (p.price || '');
+    return `
     <div class="pcard" onclick="window.location.href='opulent-product-detail.html?id=${encodeURIComponent(p.id)}'">
-      <div class="pcard-img"><img src="${sanitize(p.img)}" alt="${sanitize(p.name)}"/></div>
+      <div class="pcard-img"><img src="${sanitize(img)}" alt="${sanitize(p.name)}" onerror="this.src='https://via.placeholder.com/400'"/></div>
       <div class="pcard-body">
         <div class="pcard-name">${sanitize(p.name)}</div>
-        <div class="pcard-price">${sanitize(p.price)}</div>
+        <div class="pcard-price">${sanitize(price)}</div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
 }
 
 // ============================================================

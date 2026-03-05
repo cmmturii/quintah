@@ -286,6 +286,7 @@ tr:hover td{background:#fffbfc;}
       <input class="finput" id="orderSearch" placeholder="🔍 Search by ID, name, phone…" oninput="renderOrders()"/>
       <select class="fselect" id="orderStatusFilter" onchange="renderOrders()">
         <option value="all">All Statuses</option><option value="Processing">Processing</option>
+        <option value="Packed">Packed</option><option value="Out for Delivery">Out for Delivery</option>
         <option value="Shipped">Shipped</option><option value="Delivered">Delivered</option><option value="Cancelled">Cancelled</option>
       </select>
       <select class="fselect" id="orderSortFilter" onchange="renderOrders()">
@@ -351,10 +352,27 @@ tr:hover td{background:#fffbfc;}
       </div>
       <button class="btn btn-primary" onclick="saveSettings()">Save Delivery Settings</button>
     </div>
-    <div class="settings-section"><h3>🔔 Notifications</h3>
-      <div class="toggle-row"><div><div class="toggle-label">New Order Alerts</div><div class="toggle-sub">Get notified when a new order is placed</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-      <div class="toggle-row"><div><div class="toggle-label">Low Stock Alerts</div><div class="toggle-sub">Alert when product stock falls below 5</div></div><button class="toggle on" onclick="this.classList.toggle('on')"></button></div>
-      <div class="toggle-row"><div><div class="toggle-label">Daily Sales Report</div><div class="toggle-sub">Receive a daily summary email</div></div><button class="toggle" onclick="this.classList.toggle('on')"></button></div>
+    <div class="settings-section"><h3>🔔 WhatsApp Notifications</h3>
+      <div class="fg">
+        <label>Your WhatsApp Number (for order alerts)</label>
+        <input type="text" id="sAdminWA" placeholder="254791443762" maxlength="20"/>
+        <small style="color:var(--muted);font-size:11px">Country code, no + or spaces — e.g. 254791443762</small>
+      </div>
+      <div class="fg">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;">
+          <input type="checkbox" id="sNotifyWA" style="accent-color:var(--pink);width:16px;height:16px"/>
+          Open WhatsApp alert when order status changes
+        </label>
+      </div>
+      <button class="btn btn-primary" onclick="saveSettings()">Save Notification Settings</button>
+    </div>
+    <div class="settings-section"><h3>📊 Google Analytics</h3>
+      <div class="fg">
+        <label>Measurement ID</label>
+        <input type="text" id="sGaId" placeholder="G-XXXXXXXXXX" maxlength="20"/>
+        <small style="color:var(--muted);font-size:11px">Get from Google Analytics → Admin → Data Streams → your stream</small>
+      </div>
+      <button class="btn btn-primary" onclick="saveSettings()">Save Analytics</button>
     </div>
     <div class="settings-section"><h3>🗃️ Data Management</h3>
       <div style="display:flex;gap:9px;flex-wrap:wrap;">
@@ -594,8 +612,8 @@ function renderDashboard(){
   document.getElementById('recentOrders').innerHTML=orders.slice(0,6).map(o=>`<div class="order-row"><div><div class="order-id">#${esc(o.id)}</div><div class="order-meta">${esc(o.name)} · ${esc(o.date)}</div></div><div style="text-align:right"><div class="order-total">${fmt(o.total)}</div><span class="status-pill sp-${esc(o.status.toLowerCase())}">${esc(o.status)}</span></div></div>`).join('')||'<div style="text-align:center;padding:20px;color:var(--muted);font-size:13px">No orders yet</div>';
   const low=PRODUCTS.filter(p=>p.stock<=5).sort((a,b)=>a.stock-b.stock);
   document.getElementById('lowStock').innerHTML=low.length?low.map(p=>`<div class="ls-item"><img class="ls-img" src="${esc(p.img)}" alt=""/><div style="flex:1"><div class="ls-name">${esc(p.name)}</div><div style="font-size:11px;color:var(--muted)">${esc(p.cat)}</div></div><span class="ls-stock ${p.stock===0?'out':'low'}">${p.stock===0?'OUT':p.stock+' left'}</span><button class="btn btn-green btn-sm" onclick="restockProduct(${Number(p.id)})">Restock</button></div>`).join(''):'<div style="text-align:center;color:var(--green);padding:16px;font-size:13px;font-weight:700">✅ All products well stocked</div>';
-  const statuses=['Processing','Shipped','Delivered','Cancelled'];
-  const statusColors={'Processing':'var(--orange)','Shipped':'var(--blue)','Delivered':'var(--green)','Cancelled':'var(--red)'};
+  const statuses=['Processing','Packed','Out for Delivery','Shipped','Delivered','Cancelled'];
+  const statusColors={'Processing':'var(--orange)','Packed':'#8e44ad','Out for Delivery':'var(--blue)','Shipped':'#2980b9','Delivered':'var(--green)','Cancelled':'var(--red)'};
   const maxS=Math.max(...statuses.map(s=>orders.filter(o=>o.status===s).length),1);
   document.getElementById('statusChart').innerHTML=statuses.map(s=>{const count=orders.filter(o=>o.status===s).length;return `<div class="bar-row"><div class="bar-label">${s}</div><div class="bar-track"><div class="bar-fill" style="width:${Math.round(count/maxS*100)}%;background:${statusColors[s]}"></div></div><div class="bar-val" style="color:${statusColors[s]}">${count}</div></div>`;}).join('');
 }
@@ -632,6 +650,8 @@ function renderOrders(){
       </td>
       <td><select class="fselect" style="padding:4px 8px;font-size:11px;" onchange="updateStatus('${esc(o.id)}',this.value)">
         <option ${o.status==='Processing'?'selected':''}>Processing</option>
+        <option ${o.status==='Packed'?'selected':''}>Packed</option>
+        <option ${o.status==='Out for Delivery'?'selected':''}>Out for Delivery</option>
         <option ${o.status==='Shipped'?'selected':''}>Shipped</option>
         <option ${o.status==='Delivered'?'selected':''}>Delivered</option>
         <option ${o.status==='Cancelled'?'selected':''}>Cancelled</option>
@@ -648,7 +668,9 @@ function renderOrders(){
 
 function updateStatus(id, status){
   const o = orders.find(x=>x.id===id);
-  if(o){ o.status=status; save(); updateOrderStatusDB(id,status); renderOrders(); renderDashboard(); toast('✅ Status → '+status,'success'); }
+  if(o){ o.status=status; save(); updateOrderStatusDB(id,status); renderOrders(); renderDashboard(); toast('✅ Status → '+status,'success');
+  const settings=JSON.parse(localStorage.getItem('sc_settings')||'{}');
+  if(settings.notifyWhatsApp==='1') notifyStatusChange(o,status); }
 }
 
 function cancelOrder(id){
@@ -993,7 +1015,7 @@ function showOrderDetail(id){
       <div style="display:flex;justify-content:space-between;padding:10px 0;font-size:14px;font-weight:800"><span>Total</span><span style="color:var(--pink)">${fmt(o.total)}</span></div>
     </div>
     <div style="display:flex;gap:8px;margin-top:10px">
-      <select class="fselect" onchange="updateStatus('${esc(o.id)}',this.value);document.getElementById('orderDetailModal').classList.remove('open')"><option value="">Update Status…</option><option>Processing</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select>
+      <select class="fselect" onchange="updateStatus('${esc(o.id)}',this.value);document.getElementById('orderDetailModal').classList.remove('open')"><option value="">Update Status…</option><option>Processing</option><option>Packed</option><option>Out for Delivery</option><option>Shipped</option><option>Delivered</option><option>Cancelled</option></select>
       <button class="btn btn-secondary" onclick="showInvoice('${esc(o.id)}')">🧾 Invoice</button>
     </div>`;
   document.getElementById('orderDetailModal').classList.add('open');
@@ -1046,12 +1068,15 @@ function renderAnalytics(){
 
 function saveSettings(){
   settings={
-    storeName:  document.getElementById('storeName')?.value  || 'Opulent Collections',
-    storePhone: document.getElementById('storePhone')?.value || '+254 791 443 762',
-    storeEmail: document.getElementById('storeEmail')?.value || 'orders@opulentcollections.co.ke',
-    storeAddr:  document.getElementById('storeAddr')?.value  || 'Nairobi, Kenya',
-    delFee:     document.getElementById('delFee')?.value     || '300',
-    freeDelMin: document.getElementById('freeDelMin')?.value || '5000'
+    storeName:     document.getElementById('storeName')?.value    || 'Opulent Collections',
+    storePhone:    document.getElementById('storePhone')?.value   || '+254 791 443 762',
+    storeEmail:    document.getElementById('storeEmail')?.value   || 'orders@opulentcollections.co.ke',
+    storeAddr:     document.getElementById('storeAddr')?.value    || 'Nairobi, Kenya',
+    delFee:        document.getElementById('delFee')?.value       || '300',
+    freeDelMin:    document.getElementById('freeDelMin')?.value   || '5000',
+    adminWhatsApp: document.getElementById('sAdminWA')?.value.trim()  || '254791443762',
+    notifyWhatsApp:document.getElementById('sNotifyWA')?.checked  ? '1' : '0',
+    gaId:          document.getElementById('sGaId')?.value.trim() || ''
   };
   localStorage.setItem('sc_settings', JSON.stringify(settings));
   // Broadcast to shop tab so it updates live without refresh
@@ -1067,6 +1092,9 @@ function loadSettingsIntoForm(){
   if(s.storeAddr)  document.getElementById('storeAddr').value  = s.storeAddr;
   if(s.delFee)     document.getElementById('delFee').value     = s.delFee;
   if(s.freeDelMin) document.getElementById('freeDelMin').value = s.freeDelMin;
+  if(document.getElementById('sAdminWA'))  document.getElementById('sAdminWA').value    = s.adminWhatsApp||'254791443762';
+  if(document.getElementById('sNotifyWA')) document.getElementById('sNotifyWA').checked = s.notifyWhatsApp==='1';
+  if(document.getElementById('sGaId'))     document.getElementById('sGaId').value        = s.gaId||'';
 }
 function exportData(){const data={products:PRODUCTS,orders,settings,exported:new Date().toISOString()};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='opulent-data-'+Date.now()+'.json';a.click();toast('✅ Data exported!','success');}
 function clearAllOrders(){if(!confirm('Clear ALL orders? This cannot be undone!'))return;orders=[];save();renderDashboard();toast('All orders cleared');}
@@ -1207,6 +1235,43 @@ window.addEventListener('storage',e=>{
 // ═══════════════════════════════════════════════
 // INIT — renders immediately from localStorage, then loads DB in background
 // ═══════════════════════════════════════════════
+
+// ═══════════════════════════════════════════════
+// WHATSAPP ADMIN NOTIFICATIONS
+// ═══════════════════════════════════════════════
+function notifyWhatsApp(order) {
+  const settings = JSON.parse(localStorage.getItem('sc_settings') || '{}');
+  const adminPhone = settings.adminWhatsApp || '254791443762';
+  const items = (order.items || []).map(i => `  • ${esc(i.name)} x${i.qty}`).join('\n');
+  const msg = `🛍️ NEW ORDER #${order.id}
+👤 ${order.name}
+📞 ${order.phone}
+📍 ${order.county || ''} — ${order.address || ''}
+💰 Total: Ksh ${Number(order.total).toLocaleString()}
+💳 Payment: ${order.payment === 'mpesa' ? 'M-Pesa ✅ ' + (order.mpesaCode || '') : 'Pay on Delivery'}
+
+Items:
+${items}
+
+View in admin to update status.`;
+  const url = `https://wa.me/${adminPhone}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
+function notifyStatusChange(order, newStatus) {
+  const settings = JSON.parse(localStorage.getItem('sc_settings') || '{}');
+  const adminPhone = settings.adminWhatsApp || '254791443762';
+  const statusEmoji = {
+    'Processing': '🔄', 'Packed': '📦', 'Out for Delivery': '🚚',
+    'Shipped': '✈️', 'Delivered': '✅', 'Cancelled': '❌'
+  }[newStatus] || '📋';
+  const msg = `${statusEmoji} Order #${order.id} → ${newStatus}
+👤 ${order.name} | 📞 ${order.phone}
+💰 Ksh ${Number(order.total).toLocaleString()}`;
+  const url = `https://wa.me/${adminPhone}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+}
+
 async function adminInit(){
   const session=sessionStorage.getItem('oc_admin');
   if(!session){window.location.href='opulent%20admin%20login.html';return;}

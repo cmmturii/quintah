@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Track My Order — Opulent Collections</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --pink:#C0547A;--pink-light:#E06E8A;--pink-pale:#FDF0F4;--pink-border:#F2D0DB;
+  --white:#fff;--bg:#FFF8FB;--text:#2E1A22;--muted:#9B6B7A;--shadow:rgba(192,84,122,0.12);
+  --green:#27ae60;--orange:#e67e22;--red:#e74c3c;--blue:#1565C0;--purple:#8e44ad;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+
+/* TOPBAR */
+.topbar{background:var(--white);border-bottom:1.5px solid var(--pink-border);padding:0 20px;height:58px;
+  display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;
+  box-shadow:0 2px 12px var(--shadow);}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none;}
+.logo-icon{width:36px;height:36px;background:var(--pink);border-radius:9px;display:flex;align-items:center;justify-content:center;}
+.brand{font-size:16px;font-weight:900;color:var(--pink);}
+.back-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border-radius:100px;
+  background:var(--pink-pale);color:var(--pink);border:1.5px solid var(--pink-border);
+  font-size:12.5px;font-weight:800;cursor:pointer;text-decoration:none;font-family:'Nunito',sans-serif;}
+.back-btn:hover{background:var(--pink-border);}
+
+/* HERO */
+.hero{text-align:center;padding:40px 20px 30px;}
+.hero-icon{font-size:52px;margin-bottom:12px;}
+.hero h1{font-size:24px;font-weight:900;margin-bottom:8px;}
+.hero p{font-size:14px;color:var(--muted);font-weight:600;}
+
+/* SEARCH BOX */
+.search-box{max-width:480px;margin:0 auto 36px;padding:0 20px;}
+.search-card{background:var(--white);border-radius:16px;border:1.5px solid var(--pink-border);
+  padding:24px;box-shadow:0 4px 20px var(--shadow);}
+.search-card h2{font-size:15px;font-weight:800;margin-bottom:14px;}
+.input-row{display:flex;gap:8px;}
+.track-input{flex:1;padding:11px 14px;border:1.5px solid var(--pink-border);border-radius:100px;
+  font-size:13.5px;font-family:'Nunito',sans-serif;color:var(--text);background:#FFF5F8;outline:none;}
+.track-input:focus{border-color:var(--pink);background:var(--white);}
+.track-btn{padding:11px 22px;background:var(--pink);color:var(--white);border:none;border-radius:100px;
+  font-size:13.5px;font-weight:800;cursor:pointer;font-family:'Nunito',sans-serif;white-space:nowrap;transition:background .15s;}
+.track-btn:hover{background:var(--pink-light);}
+.track-btn:disabled{opacity:.6;cursor:not-allowed;}
+.hint{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:8px;}
+
+/* RESULTS */
+.results{max-width:600px;margin:0 auto;padding:0 20px 60px;}
+.result-header{font-size:13px;font-weight:700;color:var(--muted);margin-bottom:12px;}
+
+/* ORDER CARD */
+.order-card{background:var(--white);border-radius:16px;border:1.5px solid var(--pink-border);
+  margin-bottom:16px;overflow:hidden;box-shadow:0 2px 12px var(--shadow);}
+.order-card-top{padding:16px 18px;display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--pink-border);cursor:pointer;}
+.order-card-top:hover{background:var(--pink-pale);}
+.order-id{font-size:13px;font-weight:900;color:var(--text);}
+.order-meta{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px;}
+.order-total{font-size:14px;font-weight:900;color:var(--pink);}
+.status-pill{display:inline-block;padding:4px 12px;border-radius:100px;font-size:10.5px;font-weight:800;margin-top:4px;}
+.sp-processing{background:#FFF3E0;color:var(--orange);}
+.sp-packed{background:#F3E5F5;color:var(--purple);}
+.sp-out-for-delivery{background:#E3F2FD;color:var(--blue);}
+.sp-shipped{background:#E8EAF6;color:#3949AB;}
+.sp-delivered{background:#E8F5E9;color:var(--green);}
+.sp-cancelled{background:#fdecea;color:var(--red);}
+.sp-paid---processing{background:#FFF8E1;color:#F57F17;}
+
+/* TIMELINE */
+.timeline{padding:18px;}
+.tl-title{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:14px;}
+.tl-steps{display:flex;flex-direction:column;gap:0;}
+.tl-step{display:flex;gap:14px;position:relative;}
+.tl-step:not(:last-child)::before{content:'';position:absolute;left:14px;top:28px;
+  width:2px;height:calc(100% - 4px);background:var(--pink-border);}
+.tl-step.done::before{background:var(--pink);}
+.tl-dot{width:28px;height:28px;border-radius:50%;border:2.5px solid var(--pink-border);
+  background:var(--white);display:flex;align-items:center;justify-content:center;
+  font-size:12px;flex-shrink:0;z-index:1;}
+.tl-step.done .tl-dot{background:var(--pink);border-color:var(--pink);color:var(--white);}
+.tl-step.current .tl-dot{background:var(--pink-pale);border-color:var(--pink);color:var(--pink);
+  box-shadow:0 0 0 4px rgba(192,84,122,.15);}
+.tl-step.cancelled .tl-dot{background:#fdecea;border-color:var(--red);color:var(--red);}
+.tl-body{padding:2px 0 20px;}
+.tl-label{font-size:13px;font-weight:800;}
+.tl-step.done .tl-label{color:var(--text);}
+.tl-step.current .tl-label{color:var(--pink);}
+.tl-step.pending .tl-label{color:var(--muted);}
+.tl-step.cancelled .tl-label{color:var(--red);}
+.tl-sub{font-size:11.5px;color:var(--muted);font-weight:600;margin-top:2px;}
+
+/* ORDER ITEMS */
+.order-items{padding:0 18px 18px;}
+.items-label{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:10px;}
+.item-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--pink-border);}
+.item-row:last-child{border-bottom:none;}
+.item-img{width:44px;height:44px;border-radius:9px;object-fit:cover;background:var(--pink-pale);flex-shrink:0;}
+.item-name{font-size:13px;font-weight:700;flex:1;}
+.item-qty{font-size:12px;font-weight:800;color:var(--muted);}
+.item-price{font-size:13px;font-weight:900;color:var(--pink);}
+
+/* TOGGLE ARROW */
+.toggle-arrow{font-size:14px;color:var(--muted);transition:transform .2s;}
+.toggle-arrow.open{transform:rotate(180deg);}
+.order-detail{display:none;}
+.order-detail.open{display:block;}
+
+/* EMPTY / ERROR */
+.empty-state{text-align:center;padding:40px 20px;color:var(--muted);}
+.empty-icon{font-size:48px;margin-bottom:12px;}
+.empty-msg{font-size:15px;font-weight:800;margin-bottom:6px;color:var(--text);}
+.empty-sub{font-size:13px;}
+
+/* SPINNER */
+.spinner-wrap{text-align:center;padding:40px;}
+.spinner{display:inline-block;width:36px;height:36px;border:3.5px solid var(--pink-border);
+  border-top-color:var(--pink);border-radius:50%;animation:spin .7s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);
+  background:var(--text);color:#fff;padding:9px 22px;border-radius:100px;font-size:13px;
+  font-weight:700;z-index:600;opacity:0;pointer-events:none;transition:all .25s;white-space:nowrap;}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <a href="index.html" class="logo">
+    <div class="logo-icon">
+      <svg width="18" height="16" viewBox="0 0 24 22" fill="none"><path d="M12 1L1 9v12h7v-7h8v7h7V9L12 1z" fill="white"/></svg>
+    </div>
+    <div class="brand">Opulent Collections</div>
+  </a>
+  <a href="index.html" class="back-btn">← Back to Shop</a>
+</header>
+
+<div class="hero">
+  <div class="hero-icon">🔍</div>
+  <h1>Track Your Order</h1>
+  <p>Enter your phone number to see all your orders and their status</p>
+</div>
+
+<div class="search-box">
+  <div class="search-card">
+    <h2>📱 Enter your phone number</h2>
+    <div class="input-row">
+      <input class="track-input" id="phoneInput" type="tel"
+        placeholder="e.g. 0791443762 or 254791443762"
+        maxlength="15" onkeydown="if(event.key==='Enter')trackOrders()"/>
+      <button class="track-btn" id="trackBtn" onclick="trackOrders()">Track</button>
+    </div>
+    <div class="hint">Use the phone number you gave when placing your order</div>
+  </div>
+</div>
+
+<div class="results" id="results"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+const SUPABASE_URL     = 'https://azwcxezzzljbjgojwtax.supabase.co';
+const SUPABASE_ANON_KEY= 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF6d2N4ZXp6emxqYmpnb2p3dGF4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMTk2NTQsImV4cCI6MjA4NzY5NTY1NH0.wFrC32vU0MWbp-otIif5WdlCemeIDXEa2DyLXrl1OEI';
+const _sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+function esc(str){
+  if(str==null)return'';
+  const d=document.createElement('div');
+  d.appendChild(document.createTextNode(String(str)));
+  return d.innerHTML;
+}
+function fmt(n){return'Ksh '+Number(n).toLocaleString();}
+function showToast(msg){
+  const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+// Status timeline definition
+const ALL_STEPS = [
+  {key:'Processing',      icon:'🔄', label:'Order Placed',        sub:'Your order has been received'},
+  {key:'Packed',          icon:'📦', label:'Order Packed',         sub:'Your items are packed and ready'},
+  {key:'Out for Delivery',icon:'🚚', label:'Out for Delivery',     sub:'Your order is on the way!'},
+  {key:'Delivered',       icon:'✅', label:'Delivered',            sub:'Your order has been delivered'},
+];
+const CANCELLED_STEP = {key:'Cancelled', icon:'❌', label:'Cancelled', sub:'This order was cancelled'};
+
+function getStepIndex(status){
+  const s = status?.toLowerCase()||'';
+  if(s.includes('cancel')) return -1;
+  if(s==='delivered') return 3;
+  if(s==='out for delivery') return 2;
+  if(s==='packed') return 1;
+  if(s==='shipped') return 2; // treat shipped as out for delivery
+  if(s==='paid - processing'||s==='processing') return 0;
+  return 0;
+}
+
+function getStatusClass(status){
+  const map={'Processing':'sp-processing','Packed':'sp-packed','Out for Delivery':'sp-out-for-delivery',
+    'Shipped':'sp-shipped','Delivered':'sp-delivered','Cancelled':'sp-cancelled','Paid - Processing':'sp-paid---processing'};
+  return map[status]||'sp-processing';
+}
+
+function buildTimeline(status){
+  const cancelled = status?.toLowerCase().includes('cancel');
+  if(cancelled){
+    return `<div class="tl-step cancelled">
+      <div class="tl-dot">❌</div>
+      <div class="tl-body"><div class="tl-label">Order Cancelled</div><div class="tl-sub">This order was cancelled</div></div>
+    </div>`;
+  }
+  const currentIdx = getStepIndex(status);
+  return ALL_STEPS.map((step, i) => {
+    const isDone    = i < currentIdx;
+    const isCurrent = i === currentIdx;
+    const isPending = i > currentIdx;
+    const cls = isDone ? 'done' : isCurrent ? 'current' : 'pending';
+    return `<div class="tl-step ${cls}">
+      <div class="tl-dot">${isDone ? '✓' : step.icon}</div>
+      <div class="tl-body">
+        <div class="tl-label">${step.label}</div>
+        <div class="tl-sub">${isCurrent ? '<strong>' + step.sub + '</strong>' : step.sub}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function buildItemsHTML(items){
+  if(!items||!items.length) return '';
+  return `<div class="order-items">
+    <div class="items-label">Items Ordered</div>
+    ${items.map(it=>`
+      <div class="item-row">
+        <img class="item-img" src="${esc(it.img||it.image||'')}" alt="${esc(it.name)}" onerror="this.src='https://via.placeholder.com/44'"/>
+        <div class="item-name">${esc(it.name)}</div>
+        <div class="item-qty">×${Number(it.qty)||1}</div>
+        <div class="item-price">${fmt(Number(it.price||0)*(Number(it.qty)||1))}</div>
+      </div>`).join('')}
+  </div>`;
+}
+
+function renderOrders(orders){
+  const res = document.getElementById('results');
+  if(!orders.length){
+    res.innerHTML = `<div class="empty-state">
+      <div class="empty-icon">📭</div>
+      <div class="empty-msg">No orders found</div>
+      <div class="empty-sub">We couldn't find any orders for that phone number.<br>Try the number you used when ordering.</div>
+    </div>`;
+    return;
+  }
+  res.innerHTML = `<div class="result-header">${orders.length} order${orders.length!==1?'s':''} found</div>` +
+  orders.map((o, idx) => {
+    let items = [];
+    try{ items = typeof o.items==='string' ? JSON.parse(o.items) : (o.items||[]); }catch(e){}
+    const date = o.date ? new Date(o.date).toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'}) : '';
+    return `
+    <div class="order-card">
+      <div class="order-card-top" onclick="toggleDetail(${idx})">
+        <div>
+          <div class="order-id">Order #${esc(o.id||o.order_id||idx+1)}</div>
+          <div class="order-meta">${date} · ${items.length} item${items.length!==1?'s':''}</div>
+          <span class="status-pill ${getStatusClass(o.status)}">${esc(o.status||'Processing')}</span>
+        </div>
+        <div style="text-align:right">
+          <div class="order-total">${fmt(o.total||0)}</div>
+          <div class="toggle-arrow" id="arrow-${idx}">▼</div>
+        </div>
+      </div>
+      <div class="order-detail" id="detail-${idx}">
+        <div class="timeline">
+          <div class="tl-title">Order Status</div>
+          <div class="tl-steps">${buildTimeline(o.status)}</div>
+        </div>
+        ${buildItemsHTML(items)}
+        <div style="padding:0 18px 16px;font-size:12.5px;color:var(--muted);font-weight:600;border-top:1px solid var(--pink-border);padding-top:12px;margin-top:4px">
+          <div>📍 ${esc(o.county||'')}${o.address?` — ${esc(o.address)}`:''}</div>
+          <div style="margin-top:4px">💳 ${esc(o.payment==='mpesa'?'M-Pesa':'Pay on Delivery')}${o.mpesa_code||o.mpesaCode?' · Code: '+esc(o.mpesa_code||o.mpesaCode):''}</div>
+          ${o.notes?`<div style="margin-top:4px">📝 ${esc(o.notes)}</div>`:''}
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleDetail(idx){
+  const detail = document.getElementById('detail-'+idx);
+  const arrow  = document.getElementById('arrow-'+idx);
+  const isOpen = detail.classList.contains('open');
+  // Close all
+  document.querySelectorAll('.order-detail').forEach(d=>d.classList.remove('open'));
+  document.querySelectorAll('.toggle-arrow').forEach(a=>a.classList.remove('open'));
+  // Open this one if it was closed
+  if(!isOpen){ detail.classList.add('open'); arrow.classList.add('open'); }
+}
+
+async function trackOrders(){
+  const raw   = document.getElementById('phoneInput').value.trim();
+  const phone = raw.replace(/\s+/g,'');
+  if(!phone||phone.length < 9){ showToast('⚠️ Enter a valid phone number'); return; }
+
+  const btn = document.getElementById('trackBtn');
+  btn.disabled = true; btn.textContent = '…';
+  document.getElementById('results').innerHTML = `<div class="spinner-wrap"><div class="spinner"></div></div>`;
+
+  try {
+    // Try multiple phone formats: 0791..., 254791..., +254791...
+    const variants = [phone];
+    if(phone.startsWith('0'))     variants.push('254'+phone.slice(1));
+    if(phone.startsWith('254'))   variants.push('0'+phone.slice(3));
+    if(phone.startsWith('+254'))  variants.push('0'+phone.slice(4), '254'+phone.slice(4));
+
+    let orders = [];
+    for(const v of [...new Set(variants)]) {
+      const { data, error } = await _sb
+        .from('orders')
+        .select('id, order_id, date, status, total, items, payment, mpesa_code, county, address, notes, name')
+        .eq('phone', v)
+        .order('date', { ascending: false });
+      if(!error && data && data.length) { orders = [...orders, ...data]; }
+    }
+
+    // Deduplicate by id
+    const seen = new Set();
+    orders = orders.filter(o => { const k=o.id||o.order_id; if(seen.has(k)) return false; seen.add(k); return true; });
+
+    // Also check localStorage (for orders placed on this device before Supabase sync)
+    try {
+      const local = JSON.parse(localStorage.getItem('sc_orders')||'[]');
+      const localMatch = local.filter(o => {
+        const op = (o.phone||'').replace(/\s+/g,'');
+        return variants.includes(op);
+      });
+      // Merge, preferring DB version if duplicate
+      const dbIds = new Set(orders.map(o=>o.id||o.order_id));
+      localMatch.forEach(o => { if(!dbIds.has(o.id)) orders.push(o); });
+      orders.sort((a,b)=> new Date(b.date||0)-new Date(a.date||0));
+    } catch(e){}
+
+    renderOrders(orders);
+  } catch(err) {
+    document.getElementById('results').innerHTML = `<div class="empty-state">
+      <div class="empty-icon">⚠️</div>
+      <div class="empty-msg">Connection error</div>
+      <div class="empty-sub">Could not reach the server. Please check your internet and try again.</div>
+    </div>`;
+  }
+
+  btn.disabled = false; btn.textContent = 'Track';
+}
+
+// Auto-track if phone in URL ?phone=...
+const urlPhone = new URLSearchParams(window.location.search).get('phone');
+if(urlPhone){ document.getElementById('phoneInput').value = urlPhone; trackOrders(); }
+</script>
+</body>
+</html>
