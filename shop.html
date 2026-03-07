@@ -240,7 +240,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
   background:var(--pink);color:#fff;font-size:10px;font-weight:900;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;
 }
-/* FIX 1: Removed empty .og-step-content{} ruleset (was causing css(emptyRules) warning) */
 .og-step-title{font-size:12px;font-weight:800;color:var(--text);margin-bottom:2px;}
 .og-step-desc{font-size:10.5px;color:var(--muted);line-height:1.5;}
 .og-footer{
@@ -301,7 +300,6 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
 .pcard-cat{display:none;}
 .pcard-name{
   font-size:13px;font-weight:700;line-height:1.35;margin-bottom:6px;
-  /* FIX 2: Added standard line-clamp alongside vendor-prefixed version */
   display:-webkit-box;
   -webkit-line-clamp:2;
   -webkit-box-orient:vertical;
@@ -394,7 +392,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
 }
 .pd-overlay.open{opacity:1;pointer-events:all;}
 .pd-modal{
-  background:#fff;border-radius:18px;width:100%;max-width:700px;
+  background:#fff;border-radius:18px;width:100%;max-width:780px;
   max-height:90vh;overflow-y:auto;transform:translateY(14px);transition:transform .25s;
 }
 .pd-overlay.open .pd-modal{transform:translateY(0);}
@@ -630,6 +628,183 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
   .pd-arrow{opacity:1!important;pointer-events:all!important;}
   .og-grid{grid-template-columns:1fr 1fr;}
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   FEATURE 2 — VARIANT SELECTOR (inside product detail modal)
+══════════════════════════════════════════════════════════════════ */
+.pd-variants{margin-bottom:14px;}
+.pd-var-section{margin-bottom:12px;}
+.pd-var-label{
+  font-size:10.5px;font-weight:800;text-transform:uppercase;
+  letter-spacing:.07em;color:var(--muted);margin-bottom:8px;
+  display:flex;align-items:center;justify-content:space-between;
+}
+.pd-var-selected{font-size:12px;font-weight:800;color:var(--text);text-transform:none;letter-spacing:0;}
+/* Color swatches */
+.pd-color-swatches{display:flex;gap:8px;flex-wrap:wrap;}
+.pd-swatch{
+  width:30px;height:30px;border-radius:50%;cursor:pointer;
+  border:2.5px solid transparent;transition:all .18s;position:relative;
+}
+.pd-swatch:hover{transform:scale(1.12);}
+.pd-swatch.active{border-color:var(--pink);}
+.pd-swatch.active::after{
+  content:'';position:absolute;inset:3px;border-radius:50%;
+  border:2px solid #fff;pointer-events:none;
+}
+/* Size buttons */
+.pd-size-opts{display:flex;gap:7px;flex-wrap:wrap;}
+.pd-size-btn{
+  padding:7px 14px;border-radius:8px;border:1.5px solid var(--pink-border);
+  font-size:12.5px;font-weight:700;font-family:'Nunito',sans-serif;
+  cursor:pointer;background:none;color:var(--text);transition:all .18s;
+}
+.pd-size-btn:hover{border-color:var(--pink);color:var(--pink);}
+.pd-size-btn.active{background:var(--pink);border-color:var(--pink);color:#fff;}
+.pd-size-btn.unavailable{opacity:.38;cursor:not-allowed;text-decoration:line-through;}
+/* Material options */
+.pd-material-opts{display:flex;gap:7px;flex-wrap:wrap;}
+.pd-material-opt{
+  padding:7px 12px;border-radius:8px;border:1.5px solid var(--pink-border);
+  cursor:pointer;transition:all .18s;text-align:center;background:none;
+  font-family:'Nunito',sans-serif;
+}
+.pd-material-opt:hover,.pd-material-opt.active{border-color:var(--pink);background:var(--pink-pale);}
+.pd-material-name{font-size:12px;font-weight:700;color:var(--text);}
+.pd-material-extra{font-size:10px;color:var(--muted);}
+.pd-material-opt.active .pd-material-name{color:var(--pink);}
+/* Stock alert in PD */
+.pd-stock-alert{
+  display:flex;align-items:center;gap:8px;
+  padding:9px 12px;border-radius:9px;margin-bottom:12px;
+  font-size:12px;font-weight:700;
+}
+.pd-stock-alert.in-stock{background:#E8F5E9;color:#2E7D32;}
+.pd-stock-alert.low-stock{background:#FFF3E0;color:#E65100;}
+.pd-stock-alert.out-stock{background:#fdecea;color:var(--red);}
+
+/* ══════════════════════════════════════════════════════════════════
+   FEATURE 3 — BACK-IN-STOCK ALERT BUTTON (on sold-out cards)
+══════════════════════════════════════════════════════════════════ */
+.btn-notify{
+  flex:1;padding:9px 0;background:none;color:var(--pink);
+  border:1.5px solid var(--pink);border-radius:100px;
+  font-size:12px;font-weight:800;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:all .15s;text-align:center;
+}
+.btn-notify:hover,.btn-notify.notified{background:var(--pink);color:#fff;}
+
+/* Stock Alert Modal */
+.stock-alert-modal{
+  position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  opacity:0;pointer-events:none;transition:opacity .22s;
+}
+.stock-alert-modal.open{opacity:1;pointer-events:all;}
+.sam-box{
+  background:#fff;border-radius:18px;width:100%;max-width:400px;
+  transform:translateY(12px);transition:transform .22s;overflow:hidden;
+}
+.stock-alert-modal.open .sam-box{transform:translateY(0);}
+.sam-head{
+  background:linear-gradient(135deg,var(--pink),var(--pink-light));
+  padding:18px 20px;text-align:center;
+}
+.sam-head-icon{font-size:36px;margin-bottom:6px;}
+.sam-head-title{font-size:15px;font-weight:800;color:#fff;margin-bottom:2px;}
+.sam-head-sub{font-size:12px;color:rgba(255,255,255,.85);}
+.sam-body{padding:18px 20px;}
+.sam-product-name{
+  font-size:13px;font-weight:800;color:var(--text);
+  background:var(--pink-pale);border-radius:9px;padding:9px 13px;
+  margin-bottom:16px;text-align:center;
+}
+.sam-channels{margin-bottom:14px;}
+.sam-ch-title{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:8px;}
+.sam-ch-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;}
+.sam-ch-opt{
+  display:flex;align-items:center;gap:8px;padding:10px 12px;
+  border:1.5px solid var(--pink-border);border-radius:10px;cursor:pointer;
+  transition:all .15s;
+}
+.sam-ch-opt:hover,.sam-ch-opt.selected{border-color:var(--pink);background:var(--pink-pale);}
+.sam-ch-icon{font-size:18px;}
+.sam-ch-name{font-size:12px;font-weight:700;color:var(--text);}
+.sam-input-wrap{margin-bottom:12px;}
+.sam-input-label{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px;display:block;}
+.sam-input{
+  width:100%;padding:9px 12px;border:1.5px solid var(--pink-border);border-radius:9px;
+  font-size:13.5px;font-family:'Nunito',sans-serif;color:var(--text);background:#FFF5F8;outline:none;
+}
+.sam-input:focus{border-color:var(--pink);}
+.sam-btn{
+  width:100%;padding:11px;background:var(--pink);color:#fff;border:none;
+  border-radius:100px;font-size:14px;font-weight:800;font-family:'Nunito',sans-serif;
+  cursor:pointer;transition:background .15s;
+}
+.sam-btn:hover{background:var(--pink-light);}
+.sam-cancel{
+  width:100%;padding:8px;background:none;color:var(--muted);border:none;
+  font-size:12.5px;font-weight:700;font-family:'Nunito',sans-serif;cursor:pointer;margin-top:6px;
+}
+
+/* In-app notification bell panel */
+.notif-panel{
+  position:fixed;top:66px;right:12px;width:min(340px,94vw);
+  background:#fff;border-radius:16px;
+  box-shadow:0 8px 32px rgba(192,84,122,0.2);
+  border:1.5px solid var(--pink-border);z-index:400;
+  opacity:0;pointer-events:none;transform:translateY(-8px);transition:all .22s;
+  max-height:420px;overflow:hidden;display:flex;flex-direction:column;
+}
+.notif-panel.open{opacity:1;pointer-events:all;transform:translateY(0);}
+.notif-panel-head{
+  padding:13px 16px;border-bottom:1px solid var(--pink-border);
+  display:flex;align-items:center;justify-content:space-between;
+}
+.notif-panel-title{font-size:14px;font-weight:800;}
+.notif-panel-clear{font-size:11px;color:var(--pink);font-weight:700;background:none;border:none;cursor:pointer;}
+.notif-list{flex:1;overflow-y:auto;padding:6px 0;}
+.notif-item{
+  display:flex;gap:10px;padding:10px 16px;
+  transition:background .12s;cursor:pointer;
+}
+.notif-item:hover{background:var(--pink-pale);}
+.notif-item.unread{background:#FFF8FB;}
+.notif-dot-ind{
+  width:8px;height:8px;border-radius:50%;background:var(--pink);
+  flex-shrink:0;margin-top:5px;
+}
+.notif-dot-ind.read{background:transparent;border:1.5px solid var(--pink-border);}
+.notif-item-text{font-size:12px;font-weight:700;color:var(--text);line-height:1.5;flex:1;}
+.notif-item-time{font-size:10.5px;color:var(--muted);margin-top:2px;}
+
+/* ══════════════════════════════════════════════════════════════════
+   FEATURE 4 — ABANDONED CART REMINDER BANNER
+══════════════════════════════════════════════════════════════════ */
+.abandoned-banner{
+  margin:10px 14px 0;
+  background:linear-gradient(135deg,#fff7f0,#fff0f5);
+  border:1.5px solid #f5d5e0;border-radius:14px;
+  padding:12px 16px;display:flex;align-items:center;gap:12px;
+  flex-shrink:0;animation:fadeUp .4s ease;
+}
+.abandoned-banner.hidden{display:none;}
+.ab-icon{font-size:26px;flex-shrink:0;}
+.ab-text{flex:1;}
+.ab-title{font-size:13px;font-weight:800;color:var(--text);margin-bottom:2px;}
+.ab-sub{font-size:11.5px;color:var(--muted);font-weight:600;}
+.ab-actions{display:flex;gap:7px;flex-shrink:0;}
+.ab-btn{
+  padding:7px 14px;border-radius:100px;font-size:12px;
+  font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;
+  border:none;transition:all .15s;white-space:nowrap;
+}
+.ab-btn.primary{background:var(--pink);color:#fff;}
+.ab-btn.primary:hover{background:var(--pink-light);}
+.ab-btn.dismiss{background:none;color:var(--muted);border:1.5px solid var(--pink-border);}
+.ab-btn.dismiss:hover{border-color:var(--pink);color:var(--pink);}
+.ab-close{background:none;border:none;cursor:pointer;font-size:16px;color:var(--muted);padding:2px;flex-shrink:0;}
 </style>
 
 <script>
@@ -719,7 +894,7 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
     </div>
     <div class="topbar-right">
       <button class="icon-btn" onclick="openSearch()" title="Search">🔍</button>
-      <button class="icon-btn" title="Notifications">🔔<span class="notif-dot"></span></button>
+      <button class="icon-btn" id="notifBtn" onclick="toggleNotifPanel()" title="Notifications">🔔<span class="badge" id="notifBadge" style="display:none">0</span></button>
       <button class="icon-btn" onclick="openDrawer()" title="Cart">🛒<span class="badge" id="cartBadge">0</span></button>
       <div class="user-chip" onclick="handleProfileClick()">
         <div class="user-avatar" id="topAvatar">?</div>
@@ -727,16 +902,36 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
       </div>
     </div>
   </div>
+
+  <!-- FEATURE 4: Abandoned Cart Banner (shown after returning to site with items in cart) -->
+  <div class="abandoned-banner hidden" id="abandonedBanner">
+    <div class="ab-icon">🛒</div>
+    <div class="ab-text">
+      <div class="ab-title" id="abTitle">You left something behind!</div>
+      <div class="ab-sub" id="abSub">Your cart has items waiting for you.</div>
+    </div>
+    <div class="ab-actions">
+      <button class="ab-btn primary" onclick="openDrawer();dismissAbandonedBanner()">View Cart</button>
+      <button class="ab-btn dismiss" onclick="dismissAbandonedBanner()">Dismiss</button>
+    </div>
+    <button class="ab-close" onclick="dismissAbandonedBanner()">✕</button>
+  </div>
+
   <div class="cat-nav">
     <button class="cpill active" data-cat="all">🍀 All</button>
     <button class="cpill" data-cat="kitchen">🥘 Kitchen</button>
     <button class="cpill" data-cat="living">🛋️ Living Room</button>
+    <button class="cpill" data-cat="bathroom">🛁 Bathroom</button>
+    <button class="cpill" data-cat="kids">🧸 Kids</button>
     <button class="cpill" data-cat="appliances">🔌 Appliances</button>
     <button class="cpill" data-cat="gifts">🎁 Gifts</button>
     <button class="cpill" data-cat="decor">🌿 Decors</button>
     <button class="cpill" data-cat="travel">🧳 Travel</button>
     <button class="cpill" data-cat="laundry">🫧 Laundry</button>
+    <button class="cpill" data-cat="lights">💡 Lights</button>
+    <button class="cpill" data-cat="organizers">🗂️ Organizers</button>
   </div>
+
   <div class="hero">
     <div class="banner">
       <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=700&q=80" alt="Kitchen"/>
@@ -906,7 +1101,11 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
         <div class="pd-stars-row" id="pdStars"></div>
         <div class="pd-price-row"><span class="pd-price" id="pdPrice"></span><span class="pd-old" id="pdOld"></span></div>
         <div class="pd-desc" id="pdDesc"></div>
+        <!-- FEATURE 2: VARIANT SELECTOR -->
+        <div class="pd-variants" id="pdVariants"></div>
         <div class="pd-meta" id="pdMeta"></div>
+        <!-- FEATURE 2: Stock alert line -->
+        <div id="pdStockAlert"></div>
         <div class="pd-qty-row">
           <span style="font-size:13px;font-weight:700">Qty:</span>
           <button class="pd-qb" onclick="pdChgQty(-1)">−</button>
@@ -1093,6 +1292,60 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);}
   </div>
 </div>
 
+<!-- FEATURE 3: BACK-IN-STOCK ALERT MODAL -->
+<div class="stock-alert-modal" id="stockAlertModal">
+  <div class="sam-box">
+    <div class="sam-head">
+      <div class="sam-head-icon">🔔</div>
+      <div class="sam-head-title">Notify Me When Back in Stock</div>
+      <div class="sam-head-sub">We'll alert you the moment it's available</div>
+    </div>
+    <div class="sam-body">
+      <div class="sam-product-name" id="samProductName">Product Name</div>
+      <div class="sam-channels">
+        <div class="sam-ch-title">How would you like to be notified?</div>
+        <div class="sam-ch-grid">
+          <div class="sam-ch-opt selected" id="samEmail" onclick="toggleAlertCh('samEmail')">
+            <span class="sam-ch-icon">📧</span>
+            <span class="sam-ch-name">Email</span>
+          </div>
+          <div class="sam-ch-opt selected" id="samSms" onclick="toggleAlertCh('samSms')">
+            <span class="sam-ch-icon">📱</span>
+            <span class="sam-ch-name">SMS</span>
+          </div>
+          <div class="sam-ch-opt" id="samWa" onclick="toggleAlertCh('samWa')">
+            <span class="sam-ch-icon">💬</span>
+            <span class="sam-ch-name">WhatsApp</span>
+          </div>
+          <div class="sam-ch-opt selected" id="samInApp" onclick="toggleAlertCh('samInApp')">
+            <span class="sam-ch-icon">🔔</span>
+            <span class="sam-ch-name">In-App</span>
+          </div>
+        </div>
+      </div>
+      <div class="sam-input-wrap">
+        <label class="sam-input-label">Email Address</label>
+        <input class="sam-input" type="email" id="samEmailInput" placeholder="jane@example.com"/>
+      </div>
+      <div class="sam-input-wrap">
+        <label class="sam-input-label">Phone / WhatsApp</label>
+        <input class="sam-input" type="tel" id="samPhoneInput" placeholder="+254 7XX XXX XXX"/>
+      </div>
+      <button class="sam-btn" onclick="saveStockAlert()">🔔 Save Alert</button>
+      <button class="sam-cancel" onclick="closeStockAlertModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE 3: IN-APP NOTIFICATION PANEL -->
+<div class="notif-panel" id="notifPanel">
+  <div class="notif-panel-head">
+    <span class="notif-panel-title">🔔 Notifications</span>
+    <button class="notif-panel-clear" onclick="clearNotifs()">Mark all read</button>
+  </div>
+  <div class="notif-list" id="notifList"></div>
+</div>
+
 <!-- WHATSAPP -->
 <a class="wa" href="https://wa.me/254791443762?text=Hello!%20I%20need%20help%20with%20my%20Opulent%20order." target="_blank">
   <div class="wa-ring"></div>
@@ -1112,40 +1365,61 @@ if (!window._sb) {
 
 <script>
 const DEFAULT_PRODUCTS = [
-  {id:1,name:"Rectangular Rain Drop Humidifier",cat:"living",price:2850,oldPrice:3800,stock:15,rating:4.5,reviews:128,badge:"Sale",desc:"Beautifully designed rain drop humidifier that adds moisture to the air. Perfect for bedrooms and living rooms. Runs up to 8 hours on a full tank.",img:"https://images.unsplash.com/photo-1614251055880-ee96e4803393?w=600&q=80",images:["https://images.unsplash.com/photo-1614251055880-ee96e4803393?w=600&q=80","https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=600&q=80","https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=600&q=80"]},
-  {id:2,name:"Antislip Bathroom Mat",cat:"living",price:1550,oldPrice:null,stock:42,rating:4.2,reviews:89,badge:null,desc:"Premium non-slip bathroom mat with suction cup base. Water-absorbent, quick-drying and machine washable. 60×40cm.",img:"https://images.unsplash.com/photo-1620626011761-996317702519?w=600&q=80",images:["https://images.unsplash.com/photo-1620626011761-996317702519?w=600&q=80","https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=600&q=80"]},
+  {id:1,name:"Rectangular Rain Drop Humidifier",cat:"living",price:2850,oldPrice:3800,stock:15,rating:4.5,reviews:128,badge:"Sale",desc:"Beautifully designed rain drop humidifier that adds moisture to the air. Perfect for bedrooms and living rooms. Runs up to 8 hours on a full tank.",img:"https://images.unsplash.com/photo-1614251055880-ee96e4803393?w=600&q=80",images:["https://images.unsplash.com/photo-1614251055880-ee96e4803393?w=600&q=80","https://images.unsplash.com/photo-1556228453-efd6c1ff04f6?w=600&q=80","https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=600&q=80"],variants:{colors:["#C0547A","#7B8FA1","#FFFFFF"],sizes:["Small","Medium","Large"]}},
+  {id:2,name:"Antislip Bathroom Mat",cat:"bathroom",price:1550,oldPrice:null,stock:42,rating:4.2,reviews:89,badge:null,desc:"Premium non-slip bathroom mat with suction cup base. Water-absorbent, quick-drying and machine washable. 60×40cm.",img:"https://images.unsplash.com/photo-1620626011761-996317702519?w=600&q=80",images:["https://images.unsplash.com/photo-1620626011761-996317702519?w=600&q=80","https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=600&q=80"],variants:{colors:["#E0E0E0","#C0547A","#2E2A24"],sizes:["60×40cm","80×50cm"]}},
   {id:3,name:"9 Grid Teabag Organizer",cat:"kitchen",price:2950,oldPrice:3500,stock:8,rating:4.8,reviews:214,badge:"Sale",desc:"Elegant wooden tea bag organizer with 9 compartments. Keeps your kitchen tidy. Holds 72+ teabags.",img:"https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600&q=80",images:["https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600&q=80","https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80","https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80"]},
-  {id:4,name:"4 Tier Adjustable Corner Shelf",cat:"living",price:2550,oldPrice:null,stock:22,rating:4.3,reviews:76,badge:"New",desc:"Space-saving 4-tier corner shelf. Adjustable height, rust-resistant chrome finish. Max load 10kg per shelf.",img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",images:["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80","https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80"]},
+  {id:4,name:"4 Tier Adjustable Corner Shelf",cat:"organizers",price:2550,oldPrice:null,stock:22,rating:4.3,reviews:76,badge:"New",desc:"Space-saving 4-tier corner shelf. Adjustable height, rust-resistant chrome finish. Max load 10kg per shelf.",img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",images:["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80","https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80"]},
   {id:5,name:"Plastic Detachable 2 Layer Rack",cat:"kitchen",price:850,oldPrice:1200,stock:60,rating:4.0,reviews:55,badge:"Sale",desc:"Versatile two-layer detachable rack for kitchen countertops. Organise dishes, cups, and spices with ease.",img:"https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",images:["https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80","https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80"]},
   {id:6,name:"Bamboo Dish Drying Rack",cat:"kitchen",price:1950,oldPrice:null,stock:34,rating:4.6,reviews:163,badge:"New",desc:"Eco-friendly bamboo dish drying rack with stainless steel drainage tray. Holds up to 12 dishes plus cutlery.",img:"https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80",images:["https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80","https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80"]},
-  {id:7,name:"Smart Luggage Travel Bag",cat:"travel",price:6500,oldPrice:8500,stock:12,rating:4.7,reviews:94,badge:"Sale",desc:"Premium hard-shell carry-on with TSA lock, 360° spinner wheels, and USB charging port. Only 2.8kg.",img:"https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=600&q=80",images:["https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=600&q=80","https://images.unsplash.com/photo-1581553673739-c4906b5d0de8?w=600&q=80"]},
+  {id:7,name:"Smart Luggage Travel Bag",cat:"travel",price:6500,oldPrice:8500,stock:12,rating:4.7,reviews:94,badge:"Sale",desc:"Premium hard-shell carry-on with TSA lock, 360° spinner wheels, and USB charging port. Only 2.8kg.",img:"https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=600&q=80",images:["https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=600&q=80","https://images.unsplash.com/photo-1581553673739-c4906b5d0de8?w=600&q=80"],variants:{colors:["#2E2A24","#C0547A","#7B8FA1","#C9A84C"]}},
   {id:8,name:"Portable Mini Washing Machine",cat:"laundry",price:4200,oldPrice:5500,stock:5,rating:4.1,reviews:48,badge:"Sale",desc:"Compact portable washing machine for small loads and delicates. USB powered, quiet, and energy efficient.",img:"https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=600&q=80",images:["https://images.unsplash.com/photo-1626806787461-102c1bfaaea1?w=600&q=80"]},
   {id:9,name:"Ceramic Pour-Over Coffee Set",cat:"kitchen",price:3200,oldPrice:null,stock:28,rating:4.9,reviews:301,badge:"New",desc:"Handcrafted ceramic pour-over dripper with matching mug and 50 filter papers. Creates perfect pour-over coffee.",img:"https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80",images:["https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80","https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600&q=80","https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80"]},
-  {id:10,name:"Terracotta Candle Holders",cat:"decor",price:2800,oldPrice:3400,stock:19,rating:4.4,reviews:112,badge:"Sale",desc:"Set of 3 handmade terracotta candle holders. Earthy tones that complement any home décor style.",img:"https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&q=80",images:["https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&q=80","https://images.unsplash.com/photo-1615529328331-f8917597711f?w=600&q=80"]},
+  {id:10,name:"Terracotta Candle Holders",cat:"lights",price:2800,oldPrice:3400,stock:19,rating:4.4,reviews:112,badge:"Sale",desc:"Set of 3 handmade terracotta candle holders. Earthy tones that complement any home décor style.",img:"https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&q=80",images:["https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&q=80","https://images.unsplash.com/photo-1615529328331-f8917597711f?w=600&q=80"]},
   {id:11,name:"Travel Packing Cubes 6pc",cat:"travel",price:1800,oldPrice:null,stock:45,rating:4.5,reviews:187,badge:"New",desc:"Set of 6 lightweight nylon packing cubes. Compression zip for maximum space saving.",img:"https://images.unsplash.com/photo-1581553673739-c4906b5d0de8?w=600&q=80",images:["https://images.unsplash.com/photo-1581553673739-c4906b5d0de8?w=600&q=80","https://images.unsplash.com/photo-1565026057447-bc90a3dceb87?w=600&q=80"]},
-  {id:12,name:"Linen Cushion Covers 2pc",cat:"living",price:1200,oldPrice:null,stock:38,rating:4.3,reviews:67,badge:null,desc:"Set of 2 premium linen cushion covers in sage green. Envelope closure, machine washable. 45×45cm.",img:"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",images:["https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80","https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"]},
+  {id:12,name:"Linen Cushion Covers 2pc",cat:"living",price:1200,oldPrice:null,stock:38,rating:4.3,reviews:67,badge:null,desc:"Set of 2 premium linen cushion covers in sage green. Envelope closure, machine washable. 45×45cm.",img:"https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",images:["https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80","https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"],variants:{colors:["#B5C5A0","#C0547A","#F5E6D0","#7B8FA1"],sizes:["45×45cm","50×50cm","60×60cm"]}},
   {id:13,name:"Smart 4-Port Power Strip",cat:"appliances",price:3500,oldPrice:4200,stock:17,rating:4.6,reviews:142,badge:"Sale",desc:"4 AC outlets + 4 USB ports with surge protection. Individually switched sockets. 1.8m braided cable.",img:"https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80",images:["https://images.unsplash.com/photo-1593642632559-0c6d3fc62b89?w=600&q=80"]},
   {id:14,name:"Macramé Wall Hanging",cat:"decor",price:2100,oldPrice:null,stock:25,rating:4.7,reviews:229,badge:"New",desc:"Handcrafted boho macramé wall hanging from 100% cotton rope. 60cm wide.",img:"https://images.unsplash.com/photo-1615529328331-f8917597711f?w=600&q=80",images:["https://images.unsplash.com/photo-1615529328331-f8917597711f?w=600&q=80","https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&q=80"]},
   {id:15,name:"Premium Gift Hamper Basket",cat:"gifts",price:3800,oldPrice:4500,stock:10,rating:4.8,reviews:93,badge:"Sale",desc:"Beautifully curated wicker gift hamper basket. Perfect for all occasions.",img:"https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=600&q=80",images:["https://images.unsplash.com/photo-1607344645866-009c320b63e0?w=600&q=80"]},
   {id:16,name:"Microfiber Cleaning Cloths 10pc",cat:"laundry",price:750,oldPrice:null,stock:90,rating:4.2,reviews:312,badge:null,desc:"Pack of 10 ultra-soft microfiber cleaning cloths. Lint-free, streak-free, machine washable.",img:"https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&q=80",images:["https://images.unsplash.com/photo-1563453392212-326f5e854473?w=600&q=80"]},
-  {id:17,name:"Stainless Steel Vacuum Flask",cat:"kitchen",price:1650,oldPrice:2000,stock:55,rating:4.5,reviews:445,badge:"Sale",desc:"Double-walled vacuum flask. Hot 12hrs, cold 24hrs. 500ml, leak-proof lid. BPA free.",img:"https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80",images:["https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80","https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80"]},
-  {id:18,name:"Rattan Storage Baskets Set 3",cat:"decor",price:2900,oldPrice:null,stock:20,rating:4.4,reviews:78,badge:"New",desc:"Set of 3 handwoven rattan storage baskets in nested sizes. Perfect for any room.",img:"https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&q=80",images:["https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&q=80"]},
-  {id:19,name:"Non-Stick Frying Pan Set",cat:"kitchen",price:4800,oldPrice:6000,stock:3,rating:4.7,reviews:288,badge:"Sale",desc:"Set of 3 granite-coated non-stick pans (20cm, 24cm, 28cm). PFOA-free, all hob types.",img:"https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",images:["https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80","https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80"]},
+  {id:17,name:"Stainless Steel Vacuum Flask",cat:"kitchen",price:1650,oldPrice:2000,stock:55,rating:4.5,reviews:445,badge:"Sale",desc:"Double-walled vacuum flask. Hot 12hrs, cold 24hrs. 500ml, leak-proof lid. BPA free.",img:"https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80",images:["https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&q=80","https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=600&q=80"],variants:{colors:["#C0547A","#2E2A24","#C9A84C","#B5C5A0"]}},
+  {id:18,name:"Rattan Storage Baskets Set 3",cat:"organizers",price:2900,oldPrice:null,stock:20,rating:4.4,reviews:78,badge:"New",desc:"Set of 3 handwoven rattan storage baskets in nested sizes. Perfect for any room.",img:"https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&q=80",images:["https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=600&q=80"]},
+  {id:19,name:"Non-Stick Frying Pan Set",cat:"kitchen",price:4800,oldPrice:6000,stock:3,rating:4.7,reviews:288,badge:"Sale",desc:"Set of 3 granite-coated non-stick pans (20cm, 24cm, 28cm). PFOA-free, all hob types.",img:"https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80",images:["https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600&q=80","https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80"],variants:{sizes:["20cm","24cm","28cm","Full Set"]}},
   {id:20,name:"Adjustable Phone Stand",cat:"appliances",price:650,oldPrice:null,stock:80,rating:4.3,reviews:501,badge:null,desc:"Foldable aluminum desktop phone stand. Adjustable angle. Fits all phones and tablets.",img:"https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80",images:["https://images.unsplash.com/photo-1585771724684-38269d6639fd?w=600&q=80"]},
+  {id:21,name:"Kids Wooden Building Blocks",cat:"kids",price:1800,oldPrice:2200,stock:30,rating:4.6,reviews:87,badge:"New",desc:"50-piece natural wooden building blocks for children 2+. Smooth edges, non-toxic paint.",img:"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80",images:["https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&q=80"]},
+  {id:22,name:"LED Fairy Lights 10m",cat:"lights",price:1200,oldPrice:1600,stock:0,rating:4.5,reviews:204,badge:"Sale",desc:"Warm white LED fairy lights 10m with 100 bulbs. USB powered with 8 lighting modes. Perfect for bedrooms.",img:"https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&q=80",images:["https://images.unsplash.com/photo-1603006905003-be475563bc59?w=600&q=80"]},
+  {id:23,name:"Bamboo Bathroom Organizer Set",cat:"bathroom",price:3200,oldPrice:null,stock:18,rating:4.4,reviews:62,badge:"New",desc:"5-piece bamboo bathroom organizer set including toothbrush holder, soap dish, tumbler, dispenser & tray.",img:"https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=600&q=80",images:["https://images.unsplash.com/photo-1600585152220-90363fe7e115?w=600&q=80"]},
 ];
 
-// FIX 3: Safely read from localStorage with proper null handling
 let PRODUCTS = (() => { try { return JSON.parse(localStorage.getItem('sc_products') || 'null') || JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); } catch(e) { return JSON.parse(JSON.stringify(DEFAULT_PRODUCTS)); } })();
 let cart     = (() => { try { return JSON.parse(localStorage.getItem('sc_cart')    || '[]'); } catch(e) { return []; } })();
 let wishlist = (() => { try { return JSON.parse(localStorage.getItem('sc_wish')    || '[]'); } catch(e) { return []; } })();
 let orders   = (() => { try { return JSON.parse(localStorage.getItem('sc_orders')  || '[]'); } catch(e) { return []; } })();
 let user     = (() => { try { return JSON.parse(localStorage.getItem('sc_user')    || 'null'); } catch(e) { return null; } })();
 let reviews  = (() => { try { return JSON.parse(localStorage.getItem('sc_reviews') || '{}'); } catch(e) { return {}; } })();
+let stockAlerts = (() => { try { return JSON.parse(localStorage.getItem('sc_stock_alerts') || '{}'); } catch(e) { return {}; } })();
+let notifications = (() => { try { return JSON.parse(localStorage.getItem('sc_notifs') || '[]'); } catch(e) { return []; } })();
+
 let activeCat='all', pdId=null, pdQty=1, lastOrderId=null, pickedStar=5;
 let nextId = Math.max(...PRODUCTS.map(p=>p.id), 0) + 1;
 let pdImages = [];
 let pdImgIndex = 0;
+let pdSelectedColor = null, pdSelectedSize = null, pdMaterialAdd = 0;
 
+function requireAuth(){
+  if(!user){
+    document.getElementById('authModal').classList.add('open');
+    let msg = document.getElementById('authRequiredMsg');
+    if(!msg){
+      msg = document.createElement('div');
+      msg.id = 'authRequiredMsg';
+      msg.style.cssText = 'background:#FFF3E0;color:#E65100;border-radius:10px;padding:10px 14px;font-size:13px;font-weight:700;margin-bottom:14px;text-align:center;';
+      msg.textContent = '🔒 Please sign in first to add items to your cart and place orders.';
+      document.getElementById('signInForm').insertAdjacentElement('beforebegin', msg);
+    }
+    return false;
+  }
+  return true;
+}
 const save = () => {
   try {
     localStorage.setItem('sc_products', JSON.stringify(PRODUCTS));
@@ -1153,6 +1427,8 @@ const save = () => {
     localStorage.setItem('sc_wish',     JSON.stringify(wishlist));
     localStorage.setItem('sc_orders',   JSON.stringify(orders));
     localStorage.setItem('sc_reviews',  JSON.stringify(reviews));
+    localStorage.setItem('sc_stock_alerts', JSON.stringify(stockAlerts));
+    localStorage.setItem('sc_notifs',   JSON.stringify(notifications));
     if (user) localStorage.setItem('sc_user', JSON.stringify(user));
   } catch(e) { console.warn('Storage save failed:', e); }
 };
@@ -1160,12 +1436,12 @@ const fmt  = p => 'Ksh. ' + Number(p).toLocaleString();
 const disc = p => p.oldPrice ? Math.round((1 - p.price/p.oldPrice)*100) : 0;
 const cartCount = () => cart.reduce((s,c) => s+c.qty, 0);
 const cartSub   = () => cart.reduce((s,c) => s+c.price*c.qty, 0);
-// Reads live from sc_settings so admin changes take effect immediately
 const getSettings = () => { try { return JSON.parse(localStorage.getItem('sc_settings')||'{}'); } catch(e) { return {}; } };
 const getDelFee   = () => parseInt(getSettings().delFee  || 300);
 const getFreeMin  = () => parseInt(getSettings().freeDelMin || 5000);
 const cartDel     = () => cartSub() >= getFreeMin() ? 0 : getDelFee();
 const stars = (r,sz=11) => Array.from({length:5},(_,i)=>`<span class="star${i<Math.round(r)?' on':''}" style="font-size:${sz}px">★</span>`).join('');
+const esc = s => String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
 function toast(msg, dur=2400){
   const t = document.getElementById('toast');
@@ -1173,7 +1449,209 @@ function toast(msg, dur=2400){
   clearTimeout(t._t); t._t = setTimeout(()=>t.classList.remove('show'), dur);
 }
 
-// ══ ORDERING GUIDELINES TOGGLE ════════════════════════════════════
+/* ══════════════════════════════════════════════════════
+   FEATURE 2: VARIANT SELECTOR in PD modal
+══════════════════════════════════════════════════════ */
+function renderPDVariants(p){
+  const wrap = document.getElementById('pdVariants');
+  if(!p.variants || (!p.variants.colors && !p.variants.sizes && !p.variants.materials)){
+    wrap.innerHTML = ''; return;
+  }
+  pdSelectedColor = null; pdSelectedSize = null; pdMaterialAdd = 0;
+  let html = '';
+
+  if(p.variants.colors && p.variants.colors.length){
+    pdSelectedColor = p.variants.colors[0];
+    html += `<div class="pd-var-section">
+      <div class="pd-var-label">Colour <span class="pd-var-selected" id="pdColorSelected">${pdSelectedColor}</span></div>
+      <div class="pd-color-swatches">
+        ${p.variants.colors.map((c,i)=>`
+          <div class="pd-swatch${i===0?' active':''}" style="background:${c}"
+            onclick="pdPickColor(this,'${c}')" title="${c}"></div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  if(p.variants.sizes && p.variants.sizes.length){
+    pdSelectedSize = p.variants.sizes[0];
+    html += `<div class="pd-var-section">
+      <div class="pd-var-label">Size <span class="pd-var-selected" id="pdSizeSelected">${pdSelectedSize}</span></div>
+      <div class="pd-size-opts">
+        ${p.variants.sizes.map((s,i)=>`
+          <button class="pd-size-btn${i===0?' active':''}" onclick="pdPickSize(this,'${s}')">${s}</button>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  if(p.variants.materials && p.variants.materials.length){
+    html += `<div class="pd-var-section">
+      <div class="pd-var-label">Material</div>
+      <div class="pd-material-opts">
+        ${p.variants.materials.map((m,i)=>`
+          <div class="pd-material-opt${i===0?' active':''}" onclick="pdPickMaterial(this,${m.extra||0})">
+            <div class="pd-material-name">${m.name}</div>
+            <div class="pd-material-extra">${m.extra?'+Ksh. '+m.extra.toLocaleString():'Standard'}</div>
+          </div>`).join('')}
+      </div>
+    </div>`;
+  }
+
+  wrap.innerHTML = html;
+}
+
+function pdPickColor(el, color){
+  document.querySelectorAll('#pdVariants .pd-swatch').forEach(s=>s.classList.remove('active'));
+  el.classList.add('active');
+  pdSelectedColor = color;
+  const lbl = document.getElementById('pdColorSelected');
+  if(lbl) lbl.textContent = color;
+}
+function pdPickSize(el, size){
+  document.querySelectorAll('#pdVariants .pd-size-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
+  pdSelectedSize = size;
+  const lbl = document.getElementById('pdSizeSelected');
+  if(lbl) lbl.textContent = size;
+}
+function pdPickMaterial(el, extra){
+  document.querySelectorAll('#pdVariants .pd-material-opt').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+  pdMaterialAdd = extra;
+  const p = PRODUCTS.find(x=>x.id===pdId);
+  if(p) document.getElementById('pdPrice').textContent = fmt(p.price + extra);
+}
+
+function renderPDStockAlert(p){
+  const el = document.getElementById('pdStockAlert');
+  if(p.stock === 0){
+    el.innerHTML = `<div class="pd-stock-alert out-stock">❌ Out of Stock — <button onclick="openStockAlertModal(${p.id})" style="background:none;border:none;cursor:pointer;color:var(--red);font-weight:800;font-family:'Nunito',sans-serif;font-size:12px;padding:0;text-decoration:underline">Notify me when back</button></div>`;
+  } else if(p.stock <= 5){
+    el.innerHTML = `<div class="pd-stock-alert low-stock">⚡ Only ${p.stock} left! Order soon.</div>`;
+  } else {
+    el.innerHTML = `<div class="pd-stock-alert in-stock">✅ In Stock — ${p.stock} available</div>`;
+  }
+}
+
+/* ══════════════════════════════════════════════════════
+   FEATURE 3: BACK-IN-STOCK ALERTS
+══════════════════════════════════════════════════════ */
+let currentAlertProductId = null;
+
+function openStockAlertModal(productId){
+  currentAlertProductId = productId;
+  const p = PRODUCTS.find(x=>x.id===productId);
+  document.getElementById('samProductName').textContent = p ? p.name : 'This product';
+  if(user){
+    if(user.email) document.getElementById('samEmailInput').value = user.email;
+    if(user.phone) document.getElementById('samPhoneInput').value = user.phone;
+  }
+  document.getElementById('stockAlertModal').classList.add('open');
+}
+function closeStockAlertModal(){
+  document.getElementById('stockAlertModal').classList.remove('open');
+  currentAlertProductId = null;
+}
+function toggleAlertCh(id){
+  document.getElementById(id).classList.toggle('selected');
+}
+function saveStockAlert(){
+  if(!currentAlertProductId) return;
+  const channels = ['samEmail','samSms','samWa','samInApp']
+    .filter(id=>document.getElementById(id).classList.contains('selected'))
+    .map(id=>id.replace('sam','').toLowerCase());
+  if(!channels.length){ toast('⚠ Choose at least one notification channel'); return; }
+  stockAlerts[currentAlertProductId] = {
+    channels,
+    email: document.getElementById('samEmailInput').value,
+    phone: document.getElementById('samPhoneInput').value,
+    savedAt: new Date().toISOString()
+  };
+  save();
+  addNotification(`🔔 Alert set for "${PRODUCTS.find(x=>x.id===currentAlertProductId)?.name||'item'}" — we'll notify you when it's back in stock.`);
+  closeStockAlertModal();
+  toast('✅ Alert saved! We\'ll notify you when it restocks 🔔');
+}
+
+/* ══════════════════════════════════════════════════════
+   IN-APP NOTIFICATIONS
+══════════════════════════════════════════════════════ */
+function addNotification(text){
+  notifications.unshift({ id: Date.now(), text, time: 'Just now', read: false });
+  if(notifications.length > 20) notifications = notifications.slice(0,20);
+  save();
+  updateNotifBadge();
+}
+function updateNotifBadge(){
+  const unread = notifications.filter(n=>!n.read).length;
+  const badge = document.getElementById('notifBadge');
+  if(unread > 0){ badge.textContent = unread; badge.style.display = 'flex'; }
+  else { badge.style.display = 'none'; }
+}
+function toggleNotifPanel(){
+  const panel = document.getElementById('notifPanel');
+  const isOpen = panel.classList.contains('open');
+  if(isOpen){ panel.classList.remove('open'); return; }
+  renderNotifList();
+  panel.classList.add('open');
+  setTimeout(()=>document.addEventListener('click', closeNotifOnOutside, {once:true}), 50);
+}
+function closeNotifOnOutside(e){
+  const panel = document.getElementById('notifPanel');
+  const btn = document.getElementById('notifBtn');
+  if(!panel.contains(e.target) && !btn.contains(e.target)) panel.classList.remove('open');
+}
+function renderNotifList(){
+  const list = document.getElementById('notifList');
+  if(!notifications.length){
+    list.innerHTML = '<div style="text-align:center;padding:30px 16px;color:var(--muted);font-size:13px">No notifications yet 🔕</div>';
+    return;
+  }
+  list.innerHTML = notifications.map(n=>`
+    <div class="notif-item${n.read?'':' unread'}" onclick="markNotifRead(${n.id})">
+      <div class="notif-dot-ind${n.read?' read':''}"></div>
+      <div>
+        <div class="notif-item-text">${n.text}</div>
+        <div class="notif-item-time">${n.time}</div>
+      </div>
+    </div>`).join('');
+}
+function markNotifRead(id){
+  const n = notifications.find(x=>x.id===id);
+  if(n) n.read = true;
+  save(); renderNotifList(); updateNotifBadge();
+}
+function clearNotifs(){
+  notifications.forEach(n=>n.read=true);
+  save(); renderNotifList(); updateNotifBadge();
+  document.getElementById('notifPanel').classList.remove('open');
+}
+
+/* ══════════════════════════════════════════════════════
+   FEATURE 4: ABANDONED CART BANNER
+══════════════════════════════════════════════════════ */
+function checkAbandonedCart(){
+  const banner = document.getElementById('abandonedBanner');
+  const dismissed = sessionStorage.getItem('ab_dismissed');
+  if(dismissed || !cart.length) return;
+  const lastVisit = localStorage.getItem('sc_last_visit');
+  const now = Date.now();
+  if(lastVisit && (now - parseInt(lastVisit)) > 30 * 60 * 1000 && cart.length > 0){
+    const itemCount = cartCount();
+    const itemWord = itemCount === 1 ? 'item' : 'items';
+    document.getElementById('abTitle').textContent = `You left ${itemCount} ${itemWord} in your cart!`;
+    document.getElementById('abSub').textContent = `Total: ${fmt(cartSub())} — ready when you are.`;
+    banner.classList.remove('hidden');
+  }
+  localStorage.setItem('sc_last_visit', String(now));
+}
+function dismissAbandonedBanner(){
+  document.getElementById('abandonedBanner').classList.add('hidden');
+  sessionStorage.setItem('ab_dismissed','1');
+}
+
+/* ══════════════════════════════════════════════════════
+   ORIGINAL FUNCTIONS
+══════════════════════════════════════════════════════ */
 function toggleOG(){
   const body = document.getElementById('ogBody');
   const chevron = document.getElementById('ogChevron');
@@ -1186,8 +1664,6 @@ function scrollToOG(){
     document.getElementById('orderingGuidelinesSection').scrollIntoView({behavior:'smooth', block:'start'});
   }, 80);
 }
-
-// ══ SIDEBAR ══════════════════════════════════════════════════════
 function openSidebar(){
   document.getElementById('sidebar').classList.add('mobile-open');
   document.getElementById('sbOverlay').classList.add('open');
@@ -1207,11 +1683,11 @@ function showOffers(){
 function openOrders(){
   renderOrdersDrawer();
   document.getElementById('ordersDrawer').classList.add('open');
-  document.getElementById('overlay').classList.add('open');
+  document.getElementById('cartOverlay').classList.add('open');
 }
 function closeOrdersDrawer(){
   document.getElementById('ordersDrawer').classList.remove('open');
-  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('cartOverlay').classList.remove('open');
 }
 function renderOrdersDrawer(){
   const list = document.getElementById('ordersDrawerList');
@@ -1292,7 +1768,6 @@ function syncSidebarUI(u,role){
 }
 function showAdminSection(){ document.getElementById('sbAdminGroup').classList.add('visible'); }
 function hideAdminSection(){ document.getElementById('sbAdminGroup').classList.remove('visible'); }
-
 function handleProfileClick(){ user ? openProfileMenu() : window.location.href='index.html'; }
 function openAuth(){ document.getElementById('authModal').classList.add('open'); }
 function closeAuth(){ document.getElementById('authModal').classList.remove('open'); }
@@ -1301,10 +1776,6 @@ function switchAuth(t){
   document.getElementById('signUpForm').style.display=t==='up'?'block':'none';
   document.getElementById('tabIn').classList.toggle('active',t==='in');
   document.getElementById('tabUp').classList.toggle('active',t==='up');
-}
-async function googleSignIn(){
-  try { await window._sb.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.href}}); }
-  catch(_){ user={fname:'Google',name:'Google User',email:'user@gmail.com',role:'user',avatar:null}; save(); closeAuth(); syncSidebarUI(user,'user'); toast('✅ Welcome, Google User!'); }
 }
 async function doSignIn(){
   const em=document.getElementById('siEm').value.trim(), pw=document.getElementById('siPw').value;
@@ -1361,7 +1832,6 @@ async function doSignUp(){
     btn.disabled=false; btn.textContent='Create Account';
   }
 }
-
 function showVerifyScreen(email){
   document.getElementById('signUpForm').innerHTML=`
     <div style="text-align:center;padding:16px 0 8px;">
@@ -1379,7 +1849,6 @@ function showVerifyScreen(email){
       </div>
     </div>`;
 }
-
 async function resendVerification(email){
   try {
     await window._sb.auth.resend({type:'signup', email});
@@ -1391,15 +1860,9 @@ async function resendVerification(email){
 async function doSignOut(e){
   e?.stopPropagation();
   try { await window._sb.auth.signOut({ scope: 'local' }); } catch(_){}
-
-  // Clear all session data from localStorage
   user = null;
-  const keysToRemove = Object.keys(localStorage).filter(k =>
-    k.startsWith('sb-') || k === 'sc_user' || k.startsWith('supabase')
-  );
+  const keysToRemove = Object.keys(localStorage).filter(k=>k.startsWith('sb-')||k==='sc_user'||k.startsWith('supabase'));
   keysToRemove.forEach(k => localStorage.removeItem(k));
-
-  // Redirect to login page
   window.location.href = 'index.html';
 }
 function openProfileMenu(){
@@ -1413,7 +1876,6 @@ function openProfileMenu(){
 }
 function closeProfileMenu(){ document.getElementById('profileMenu').classList.remove('open'); }
 function closeProfileOnOutside(e){ if(!document.getElementById('profileMenu').contains(e.target))closeProfileMenu(); }
-
 function openChangePassword(){ closeProfileMenu(); switchToChangePw(); document.getElementById('cpwModalTitle').textContent='🔑 Change Password'; document.getElementById('changePwModal').classList.add('open'); }
 function openForgotFromModal(){ switchToForgot(); document.getElementById('cpwModalTitle').textContent='🔓 Reset Password'; document.getElementById('changePwModal').classList.add('open'); }
 function closeChangePw(){ document.getElementById('changePwModal').classList.remove('open'); }
@@ -1450,6 +1912,7 @@ function render(){
 }
 function cardHTML(p,i=0){
   const inCart=cart.find(c=>c.id===p.id),isW=wishlist.includes(p.id),d=disc(p),oos=p.stock===0;
+  const hasAlert=stockAlerts[p.id];
   return `<div class="pcard" style="animation-delay:${i*.04}s">
     ${p.badge?`<div class="pcard-badge${p.badge==='New'?' new-b':''}"> ${p.badge}</div>`:''}
     ${d>0?`<div class="pcard-badge disc-b" style="${p.badge?'top:36px':''}">-${d}%</div>`:''}
@@ -1463,8 +1926,11 @@ function cardHTML(p,i=0){
       </div>
       ${p.stock<=5&&p.stock>0?`<div class="pcard-stock low">⚡ Only ${p.stock} left!</div>`:oos?'<div class="pcard-stock out">❌ Out of Stock</div>':''}
       <div class="pcard-actions">
-        <button class="btn-cart${inCart?' added':''}${oos?' out-btn':''}" onclick="${oos?`toast('Out of stock')`:'addCart('+p.id+')'}" title="Add to cart">${inCart?'✓':'🛒'}</button>
-        <button class="btn-buy" onclick="${oos?`toast('Out of stock')`:'addCart('+p.id+');openDrawer()'}" ${oos?'disabled':''}>Buy</button>
+        ${oos
+          ? `<button class="btn-notify${hasAlert?' notified':''}" onclick="openStockAlertModal(${p.id})">${hasAlert?'🔔 Notified':'🔔 Notify Me'}</button>`
+          : `<button class="btn-cart${inCart?' added':''}" onclick="addCart(${p.id})" title="Add to cart">${inCart?'✓':'🛒'}</button>
+             <button class="btn-buy" onclick="addCart(${p.id});openDrawer()">Buy</button>`
+        }
       </div>
     </div>
   </div>`;
@@ -1475,6 +1941,7 @@ document.querySelectorAll('.cpill').forEach(b=>b.addEventListener('click',()=>{
 }));
 
 function addCart(id,qty=1){
+  if(!requireAuth()) return;
   const p=PRODUCTS.find(x=>x.id===id); if(!p||p.stock===0){toast('Out of stock');return;}
   const ex=cart.find(x=>x.id===id);
   if(ex){if(ex.qty+qty>p.stock){toast('Max stock reached');return;} ex.qty+=qty;}
@@ -1497,6 +1964,7 @@ function updateBadges(){
   document.getElementById('cartCount').textContent=n>0?`(${n})`:'';
   const wb=document.getElementById('sbWishBadge');
   if(wb){wb.textContent=wishlist.length; wb.style.display=wishlist.length>0?'flex':'none';}
+  updateNotifBadge();
 }
 function renderDrawer(){
   const di=document.getElementById('ditems'),df=document.getElementById('cartFooter');
@@ -1607,18 +2075,12 @@ document.addEventListener('keydown', e=>{
 function openPD(id){
   pdId=id; pdQty=1;
   const p=PRODUCTS.find(x=>x.id===id);
-  // FIX 4: Robust images resolution — handles string JSON, array, or missing
   let imgs;
   try {
     const raw = p.images;
-    if (Array.isArray(raw) && raw.length) {
-      imgs = raw;
-    } else if (typeof raw === 'string') {
-      const parsed = JSON.parse(raw);
-      imgs = Array.isArray(parsed) && parsed.length ? parsed : [p.img];
-    } else {
-      imgs = [p.img];
-    }
+    if (Array.isArray(raw) && raw.length) { imgs = raw; }
+    else if (typeof raw === 'string') { const parsed = JSON.parse(raw); imgs = Array.isArray(parsed) && parsed.length ? parsed : [p.img]; }
+    else { imgs = [p.img]; }
   } catch(e) { imgs = [p.img]; }
   buildPDGallery(imgs);
   pdGoToImage(0, false);
@@ -1637,8 +2099,10 @@ function openPD(id){
   btn.disabled=p.stock===0;
   document.getElementById('pdMeta').innerHTML=`
     <div class="pd-meta-row"><span>Category</span><span>${p.cat}</span></div>
-    ${p.oldPrice?`<div class="pd-meta-row"><span>Discount</span><span style="color:var(--green);font-weight:800">--${disc(p)}% OFF</span></div>`:''}
+    ${p.oldPrice?`<div class="pd-meta-row"><span>Discount</span><span style="color:var(--green);font-weight:800">-${disc(p)}% OFF</span></div>`:''}
     <div class="pd-meta-row"><span>Delivery</span><span>🚚 Nairobi 1-2 days · Nationwide 3-5 days</span></div>`;
+  renderPDVariants(p);
+  renderPDStockAlert(p);
   renderPDReviews(id);
   document.getElementById('pdOverlay').classList.add('open');
 }
@@ -1673,6 +2137,7 @@ function submitReview(id){
 }
 
 function openCheckout(){
+  if(!requireAuth()) return;
   closeDrawer();
   if(user){
     if(user.fname)document.getElementById('fn').value=user.fname;
@@ -1694,7 +2159,6 @@ function selPay(t){
   document.getElementById('omPay').classList.toggle('active',t==='mpesa');
   document.getElementById('opPay').classList.toggle('active',t==='pod');
   document.getElementById('mpesaNote').classList.toggle('show',t==='mpesa');
-  // Clear code when switching away from mpesa
   if(t!=='mpesa'){ const c=document.getElementById('mpesaCode'); if(c) c.value=''; }
 }
 async function placeOrder(){
@@ -1703,60 +2167,41 @@ async function placeOrder(){
   if(!fn||!ph||!co||!ad){toast('⚠ Fill all required fields');return;}
   const payMethod=document.querySelector('[name=pay]:checked').value;
   const mpesaCode=(document.getElementById('mpesaCode')?.value||'').trim().toUpperCase();
-  if(payMethod==='mpesa'&&!mpesaCode){
-    toast('⚠ Enter your M-Pesa confirmation code');
-    document.getElementById('mpesaCode')?.focus();
-    return;
-  }
-  if(payMethod==='mpesa'&&mpesaCode.length<6){
-    toast('⚠ M-Pesa code looks too short — check your SMS');
-    return;
-  }
+  if(payMethod==='mpesa'&&!mpesaCode){toast('⚠ Enter your M-Pesa confirmation code');document.getElementById('mpesaCode')?.focus();return;}
+  if(payMethod==='mpesa'&&mpesaCode.length<6){toast('⚠ M-Pesa code looks too short — check your SMS');return;}
   const btn=document.getElementById('placeBtn'); btn.disabled=true; btn.textContent='Processing…';
   const oid='SUN-'+Date.now().toString().slice(-6); lastOrderId=oid;
   const orderObj={
-    id:oid,
-    date:new Date().toLocaleDateString('en-KE'),
-    time:new Date().toLocaleTimeString('en-KE'),
-    items:JSON.parse(JSON.stringify(cart)),
-    subtotal:cartSub(),delivery:cartDel(),total:cartSub()+cartDel(),
+    id:oid,date:new Date().toLocaleDateString('en-KE'),time:new Date().toLocaleTimeString('en-KE'),
+    items:JSON.parse(JSON.stringify(cart)),subtotal:cartSub(),delivery:cartDel(),total:cartSub()+cartDel(),
     status: payMethod==='mpesa' ? 'Paid - Processing' : 'Processing',
-    county:co,address:ad,phone:ph,
-    email:document.getElementById('em').value,
-    name:fn+' '+document.getElementById('ln').value,
-    payment:payMethod,
+    county:co,address:ad,phone:ph,email:document.getElementById('em').value,
+    name:fn+' '+document.getElementById('ln').value,payment:payMethod,
     mpesaCode: payMethod==='mpesa' ? mpesaCode : null,
     notes:document.getElementById('notes').value
   };
   orders.unshift(orderObj);
   try {
     const dbPayload = {
-      id:orderObj.id, customer_name:orderObj.name, customer_phone:orderObj.phone,
-      customer_email:orderObj.email||null, address:orderObj.address, county:orderObj.county,
-      payment_method:orderObj.payment, notes:orderObj.notes||null,
-      items:orderObj.items, subtotal:orderObj.subtotal, delivery:orderObj.delivery,
-      total:orderObj.total, status:orderObj.status,
-      mpesa_code:orderObj.mpesaCode||null,
+      id:orderObj.id,customer_name:orderObj.name,customer_phone:orderObj.phone,
+      customer_email:orderObj.email||null,address:orderObj.address,county:orderObj.county,
+      payment_method:orderObj.payment,notes:orderObj.notes||null,
+      items:orderObj.items,subtotal:orderObj.subtotal,delivery:orderObj.delivery,
+      total:orderObj.total,status:orderObj.status,mpesa_code:orderObj.mpesaCode||null,
       created_at:new Date().toISOString()
     };
     await window._sb.from('orders').insert(dbPayload);
   } catch(_){}
   cart.forEach(ci=>{ const p=PRODUCTS.find(x=>x.id===ci.id); if(p)p.stock=Math.max(0,p.stock-ci.qty); });
+  addNotification(`✅ Order #${oid} confirmed! ${payMethod==='mpesa'?'M-Pesa payment received.':'Pay on delivery.'}`);
   save();
   document.getElementById('oNum').textContent='Order #'+oid;
-  // Show mpesa code in success view
   const mpesaSuccessEl=document.getElementById('mpesaSuccessInfo');
   if(mpesaSuccessEl){
     if(payMethod==='mpesa'){
-      mpesaSuccessEl.innerHTML=`<div style="background:#e8f5e9;border-radius:10px;padding:12px 16px;margin:10px 0;text-align:left;">
-        <div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#388e3c;margin-bottom:4px;">✅ M-Pesa Payment Received</div>
-        <div style="font-size:13px;font-weight:700;color:#1b5e20;">Confirmation Code: <span style="font-size:15px;font-weight:900;letter-spacing:.08em">${mpesaCode}</span></div>
-        <div style="font-size:11.5px;color:#388e3c;margin-top:4px;">Keep this code for your records.</div>
-      </div>`;
+      mpesaSuccessEl.innerHTML=`<div style="background:#e8f5e9;border-radius:10px;padding:12px 16px;margin:10px 0;text-align:left;"><div style="font-size:11px;font-weight:800;text-transform:uppercase;color:#388e3c;margin-bottom:4px;">✅ M-Pesa Payment Received</div><div style="font-size:13px;font-weight:700;color:#1b5e20;">Confirmation Code: <span style="font-size:15px;font-weight:900;letter-spacing:.08em">${mpesaCode}</span></div><div style="font-size:11.5px;color:#388e3c;margin-top:4px;">Keep this code for your records.</div></div>`;
       mpesaSuccessEl.style.display='block';
-    } else {
-      mpesaSuccessEl.style.display='none';
-    }
+    } else { mpesaSuccessEl.style.display='none'; }
   }
   document.getElementById('checkoutForm').style.display='none';
   document.getElementById('successView').classList.add('show');
@@ -1824,12 +2269,6 @@ document.addEventListener('keydown', e=>{if(e.key==='Escape'&&!document.getEleme
 window.addEventListener('storage',e=>{
   if(e.key==='sc_products'){ try { PRODUCTS=JSON.parse(e.newValue||'null')||PRODUCTS; render(); } catch(err){} }
   if(e.key==='sc_cart'){ try { cart=JSON.parse(e.newValue||'[]'); updateBadges(); } catch(err){} }
-  if(e.key==='sc_settings'){
-    // Delivery fee changed in admin — update cart drawer and checkout live
-    updateCart();
-    const sumEl=document.getElementById('orderSummary');
-    if(sumEl && sumEl.innerHTML) renderOrderSummary();
-  }
 });
 
 async function loadProductsFromDB(){
@@ -1841,21 +2280,16 @@ async function loadProductsFromDB(){
         oldPrice:p.old_price,stock:p.stock,rating:Number(p.rating)||4.5,
         reviews:p.reviews||0,badge:p.badge||null,desc:p.description||'',
         img:p.img,
-        // FIX 4 (continued): Clean images parsing — handles Supabase returning
-        // either a native array or a JSON string from a text column
         images: (() => {
           try {
             const raw = p.images;
             if (Array.isArray(raw) && raw.length) return raw;
-            if (typeof raw === 'string') {
-              const parsed = JSON.parse(raw);
-              return Array.isArray(parsed) && parsed.length ? parsed : [p.img];
-            }
+            if (typeof raw === 'string') { const parsed = JSON.parse(raw); return Array.isArray(parsed) && parsed.length ? parsed : [p.img]; }
             return [p.img];
           } catch(e) { return [p.img]; }
-        })()
+        })(),
+        variants: p.variants || null
       }));
-      // Persist to localStorage so the page survives a refresh without a DB round-trip
       try { localStorage.setItem('sc_products', JSON.stringify(PRODUCTS)); } catch(e) {}
       render();
     }
@@ -1867,11 +2301,13 @@ function setupRealtimeProducts(){
   } catch(_){}
 }
 
+// ── INIT ──────────────────────────────────────────────────────────
 updateBadges();
 render();
 initAuth();
 loadProductsFromDB();
 setupRealtimeProducts();
+checkAbandonedCart();
 </script>
 </body>
 </html>

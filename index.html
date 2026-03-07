@@ -134,19 +134,19 @@
     });
   }
 
-  // ── Detect recovery link OR normal session ───────────────────────
-  // Must run AFTER supabase is ready but BEFORE the page renders forms
-  window._sb.auth.getSession().then(({ data: { session } }) => {
-    const hash   = window.location.hash;
-    const params = new URLSearchParams(hash.replace('#', '?'));
-    const type   = params.get('type');
-
-    if (type === 'recovery' && session) {
-      // Password reset link — show reset form, do NOT redirect to shop
+  // ── FIXED: Use onAuthStateChange to correctly detect PASSWORD_RECOVERY ──
+  window._sb.auth.onAuthStateChange((event, session) => {
+    if (event === 'PASSWORD_RECOVERY') {
+      // Password reset link clicked — show reset form
       showResetPasswordForm();
-    } else if (session) {
-      // Already logged in normally — go straight to shop
-      window.location.replace('shop.html');
+    } else if (event === 'SIGNED_IN' && session) {
+      // Only redirect if we are NOT in a recovery flow
+      const hash = window.location.hash;
+      const params = new URLSearchParams(hash.replace('#', '?'));
+      const type = params.get('type');
+      if (type !== 'recovery') {
+        window.location.replace('shop.html');
+      }
     }
   });
 </script>
@@ -292,7 +292,6 @@
       document.getElementById(id).classList.remove('active');
     });
     document.getElementById('panel-reset').classList.add('active');
-    // Clean the recovery hash from the URL bar
     history.replaceState(null, '', window.location.pathname);
   }
 
@@ -428,7 +427,7 @@
 
     try {
       await window._sb.auth.resetPasswordForEmail(email, {
-        redirectTo: window.location.origin + '/index.html'
+        redirectTo: 'https://opulentcollection.netlify.app/index.html'
       });
       showMsg('forgot-msg', '📧 Reset link sent! Check your inbox (and spam folder).', 'success');
       btn.textContent = 'Sent ✓';
@@ -462,7 +461,6 @@
       showMsg('reset-msg', '✅ Password updated! Signing you out to log in fresh…', 'success');
 
       setTimeout(async () => {
-        // Clear all Supabase session keys then sign out
         Object.keys(localStorage)
           .filter(k => k.startsWith('sb-') || k === 'sc_user' || k.startsWith('supabase'))
           .forEach(k => localStorage.removeItem(k));
