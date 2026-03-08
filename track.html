@@ -147,14 +147,14 @@ body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);min-
 
 <div class="search-box">
   <div class="search-card">
-    <h2>📱 Enter your phone number</h2>
+    <h2>🔍 Track your order</h2>
     <div class="input-row">
-      <input class="track-input" id="phoneInput" type="tel"
-        placeholder="e.g. 0791443762 or 254791443762"
-        maxlength="15" onkeydown="if(event.key==='Enter')trackOrders()"/>
+      <input class="track-input" id="phoneInput" type="text"
+        placeholder="Phone number or Order ID (e.g. OPC-165682)"
+        maxlength="20" onkeydown="if(event.key==='Enter')trackOrders()"/>
       <button class="track-btn" id="trackBtn" onclick="trackOrders()">Track</button>
     </div>
-    <div class="hint">Use the phone number you gave when placing your order</div>
+    <div class="hint">Enter your phone number <strong>or</strong> your OPC order ID</div>
   </div>
 </div>
 
@@ -256,7 +256,7 @@ function renderOrders(orders){
   orders.map((o, idx) => {
     let items = [];
     try{ items = typeof o.items==='string' ? JSON.parse(o.items) : (o.items||[]); }catch(e){}
-    const date = o.date ? new Date(o.date).toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'}) : '';
+    const date = o.created_at||o.date ? new Date(o.created_at||o.date).toLocaleDateString('en-KE',{day:'numeric',month:'short',year:'numeric'}) : '';
     return `
     <div class="order-card">
       <div class="order-card-top" onclick="toggleDetail(${idx})">
@@ -278,7 +278,7 @@ function renderOrders(orders){
         ${buildItemsHTML(items)}
         <div style="padding:0 18px 16px;font-size:12.5px;color:var(--muted);font-weight:600;border-top:1px solid var(--pink-border);padding-top:12px;margin-top:4px">
           <div>📍 ${esc(o.county||'')}${o.address?` — ${esc(o.address)}`:''}</div>
-          <div style="margin-top:4px">💳 ${esc(o.payment==='mpesa'?'M-Pesa':'Pay on Delivery')}${o.mpesa_code||o.mpesaCode?' · Code: '+esc(o.mpesa_code||o.mpesaCode):''}</div>
+          <div style="margin-top:4px">💳 ${esc(o.payment_method==='mpesa'?'M-Pesa':'Pay on Delivery')}${o.mpesa_code||o.mpesaCode?' · Code: '+esc(o.mpesa_code||o.mpesaCode):''}</div>
           ${o.notes?`<div style="margin-top:4px">📝 ${esc(o.notes)}</div>`:''}
         </div>
       </div>
@@ -317,15 +317,26 @@ async function trackOrders(){
     for(const v of [...new Set(variants)]) {
       const { data, error } = await _sb
         .from('orders')
-        .select('id, order_id, date, status, total, items, payment, mpesa_code, county, address, notes, name')
+        .select('id, created_at,order_id, date, status, total, items, payment, mpesa_code, county, address, notes, name')
         .eq('phone', v)
-        .order('date', { ascending: false });
+        .order('created_at,date', { ascending: false });
       if(!error && data && data.length) { orders = [...orders, ...data]; }
     }
 
     // Deduplicate by id
-    const seen = new Set();
-    orders = orders.filter(o => { const k=o.id||o.order_id; if(seen.has(k)) return false; seen.add(k); return true; });
+   // Deduplicate by id
+const seen = new Set();
+orders = orders.filter(o => { const k=o.id||o.order_id; if(seen.has(k)) return false; seen.add(k); return true; });
+
+// Also search by order ID if input looks like OPC-XXXXXX
+if(raw.toUpperCase().startsWith('OPC-') || raw.toUpperCase().startsWith('SUN-')){
+  const { data: idData } = await _sb
+    .from('orders')
+    .select('id, created_at, status, total, items, payment_method, mpesa_code, county, address, notes, customer_name, customer_phone')
+    .eq('id', raw.toUpperCase().trim())
+    .single();
+  if(idData && !orders.find(o=>o.id===idData.id)) orders.unshift(idData);
+}
 
     // Also check localStorage (for orders placed on this device before Supabase sync)
     try {

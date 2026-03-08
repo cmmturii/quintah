@@ -1397,7 +1397,11 @@ let orders   = (() => { try { return JSON.parse(localStorage.getItem('sc_orders'
 let user     = (() => { try { return JSON.parse(localStorage.getItem('sc_user')    || 'null'); } catch(e) { return null; } })();
 let reviews  = (() => { try { return JSON.parse(localStorage.getItem('sc_reviews') || '{}'); } catch(e) { return {}; } })();
 let stockAlerts = (() => { try { return JSON.parse(localStorage.getItem('sc_stock_alerts') || '{}'); } catch(e) { return {}; } })();
-let notifications = (() => { try { return JSON.parse(localStorage.getItem('sc_notifs') || '[]'); } catch(e) { return []; } })();
+let notifications = [];
+function loadNotifications(){
+  if(!user) return;
+  try { notifications = JSON.parse(localStorage.getItem('sc_notifs_'+user.id) || '[]'); } catch(e) { notifications = []; }
+}
 
 let activeCat='all', pdId=null, pdQty=1, lastOrderId=null, pickedStar=5;
 let nextId = Math.max(...PRODUCTS.map(p=>p.id), 0) + 1;
@@ -1428,7 +1432,7 @@ const save = () => {
     localStorage.setItem('sc_orders',   JSON.stringify(orders));
     localStorage.setItem('sc_reviews',  JSON.stringify(reviews));
     localStorage.setItem('sc_stock_alerts', JSON.stringify(stockAlerts));
-    localStorage.setItem('sc_notifs',   JSON.stringify(notifications));
+    if(user) localStorage.setItem('sc_notifs_'+user.id, JSON.stringify(notifications));
     if (user) localStorage.setItem('sc_user', JSON.stringify(user));
   } catch(e) { console.warn('Storage save failed:', e); }
 };
@@ -1680,10 +1684,43 @@ function showOffers(){
   PRODUCTS.sort((a,b)=>disc(b)-disc(a));
   render(); scrollToGrid();
 }
-function openOrders(){
-  renderOrdersDrawer();
+async function openOrders(){
   document.getElementById('ordersDrawer').classList.add('open');
   document.getElementById('cartOverlay').classList.add('open');
+  document.getElementById('ordersDrawerList').innerHTML = '<div style="text-align:center;padding:40px;color:var(--muted)">Loading orders…</div>';
+  
+  if(!user){ renderOrdersDrawer(); return; }
+  
+  try {
+    const {data, error} = await window._sb
+      .from('orders')
+      .select('*')
+      .eq('customer_email', user.email)
+      .order('created_at', {ascending: false});
+    
+    if(!error && data){
+      orders = data.map(o=>({
+        id: o.id,
+        date: new Date(o.created_at).toLocaleDateString('en-KE'),
+        time: new Date(o.created_at).toLocaleTimeString('en-KE'),
+        items: o.items||[],
+        subtotal: o.subtotal,
+        delivery: o.delivery,
+        total: o.total,
+        status: o.status,
+        county: o.county,
+        address: o.address,
+        phone: o.customer_phone,
+        email: o.customer_email,
+        name: o.customer_name,
+        payment: o.payment_method,
+        notes: o.notes
+      }));
+    }
+  } catch(e){ console.warn('Could not load orders from DB'); }
+  
+  renderOrdersDrawer();
+
 }
 function closeOrdersDrawer(){
   document.getElementById('ordersDrawer').classList.remove('open');
@@ -1754,6 +1791,7 @@ if(!welcomed){
   addNotification('🔥 Flash Sale is live — up to 40% off!');
   addNotification('🎉 Welcome to Opulent Collections, '+user.fname+'!');
 }
+  loadNotifications();
   syncSidebarUI(user,role);
 }
 function syncSidebarUI(u,role){
@@ -1871,7 +1909,7 @@ async function doSignOut(e){
   user = null;
   const keysToRemove = Object.keys(localStorage).filter(k=>k.startsWith('sb-')||k==='sc_user'||k.startsWith('supabase'));
   keysToRemove.forEach(k => localStorage.removeItem(k));
-  window.location.href = 'index.html';
+  window.location.replace = 'index.html';
 }
 function openProfileMenu(){
   const menu=document.getElementById('profileMenu');

@@ -678,11 +678,21 @@ function renderOrders(){
     </tr>`).join('');
 }
 
-function updateStatus(id, status){
+async function updateStatus(id, status){
   const o = orders.find(x=>x.id===id);
-  if(o){ o.status=status; save(); updateOrderStatusDB(id,status); renderOrders(); renderDashboard(); toast('✅ Status → '+status,'success');
-  const settings=JSON.parse(localStorage.getItem('sc_settings')||'{}');
-  if(settings.notifyWhatsApp==='1') notifyStatusChange(o,status); }
+  if(!o) return;
+  o.status = status;
+  save();
+  renderOrders();
+  renderDashboard();
+  toast('✅ Status → '+status, 'success');
+  const s = JSON.parse(localStorage.getItem('sc_settings')||'{}');
+  if(s.notifyWhatsApp==='1') notifyStatusChange(o, status);
+  try {
+    await _sbAdmin.from('orders').update({ status }).eq('id', id);
+  } catch(e){
+    console.warn('DB sync failed (status saved locally):', e);
+  }
 }
 
 function cancelOrder(id){
@@ -1145,13 +1155,13 @@ async function loadProductsFromDB(){
   }
 }
 
-async function updateOrderStatusDB(id,status){
-  try{await _sb.from('orders').update({status,updated_at:new Date().toISOString()}).eq('id',id);}
-  catch(e){console.warn('Status update failed',e);}
+async function updateOrderStatusDB(id, status){
+  try { await _sbAdmin.from('orders').update({ status }).eq('id', id); }
+  catch(e){ console.warn('Status update failed', e); }
 }
-async function updateProductStockDB(id,stock){
-  try{await _sbAdmin.from('products').update({stock,updated_at:new Date().toISOString()}).eq('id',id);}
-  catch(e){console.warn('Stock update failed',e);}
+async function updateProductStockDB(id, stock){
+  try { await _sbAdmin.from('products').update({ stock }).eq('id', id); }
+  catch(e){ console.warn('Stock update failed', e); }
 }
 async function saveOrderToDB(order){
   try{
