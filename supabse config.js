@@ -32,7 +32,7 @@ if (!window._sb) {
 }
 
 // Shorthand auth helpers used across pages
-window.SunUpAuth = {
+window.OpulentAuth = {
 
   async getUser() {
     const { data: { user } } = await window._sb.auth.getUser();

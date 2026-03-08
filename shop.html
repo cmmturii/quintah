@@ -1746,6 +1746,14 @@ async function loadSupabaseUser(sbUser) {
       phone:data?.phone||'', role, avatar:sbUser.user_metadata?.avatar_url||null };
   } catch(_) { user={fname:sbUser.email.split('@')[0],name:sbUser.email.split('@')[0],email:sbUser.email,role:'user'}; }
   localStorage.setItem('sc_user',JSON.stringify(user));
+  const welcomed = localStorage.getItem('sc_welcomed_'+sbUser.id);
+if(!welcomed){
+  localStorage.setItem('sc_welcomed_'+sbUser.id, '1');
+  notifications = [];
+  addNotification('📦 Check out our new arrivals');
+  addNotification('🔥 Flash Sale is live — up to 40% off!');
+  addNotification('🎉 Welcome to Opulent Collections, '+user.fname+'!');
+}
   syncSidebarUI(user,role);
 }
 function syncSidebarUI(u,role){
@@ -2170,7 +2178,7 @@ async function placeOrder(){
   if(payMethod==='mpesa'&&!mpesaCode){toast('⚠ Enter your M-Pesa confirmation code');document.getElementById('mpesaCode')?.focus();return;}
   if(payMethod==='mpesa'&&mpesaCode.length<6){toast('⚠ M-Pesa code looks too short — check your SMS');return;}
   const btn=document.getElementById('placeBtn'); btn.disabled=true; btn.textContent='Processing…';
-  const oid='SUN-'+Date.now().toString().slice(-6); lastOrderId=oid;
+  const oid='OPC-'+Date.now().toString().slice(-6); lastOrderId=oid;
   const orderObj={
     id:oid,date:new Date().toLocaleDateString('en-KE'),time:new Date().toLocaleTimeString('en-KE'),
     items:JSON.parse(JSON.stringify(cart)),subtotal:cartSub(),delivery:cartDel(),total:cartSub()+cartDel(),

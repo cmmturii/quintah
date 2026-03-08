@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Opulent Collections — Checkout</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{
+  --pink:#C0547A;--pink-mid:#D4617F;--pink-light:#E06E8A;
+  --pink-pale:#FDF0F4;--pink-border:#F2D0DB;
+  --white:#FFFFFF;--bg:#FFF8FB;--text:#2E1A22;--muted:#9B6B7A;
+  --shadow:rgba(192,84,122,0.15);--green:#27ae60;--red:#e74c3c;--orange:#e67e22;
+  --green-pale:#F0FBF0;--green-border:#A5D6A7;--orange-pale:#FFF8F0;--orange-border:#FFCC80;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Nunito',sans-serif;background:var(--bg);color:var(--text);
+  background-image:radial-gradient(ellipse at 15% 0%,rgba(255,182,210,0.22) 0%,transparent 55%);}
+
+/* OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(46,26,34,0.55);z-index:100;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  backdrop-filter:blur(3px);opacity:0;animation:fadeIn .25s ease forwards;}
+@keyframes fadeIn{to{opacity:1;}}
+
+/* MODAL */
+.modal{background:var(--white);border-radius:20px;width:100%;max-width:520px;
+  max-height:90vh;overflow-y:auto;box-shadow:0 20px 60px rgba(46,26,34,0.22);
+  transform:translateY(18px);animation:slideUp .3s ease forwards;}
+@keyframes slideUp{to{transform:translateY(0);}}
+.modal::-webkit-scrollbar{width:4px;}
+.modal::-webkit-scrollbar-thumb{background:var(--pink-border);border-radius:4px;}
+
+/* MODAL HEADER */
+.modal-head{display:flex;align-items:center;justify-content:space-between;
+  padding:18px 22px 16px;border-bottom:1.5px solid var(--pink-border);
+  position:sticky;top:0;background:var(--white);z-index:10;border-radius:20px 20px 0 0;}
+.modal-title{font-size:17px;font-weight:900;display:flex;align-items:center;gap:8px;}
+.modal-close{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--pink-border);
+  background:var(--pink-pale);cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:15px;color:var(--muted);transition:all .15s;}
+.modal-close:hover{background:var(--pink);color:#fff;border-color:var(--pink);}
+
+/* MODAL BODY */
+.modal-body{padding:20px 22px;}
+
+/* FORM */
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:13px;}
+.form-row.single{grid-template-columns:1fr;}
+.fg{display:flex;flex-direction:column;gap:4px;}
+.fg label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.09em;color:var(--muted);}
+.fg input,.fg select,.fg textarea{width:100%;padding:10px 13px;border:1.5px solid var(--pink-border);
+  border-radius:10px;font-size:13.5px;font-family:'Nunito',sans-serif;color:var(--text);
+  background:var(--pink-pale);outline:none;transition:border .15s,background .15s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--pink);background:#fff;
+  box-shadow:0 0 0 3px rgba(192,84,122,0.09);}
+.fg input.error{border-color:var(--red);}
+.err{font-size:10.5px;color:var(--red);font-weight:700;display:none;margin-top:2px;}
+.err.show{display:block;}
+.fg textarea{resize:vertical;min-height:68px;}
+
+/* SECTION LABEL */
+.section-lbl{font-size:10px;font-weight:900;text-transform:uppercase;
+  letter-spacing:.09em;color:var(--muted);margin:18px 0 10px;}
+
+/* GOOGLE MAPS */
+.map-search-wrap{position:relative;margin-bottom:10px;}
+.map-search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none;}
+#map-input{width:100%;padding:10px 13px 10px 36px;border:1.5px solid var(--pink-border);border-radius:10px;
+  font-size:13.5px;font-family:'Nunito',sans-serif;color:var(--text);background:var(--pink-pale);
+  outline:none;transition:border .15s;}
+#map-input:focus{border-color:var(--pink);background:#fff;box-shadow:0 0 0 3px rgba(192,84,122,0.09);}
+#map-input.error{border-color:var(--red);}
+
+.map-box{border-radius:12px;overflow:hidden;height:220px;background:var(--pink-pale);
+  border:1.5px solid var(--pink-border);position:relative;margin-bottom:10px;}
+#map{width:100%;height:100%;transition:opacity .4s;}
+.map-loader{position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;background:var(--pink-pale);z-index:5;gap:8px;}
+.map-spinner{width:26px;height:26px;border:3px solid var(--pink-border);
+  border-top-color:var(--pink);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg);}}
+.map-hint-pill{position:absolute;bottom:9px;left:50%;transform:translateX(-50%);
+  background:rgba(46,26,34,0.7);color:#fff;font-size:10.5px;font-weight:700;
+  padding:4px 13px;border-radius:100px;white-space:nowrap;pointer-events:none;backdrop-filter:blur(3px);}
+
+/* ADDRESS STRIPS */
+.addr-strip{border-radius:10px;padding:11px 14px;display:flex;align-items:flex-start;gap:9px;margin-bottom:8px;}
+.addr-strip.in{background:var(--green-pale);border:1.5px solid var(--green-border);}
+.addr-strip.out{background:var(--orange-pale);border:1.5px solid var(--orange-border);}
+.addr-strip-icon{font-size:17px;flex-shrink:0;margin-top:1px;}
+.addr-strip-title{font-size:12.5px;font-weight:800;line-height:1.4;}
+.addr-strip.in .addr-strip-title{color:#2E7D32;}
+.addr-strip.out .addr-strip-title{color:#BF360C;}
+.addr-strip-sub{font-size:11px;font-weight:600;margin-top:2px;}
+.addr-strip.in .addr-strip-sub{color:#558B2F;}
+.addr-strip.out .addr-strip-sub{color:#E65100;}
+.wa-btn{display:inline-flex;align-items:center;gap:5px;margin-top:7px;
+  background:#25D366;color:#fff;padding:6px 14px;border-radius:100px;
+  font-size:11.5px;font-weight:800;text-decoration:none;}
+.change-loc{background:none;border:1.5px solid var(--pink-border);color:var(--muted);
+  padding:5px 12px;border-radius:100px;font-size:11.5px;font-weight:700;
+  cursor:pointer;font-family:'Nunito',sans-serif;margin-top:7px;margin-left:6px;transition:all .15s;}
+.change-loc:hover{border-color:var(--pink);color:var(--pink);}
+
+/* PAYMENT OPTIONS */
+.pay-options{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+.pay-card{border:2px solid var(--pink-border);border-radius:14px;padding:14px 12px;
+  cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:6px;text-align:center;}
+.pay-card:hover{border-color:var(--pink-mid);background:var(--pink-pale);}
+.pay-card.selected{border-color:var(--pink);background:var(--pink-pale);box-shadow:0 0 0 3px rgba(192,84,122,0.1);}
+.pay-card-icon{font-size:26px;}
+.pay-card-name{font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.06em;}
+.pay-card-sub{font-size:10.5px;font-weight:700;color:var(--muted);}
+
+/* MPESA PANEL */
+.mpesa-panel{background:var(--green-pale);border:1.5px solid var(--green-border);
+  border-radius:12px;padding:15px 16px;margin-bottom:14px;display:none;}
+.mpesa-panel.show{display:block;}
+.mpesa-panel-title{font-size:13px;font-weight:900;color:#2E7D32;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.mpesa-send-box{background:#fff;border:1.5px solid var(--green-border);border-radius:10px;padding:13px 15px;margin-bottom:12px;}
+.mpesa-send-lbl{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:#558B2F;margin-bottom:4px;}
+.mpesa-number{font-size:24px;font-weight:900;color:#1B5E20;letter-spacing:.04em;line-height:1.1;}
+.mpesa-name{font-size:11.5px;color:#558B2F;font-weight:700;margin-top:3px;}
+.mpesa-instruction{font-size:12.5px;color:#2E7D32;font-weight:600;margin-bottom:10px;line-height:1.55;}
+.mpesa-instruction strong{font-weight:900;}
+.mpesa-code-hint{font-size:11px;color:#558B2F;font-weight:600;margin-top:6px;}
+.mpesa-code-hint strong{font-weight:900;letter-spacing:.04em;}
+
+/* POD PANEL */
+.pod-panel{background:#FFF8F0;border:1.5px solid #FFCC80;border-radius:12px;
+  padding:13px 15px;margin-bottom:14px;display:none;}
+.pod-panel.show{display:block;}
+.pod-panel-text{font-size:13px;font-weight:700;color:#E65100;display:flex;align-items:center;gap:8px;}
+
+/* ORDER TOTALS */
+.totals{border-top:1.5px solid var(--pink-border);padding-top:13px;margin-bottom:16px;
+  display:flex;flex-direction:column;gap:7px;}
+.total-row{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);font-weight:700;}
+.total-row.main{font-size:16px;font-weight:900;color:var(--text);padding-top:7px;
+  border-top:1.5px solid var(--pink-border);margin-top:3px;}
+.total-row.main span:last-child{color:var(--pink);}
+.free-tag{background:#E8F5E9;color:var(--green);font-size:10.5px;font-weight:800;padding:2px 8px;border-radius:100px;}
+
+/* PLACE ORDER */
+.btn-place{width:100%;padding:15px;background:linear-gradient(135deg,var(--pink),var(--pink-mid));
+  color:#fff;border:none;border-radius:100px;font-size:15px;font-weight:900;
+  font-family:'Nunito',sans-serif;cursor:pointer;transition:all .2s;
+  box-shadow:0 4px 18px rgba(192,84,122,0.35);letter-spacing:.02em;margin-bottom:10px;}
+.btn-place:hover:not(:disabled){transform:translateY(-2px);box-shadow:0 7px 24px rgba(192,84,122,0.45);}
+.btn-place:disabled{background:#ddd;cursor:not-allowed;box-shadow:none;transform:none;}
+.secure-note{text-align:center;font-size:11px;color:var(--muted);font-weight:700;
+  display:flex;align-items:center;justify-content:center;gap:5px;}
+
+/* SUCCESS */
+.success-overlay{position:fixed;inset:0;background:rgba(46,26,34,0.6);z-index:200;
+  display:flex;align-items:center;justify-content:center;padding:16px;
+  opacity:0;pointer-events:none;transition:opacity .3s;backdrop-filter:blur(4px);}
+.success-overlay.show{opacity:1;pointer-events:all;}
+.success-card{background:#fff;border-radius:22px;padding:36px 28px;max-width:400px;width:100%;
+  text-align:center;transform:scale(.9);transition:transform .3s;box-shadow:0 20px 50px rgba(0,0,0,.2);}
+.success-overlay.show .success-card{transform:scale(1);}
+.success-icon{font-size:52px;margin-bottom:12px;display:block;animation:pop .5s ease .2s both;}
+@keyframes pop{0%{transform:scale(0);}70%{transform:scale(1.15);}100%{transform:scale(1);}}
+.success-title{font-size:22px;font-weight:900;margin-bottom:7px;}
+.success-sub{font-size:13px;color:var(--muted);font-weight:600;line-height:1.6;margin-bottom:5px;}
+.success-id{font-size:12.5px;color:var(--pink);font-weight:800;margin-bottom:22px;}
+.success-btns{display:flex;flex-direction:column;gap:9px;}
+.btn-track{padding:12px;background:var(--pink);color:#fff;border:none;border-radius:100px;
+  font-size:13.5px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;}
+.btn-track:hover{background:var(--pink-light);}
+.btn-more{padding:12px;background:transparent;color:var(--pink);border:2px solid var(--pink);
+  border-radius:100px;font-size:13.5px;font-weight:800;font-family:'Nunito',sans-serif;cursor:pointer;}
+.btn-more:hover{background:var(--pink-pale);}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(8px);
+  background:var(--text);color:#fff;padding:9px 22px;border-radius:100px;
+  font-size:13px;font-weight:700;z-index:999;opacity:0;pointer-events:none;
+  transition:all .25s;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.2);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+@media(max-width:480px){
+  .form-row{grid-template-columns:1fr;}
+  .modal{border-radius:16px 16px 0 0;max-height:95vh;position:fixed;bottom:0;left:0;right:0;max-width:100%;}
+  .overlay{align-items:flex-end;padding:0;}
+}
+</style>
+</head>
+<body>
+
+<!-- OVERLAY + MODAL -->
+<div class="overlay" id="checkout-overlay">
+  <div class="modal">
+
+    <!-- HEAD -->
+    <div class="modal-head">
+      <div class="modal-title">🛍️ Complete Your Order</div>
+      <button class="modal-close" onclick="closeCheckout()">✕</button>
+    </div>
+
+    <!-- BODY -->
+    <div class="modal-body">
+
+      <!-- 1. CUSTOMER DETAILS -->
+      <div class="form-row">
+        <div class="fg">
+          <label>First Name *</label>
+          <input type="text" id="first-name" placeholder="Jane"/>
+          <span class="err" id="err-first">Required</span>
+        </div>
+        <div class="fg">
+          <label>Last Name</label>
+          <input type="text" id="last-name" placeholder="Wanjiku"/>
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="fg">
+          <label>Phone Number *</label>
+          <input type="tel" id="phone" placeholder="+254 7XX XXX XXX"/>
+          <span class="err" id="err-phone">Enter a valid phone number</span>
+        </div>
+      </div>
+
+      <div class="form-row single">
+        <div class="fg">
+          <label>Email</label>
+          <input type="email" id="email" placeholder="jane@example.com"/>
+        </div>
+      </div>
+
+      <!-- 2. DELIVERY ADDRESS -->
+      <div class="section-lbl">📍 Delivery Address *</div>
+
+      <div class="map-search-wrap">
+        <span class="map-search-icon">🔍</span>
+        <input type="text" id="map-input" placeholder="Search your address in Kenya…"/>
+      </div>
+      <span class="err" id="err-address">Please pin your delivery location on the map</span>
+
+      <div class="map-box">
+        <div class="map-loader" id="map-loader">
+          <div class="map-spinner"></div>
+          <span style="font-size:11.5px;color:var(--muted);font-weight:700;">Loading map…</span>
+        </div>
+        <div id="map" style="width:100%;height:100%;opacity:0;"></div>
+        <div class="map-hint-pill" id="map-hint">Tap anywhere on the map to pin your location</div>
+      </div>
+
+      <!-- Confirmed (Nairobi) -->
+      <div id="addr-confirmed" class="addr-strip in" style="display:none;">
+        <div class="addr-strip-icon">📍</div>
+        <div>
+          <div class="addr-strip-title" id="addr-text"></div>
+          <div class="addr-strip-sub" id="addr-coords"></div>
+          <button class="change-loc" onclick="resetMap()">✏️ Change</button>
+        </div>
+      </div>
+
+      <!-- Outside Nairobi -->
+      <div id="addr-outside" class="addr-strip out" style="display:none;">
+        <div class="addr-strip-icon">📦</div>
+        <div>
+          <div class="addr-strip-title">Outside Nairobi delivery</div>
+          <div class="addr-strip-sub">Please contact us to arrange delivery to your location.</div>
+          <a id="wa-link" href="#" target="_blank" class="wa-btn">💬 WhatsApp Us</a>
+          <button class="change-loc" onclick="resetMap()">↩ Change</button>
+        </div>
+      </div>
+
+      <!-- Order Notes -->
+      <div class="form-row single" style="margin-top:13px;">
+        <div class="fg">
+          <label>Order Notes</label>
+          <textarea id="notes" placeholder="Special instructions…"></textarea>
+        </div>
+      </div>
+
+      <!-- 3. PAYMENT -->
+      <div class="section-lbl">💳 Payment Method *</div>
+
+      <div class="pay-options">
+        <div class="pay-card selected" id="pay-mpesa" onclick="selectPay('mpesa')">
+          <div class="pay-card-icon">📱</div>
+          <div class="pay-card-name">M-Pesa</div>
+          <div class="pay-card-sub">Send Payment</div>
+        </div>
+        <div class="pay-card" id="pay-pod" onclick="selectPay('pod')">
+          <div class="pay-card-icon">💵</div>
+          <div class="pay-card-name">Pay on Delivery</div>
+          <div class="pay-card-sub">Cash / Card</div>
+        </div>
+      </div>
+
+      <!-- M-Pesa Panel -->
+      <div class="mpesa-panel show" id="mpesa-panel">
+        <div class="mpesa-panel-title">📱 Pay via M-Pesa</div>
+        <div class="mpesa-send-box">
+          <div class="mpesa-send-lbl">Send Payment To</div>
+          <div class="mpesa-number" id="mpesa-display-num">0791 443 762</div>
+          <div class="mpesa-name" id="mpesa-display-name">Opulent Collections · Queenta Wachira</div>
+        </div>
+        <p class="mpesa-instruction">After sending, enter your <strong>M-Pesa confirmation code</strong> below:</p>
+        <div class="fg">
+          <input type="text" id="mpesa-code" placeholder="E.G. RGK4X2T8KL"
+            style="text-transform:uppercase;letter-spacing:.08em;font-weight:800;font-size:15px;"/>
+          <span class="err" id="err-mpesa">Enter your M-Pesa confirmation code</span>
+        </div>
+        <div class="mpesa-code-hint">The code looks like: <strong>RGK4X2T8KL</strong> — from the SMS you received</div>
+      </div>
+
+      <!-- Pay on Delivery Panel -->
+      <div class="pod-panel" id="pod-panel">
+        <div class="pod-panel-text">💵 Pay with cash or M-Pesa when your order arrives.</div>
+      </div>
+
+      <!-- 4. ORDER TOTALS -->
+      <div class="totals" id="totals-section"></div>
+
+      <!-- PLACE ORDER -->
+      <button class="btn-place" id="place-btn" onclick="placeOrder()">Place Order 🛒</button>
+      <div class="secure-note">🔐 Secure checkout · Your info is protected</div>
+
+    </div>
+  </div>
+</div>
+
+<!-- SUCCESS -->
+<div class="success-overlay" id="success-overlay">
+  <div class="success-card">
+    <span class="success-icon">🎉</span>
+    <div class="success-title">Order Placed!</div>
+    <div class="success-sub">Thank you for shopping with Opulent Collections.<br/>Your order is confirmed!</div>
+    <div class="success-id" id="success-id"></div>
+    <div class="success-sub" id="success-pay-note" style="margin-bottom:22px;"></div>
+    <div class="success-btns">
+      <button class="btn-track" onclick="window.location.href='opulent -order-tracking.html'">📦 Track My Order</button>
+      <button class="btn-more" onclick="window.location.href='shop.html'">Continue Shopping</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<!-- SUPABASE -->
+<script src="supabse config.js"></script>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────
+const GMAPS_KEY    = 'YOUR_GOOGLE_MAPS_API_KEY'; // 🔑 Replace
+const WA_NUMBER    = '254791443762';              // 📱 Replace with your number
+const FREE_DEL_MIN = 2000;
+const DEL_FEE      = 200;
+
+// Nairobi bounding box
+const NBI = { n:-1.163, s:-1.444, w:36.650, e:37.100 };
+
+// ── STATE ───────────────────────────────────────────────────
+let cart     = JSON.parse(localStorage.getItem('Opulent_cart') || '[]');
+let delivery = { address:'', lat:null, lng:null, inNairobi:false };
+let payment  = 'mpesa';
+let mapInst, markerInst, geocoder, autocomplete;
+let toastTmr;
+
+// ── INIT ────────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  renderTotals();
+  loadGMaps();
+  prefill();
+  // Set WhatsApp link
+  const msg = encodeURIComponent("Hi, I'd like to arrange delivery outside Nairobi for my Opulent Collections order.");
+  document.getElementById('wa-link').href = `https://wa.me/${WA_NUMBER}?text=${msg}`;
+});
+
+async function prefill() {
+  try {
+    const sb = window._sb;
+    if (!sb) return;
+    const { data:{ user } } = await sb.auth.getUser();
+    if (!user) return;
+    const { data:p } = await sb.from('profiles').select('*').eq('id', user.id).single();
+    if (p?.first_name) document.getElementById('first-name').value = p.first_name;
+    if (p?.last_name)  document.getElementById('last-name').value  = p.last_name;
+    if (p?.phone)      document.getElementById('phone').value      = p.phone;
+    document.getElementById('email').value = p?.email || user.email || '';
+  } catch(_) {}
+}
+
+// ── TOTALS ──────────────────────────────────────────────────
+function renderTotals() {
+  const subtotal = cart.reduce((s,i) => s + (i.price * (i.qty||1)), 0);
+  let delHtml = '', total = subtotal;
+
+  if (!delivery.lat) {
+    delHtml = `<span style="color:var(--muted);font-size:12px;">Pin location first</span>`;
+  } else if (!delivery.inNairobi) {
+    delHtml = `<span style="color:var(--orange);">Contact us</span>`;
+  } else if (subtotal >= FREE_DEL_MIN) {
+    delHtml = `<span class="free-tag">FREE</span>`;
+  } else {
+    delHtml = `Ksh. ${DEL_FEE.toLocaleString()}`;
+    total  += DEL_FEE;
+  }
+
+  const itemLines = cart.length
+    ? cart.map(i => `
+        <div class="total-row">
+          <span>${i.name} ×${i.qty||1}${i.size?' · '+i.size:''}</span>
+          <span>Ksh. ${(i.price*(i.qty||1)).toLocaleString()}</span>
+        </div>`).join('')
+    : `<div class="total-row"><span style="color:var(--muted);">Cart is empty</span><span>—</span></div>`;
+
+  document.getElementById('totals-section').innerHTML = `
+    ${itemLines}
+    <div class="total-row"><span>Delivery</span><span>${delHtml}</span></div>
+    <div class="total-row main"><span><strong>Total</strong></span><span>Ksh. ${total.toLocaleString()}</span></div>
+  `;
+}
+
+// ── GOOGLE MAPS ─────────────────────────────────────────────
+function loadGMaps() {
+  if (window.google?.maps) { initMap(); return; }
+  const s = document.createElement('script');
+  s.src = `https://maps.googleapis.com/maps/api/js?key=${GMAPS_KEY}&libraries=places&callback=initMap`;
+  s.async = true; s.defer = true;
+  s.onerror = () => {
+    document.getElementById('map-loader').innerHTML =
+      `<span style="color:var(--red);font-size:12px;font-weight:700;text-align:center;padding:10px;">
+        ⚠️ Map failed to load.<br/>Check your API key.</span>`;
+  };
+  document.head.appendChild(s);
+}
+
+window.initMap = function() {
+  const maps = window.google.maps;
+  const map  = new maps.Map(document.getElementById('map'), {
+    center: { lat:-1.2921, lng:36.8219 },
+    zoom: 12,
+    disableDefaultUI: true,
+    zoomControl: true,
+    zoomControlOptions: { position: maps.ControlPosition.RIGHT_BOTTOM },
+    styles:[
+      { featureType:'poi',     elementType:'labels', stylers:[{visibility:'off'}] },
+      { featureType:'transit', elementType:'labels', stylers:[{visibility:'off'}] },
+    ]
+  });
+  mapInst  = map;
+  geocoder = new maps.Geocoder();
+
+  document.getElementById('map').style.opacity = '1';
+  document.getElementById('map-loader').style.display = 'none';
+
+  // Click to pin
+  map.addListener('click', e => {
+    placePin(e.latLng);
+    geocoder.geocode({ location: e.latLng }, (results, status) => {
+      if (status==='OK' && results[0]) {
+        const addr = results[0].formatted_address;
+        document.getElementById('map-input').value = addr;
+        onAddressPicked(addr, e.latLng.lat(), e.latLng.lng());
+      }
+    });
+  });
+
+  // Autocomplete — all Kenya
+  autocomplete = new maps.places.Autocomplete(document.getElementById('map-input'), {
+    componentRestrictions: { country:'ke' },
+    fields: ['formatted_address','geometry','name']
+  });
+  autocomplete.addListener('place_changed', () => {
+    const p = autocomplete.getPlace();
+    if (!p.geometry) return;
+    const loc = p.geometry.location;
+    placePin(loc);
+    map.setZoom(15);
+    onAddressPicked(p.formatted_address || p.name, loc.lat(), loc.lng());
+  });
+};
+
+function placePin(latlng) {
+  const maps = window.google.maps;
+  if (markerInst) markerInst.setMap(null);
+  markerInst = new maps.Marker({
+    position: latlng, map: mapInst,
+    icon:{ path:maps.SymbolPath.CIRCLE, scale:11,
+      fillColor:'#C0547A', fillOpacity:1, strokeColor:'#fff', strokeWeight:2.5 },
+    animation: maps.Animation.DROP,
+  });
+  mapInst.panTo(latlng);
+  document.getElementById('map-hint').style.display = 'none';
+}
+
+function onAddressPicked(address, lat, lng) {
+  const inNairobi = lat>=NBI.s && lat<=NBI.n && lng>=NBI.w && lng<=NBI.e;
+  delivery = { address, lat, lng, inNairobi };
+
+  document.getElementById('addr-confirmed').style.display = inNairobi ? 'flex'  : 'none';
+  document.getElementById('addr-outside').style.display   = inNairobi ? 'none'  : 'flex';
+  document.getElementById('err-address').style.display    = 'none';
+  document.getElementById('map-input').classList.remove('error');
+
+  if (inNairobi) {
+    document.getElementById('addr-text').textContent   = address;
+    document.getElementById('addr-coords').textContent = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
+  }
+  renderTotals();
+}
+
+function resetMap() {
+  delivery = { address:'', lat:null, lng:null, inNairobi:false };
+  if (markerInst) { markerInst.setMap(null); markerInst=null; }
+  document.getElementById('map-input').value = '';
+  document.getElementById('map-hint').style.display      = 'block';
+  document.getElementById('addr-confirmed').style.display = 'none';
+  document.getElementById('addr-outside').style.display   = 'none';
+  mapInst?.setCenter({ lat:-1.2921, lng:36.8219 });
+  mapInst?.setZoom(12);
+  renderTotals();
+}
+
+// ── PAYMENT ─────────────────────────────────────────────────
+function selectPay(method) {
+  payment = method;
+  document.getElementById('pay-mpesa').classList.toggle('selected', method==='mpesa');
+  document.getElementById('pay-pod').classList.toggle('selected',   method==='pod');
+  document.getElementById('mpesa-panel').classList.toggle('show',   method==='mpesa');
+  document.getElementById('pod-panel').classList.toggle('show',     method==='pod');
+}
+
+// ── VALIDATION ──────────────────────────────────────────────
+function validate() {
+  let ok = true;
+
+  const check = (inputId, errId, test) => {
+    const val  = document.getElementById(inputId).value.trim();
+    const fail = !test(val);
+    document.getElementById(inputId).classList.toggle('error', fail);
+    const e = document.getElementById(errId);
+    if (e) { e.style.display = fail ? 'block' : 'none'; }
+    if (fail) ok = false;
+  };
+
+  check('first-name', 'err-first', v => v.length > 0);
+  check('phone',      'err-phone', v => v.replace(/\D/g,'').length >= 9);
+
+  if (!delivery.lat) {
+    document.getElementById('map-input').classList.add('error');
+    document.getElementById('err-address').style.display = 'block';
+    showToast('📍 Please pin your delivery location on the map');
+    ok = false;
+  }
+  if (delivery.lat && !delivery.inNairobi) {
+    showToast('📦 Outside Nairobi — please WhatsApp us to arrange delivery');
+    ok = false;
+  }
+  if (payment === 'mpesa') {
+    check('mpesa-code', 'err-mpesa', v => v.length >= 8);
+  }
+  return ok;
+}
+
+// ── PLACE ORDER ─────────────────────────────────────────────
+async function placeOrder() {
+  if (!validate()) return;
+
+  const btn = document.getElementById('place-btn');
+  btn.disabled     = true;
+  btn.textContent  = '⏳ Placing Order…';
+
+  try {
+    const sb       = window._sb;
+    const subtotal = cart.reduce((s,i) => s + (i.price*(i.qty||1)), 0);
+    const delFee   = delivery.inNairobi ? (subtotal >= FREE_DEL_MIN ? 0 : DEL_FEE) : 0;
+
+    const payload = {
+      customer_first_name: document.getElementById('first-name').value.trim(),
+      customer_last_name:  document.getElementById('last-name').value.trim(),
+      customer_phone:      document.getElementById('phone').value.trim(),
+      customer_email:      document.getElementById('email').value.trim(),
+      notes:               document.getElementById('notes').value.trim(),
+      delivery_address:    delivery.address,
+      delivery_lat:        delivery.lat,
+      delivery_lng:        delivery.lng,
+      payment_method:      payment,
+      mpesa_code:          payment==='mpesa'
+                             ? document.getElementById('mpesa-code').value.trim().toUpperCase()
+                             : null,
+      subtotal,
+      delivery_fee:        delFee,
+      total:               subtotal + delFee,
+      status:              'pending',
+      items:               cart,
+      created_at:          new Date().toISOString(),
+    };
+
+    const { data:order, error } = await sb.from('orders').insert(payload).select().single();
+    if (error) throw error;
+
+    localStorage.removeItem('Opulent_cart');
+
+    const id = order?.id || Math.random().toString(36).slice(2,8).toUpperCase();
+    document.getElementById('success-id').textContent       = `Order #${id}`;
+    document.getElementById('success-pay-note').textContent =
+      payment==='mpesa' ? '✅ Your M-Pesa payment has been recorded.' : '💵 Pay when your order arrives.';
+    document.getElementById('success-overlay').classList.add('show');
+
+  } catch(err) {
+    console.error(err);
+    showToast('❌ Failed to place order. Please try again.');
+    btn.disabled    = false;
+    btn.textContent = 'Place Order 🛒';
+  }
+}
+
+// ── UTILS ────────────────────────────────────────────────────
+function closeCheckout() { window.history.back(); }
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTmr);
+  toastTmr = setTimeout(() => t.classList.remove('show'), 3200);
+}
+</script>
+</body>
+</html>
